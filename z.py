@@ -166,6 +166,7 @@ async def main():
                     group = "🏁 FINISHED"
                     order = 3
                 else:
+                    # Semua upcoming/live 2 masuk sini
                     group = "🔴 LIVE"
                     order = 1
 
@@ -173,9 +174,17 @@ async def main():
 
                 if ts:
                     dt = datetime.utcfromtimestamp(int(ts)) + timedelta(hours=7)
-                    time_info = dt.strftime("[%H:%M WIB]")
+                    # format: [01:30 WIB 22/03/2026]
+                    time_info = dt.strftime("[%H:%M WIB %d/%m/%Y]")
 
-                title = f"{league} {time_info} {home} vs {away}"
+                    # Jika status bukan FT dan waktu > sekarang, jadikan LIVE 2
+                    now = datetime.utcnow() + timedelta(hours=7)
+                    if dt > now and status != "FT":
+                        group = "🔴 LIVE 2"
+                        order = 2
+
+                # Ubah posisi time_info di belakang match
+                title = f"{league} {home} vs {away} {time_info}"
 
                 streams = set()
 
