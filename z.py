@@ -23,29 +23,18 @@ DONASI_LOGO = "https://trakteer.id/images/trakteer-og.png"
 
 EXTRA_STREAM = "https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php"
 
-UA_STRING = "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
-REFERER_STRING = f"{BASE_URL}/"
+UA_STRING = "Mozilla/5.0"
+REFERER_STRING = BASE_URL
 
 HEADERS = {
     "User-Agent": UA_STRING,
-    "Accept": "application/json, text/plain, */*",
-    "Referer": REFERER_STRING,
-    "Origin": BASE_URL
+    "Accept": "application/json",
+    "Referer": REFERER_STRING
 }
 
 
 def log(msg):
-    print(f"[LOG] {msg}")
-
-
-def country_to_flag(code):
-
-    if not code or len(code) != 2:
-        return ""
-
-    code = code.upper()
-
-    return chr(ord(code[0]) + 127397) + chr(ord(code[1]) + 127397)
+    print("[LOG]", msg)
 
 
 def encrypt_url(url):
@@ -84,114 +73,15 @@ def is_stream_url(url):
         ".m3u8",
         ".flv",
         ".ts",
-        ".mp4",
-        ".php"
+        ".mp4"
     ])
-
-
-def extract_stream_urls(obj, found=None):
-
-    if found is None:
-        found = set()
-
-    if isinstance(obj, dict):
-
-        for v in obj.values():
-
-            if isinstance(v, str) and is_stream_url(v):
-                found.add(v)
-
-            elif isinstance(v, (dict, list)):
-                extract_stream_urls(v, found)
-
-    elif isinstance(obj, list):
-
-        for i in obj:
-            extract_stream_urls(i, found)
-
-    return found
 
 
 def get_full_wib_datetime():
 
     now = datetime.utcnow() + timedelta(hours=7)
 
-    hari = [
-        "Senin","Selasa","Rabu","Kamis","Jumat","Sabtu","Minggu"
-    ]
-
-    bulan = [
-        "Januari","Februari","Maret","April","Mei","Juni",
-        "Juli","Agustus","September","Oktober","November","Desember"
-    ]
-
-    h = hari[now.weekday()]
-    b = bulan[now.month-1]
-
-    return f"{h}, {now.day} {b} {now.year} {now.strftime('%H:%M:%S')} WIB"
-
-
-def get_wib_time(ts):
-
-    if not ts:
-        return ""
-
-    try:
-
-        dt = datetime.utcfromtimestamp(int(ts)) + timedelta(hours=7)
-
-        now = datetime.utcnow() + timedelta(hours=7)
-
-        if dt.date() == now.date():
-            label = "Hari Ini"
-
-        elif dt.date() == (now + timedelta(days=1)).date():
-            label = "Besok"
-
-        else:
-            label = dt.strftime("%d/%m")
-
-        return f"[{label} {dt.strftime('%H:%M')} WIB]"
-
-    except:
-        return ""
-
-
-def get_countdown(ts):
-
-    if not ts:
-        return ""
-
-    try:
-
-        now = datetime.utcnow() + timedelta(hours=7)
-        start = datetime.utcfromtimestamp(int(ts)) + timedelta(hours=7)
-
-        diff = (start - now).total_seconds()
-
-        if diff <= 0:
-            return "🔴 LIVE"
-
-        h = int(diff // 3600)
-        m = int((diff % 3600) // 60)
-        s = int(diff % 60)
-
-        return f"⏳ {h:02d}:{m:02d}:{s:02d}"
-
-    except:
-        return ""
-
-
-def detect_status(match):
-
-    status = int(match.get("matchStatus", 0))
-
-    if status == 2:
-        return 1
-    elif status in (3,4,5):
-        return 3
-    else:
-        return 2
+    return now.strftime("%Y-%m-%d %H:%M:%S WIB")
 
 
 async def get_deep_streams(session, slug):
@@ -204,7 +94,24 @@ async def get_deep_streams(session, slug):
 
                 js = await resp.json()
 
-                return extract_stream_urls(js)
+                found = set()
+
+                def extract(obj):
+
+                    if isinstance(obj, dict):
+                        for v in obj.values():
+                            if isinstance(v, str) and is_stream_url(v):
+                                found.add(v)
+                            elif isinstance(v, (list, dict)):
+                                extract(v)
+
+                    elif isinstance(obj, list):
+                        for i in obj:
+                            extract(i)
+
+                extract(js)
+
+                return found
 
     except:
         pass
@@ -222,17 +129,15 @@ async def main():
 
         try:
 
-            async with session.get(LIST_API, timeout=20) as resp:
+            async with session.get(LIST_API) as resp:
 
                 payload = await resp.json()
 
-                matches = payload.get("data", [])
+                all_matches = payload["data"]["results"]
 
-                if matches:
-                    all_matches.extend(matches)
+        except Exception as e:
 
-        except:
-            pass
+            log(f"API ERROR {e}")
 
         log(f"Matches: {len(all_matches)}")
 
@@ -244,39 +149,51 @@ async def main():
 
             async with sem:
 
-                slug = m.get("slug")
+                home = m.get("21", "Home")
+                away = m.get("22", "Away")
 
-                order = detect_status(m)
+                league = m.get("10", "Football")
 
-                if order == 1:
-                    group = "😈🔴LIVE🔴😈"
-                elif order == 2:
-                    group = "😈⏳LIVE2⚠️UPCOMING⏳😈"
+                logo = m.get("2", "")
+
+                slug = m.get("20")
+
+                ts = m.get("6")
+
+                status = m.get("17","")
+
+                if status == "FT":
+                    group = "🏁 FINISHED"
+                    order = 3
                 else:
-                    group = "😈 🏁 FINISHED MATCH 🏁 😈"
+                    group = "🔴 LIVE"
+                    order = 1
 
-                time_info = get_wib_time(m.get("matchTime"))
-                countdown = get_countdown(m.get("matchTime"))
+                time_info = ""
 
-                home = m.get("home_name","Home")
-                away = m.get("away_name","Away")
+                if ts:
+                    dt = datetime.utcfromtimestamp(int(ts)) + timedelta(hours=7)
+                    time_info = dt.strftime("[%H:%M WIB]")
 
-                home_flag = country_to_flag(m.get("home_country",""))
-                away_flag = country_to_flag(m.get("away_country",""))
+                title = f"{league} {time_info} {home} vs {away}"
 
-                title = f"😈 {time_info} {countdown} {home_flag} {home} 🆚 {away_flag} {away} 😈"
+                streams = set()
 
-                streams = extract_stream_urls(m)
+                if m.get("26"):
+                    streams.add(m["26"])
+
+                if m.get("27"):
+                    streams.add(m["27"])
 
                 if slug:
                     streams.update(await get_deep_streams(session, slug))
 
-                for i,url in enumerate(sorted(streams)):
+                for i,url in enumerate(streams):
 
                     channels.append({
                         "name": f"{title} [SVR-BHNS{i+1}]",
                         "url": encrypt_url(url),
-                        "logo": m.get("home_logo",""),
+                        "logo": logo,
                         "group": group,
                         "order": order
                     })
@@ -294,16 +211,6 @@ async def main():
             f.write("#EXTM3U\n")
             f.write(f"# Updated: {idn_time}\n\n")
 
-            f.write(
-                f'#EXTINF:-1 tvg-logo="{DONASI_LOGO}" group-title="😈 DONASI ADMIN SUPPORT SERVER😈",😈DUKUNG SERVER DONASI https://trakteer.id/mybhianesse0😈\n'
-            )
-            f.write(f"{DONASI_URL}\n\n")
-
-            f.write(
-                f'#EXTINF:-1 tvg-logo="{CUSTOM_LOGO}" group-title="😈 https://trakteer.id/mybhianesse0😈",😈 STREAM SERVER BACKUP 😈\n'
-            )
-            f.write(f"{EXTRA_STREAM}\n\n")
-
             for c in channels:
 
                 f.write(
@@ -311,7 +218,6 @@ async def main():
                 )
 
                 f.write(f'#EXTVLCOPT:http-user-agent={UA_STRING}\n')
-                f.write(f'#EXTVLCOPT:http-referrer={REFERER_STRING}\n')
 
                 f.write(f'{c["url"]}\n\n')
 
