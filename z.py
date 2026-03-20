@@ -2,28 +2,31 @@ import requests
 import yaml
 import re
 
-with open("config.yml") as f:
-    cfg = yaml.safe_load(f)
+cfg = yaml.safe_load(open("z.yml"))
 
 site = cfg["site"]
-api = cfg["api"]
+api  = cfg["api"]["match_detail"]
 servers = cfg["servers"]
-referer = cfg["referer"]
-timeout = cfg["timeout"]
-output = cfg["output"]
-
 headers = {
-    "User-Agent":"Mozilla/5.0",
-    "Referer":referer
+    "User-Agent": cfg["headers"]["user_agent"],
+    "Referer": cfg["headers"]["referer"]
 }
 
-print("ambil halaman match...")
+timeout = cfg["timeout"]
+output = cfg["output"]["playlist"]
+group = cfg["group"]["default"]
 
-html = requests.get(site,headers=headers).text
+def get(url):
+    try:
+        return requests.get(url,headers=headers,timeout=timeout).text
+    except:
+        return ""
 
-# ambil semua link pertandingan
+print("ambil halaman match")
+
+html = get(site)
+
 matches = re.findall(r'https://xoilaczzzm\.tv/truc-tiep/[^"]+',html)
-
 matches = list(set(matches))
 
 print("match ditemukan:",len(matches))
@@ -32,61 +35,47 @@ playlist = ["#EXTM3U"]
 
 for m in matches:
 
-    try:
+    print("proses:",m)
 
-        print("proses:",m)
+    page = get(m)
 
-        page = requests.get(m,headers=headers).text
+    u = re.search(r'uuid=([a-z0-9]+)',page)
 
-        # cari uuid
-        u = re.search(r'uuid=([a-z0-9]+)',page)
+    if not u:
+        continue
 
-        if not u:
-            continue
+    uuid = u.group(1)
 
-        uuid = u.group(1)
+    api_url = f"{api}?uuid={uuid}&lang=en"
 
-        api_url = f"{api}?uuid={uuid}&lang=en"
+    data = get(api_url)
 
-        r = requests.get(api_url,headers=headers)
+    mid = re.search(r'\d{6,8}',data)
 
-        data = r.content.decode("latin1",errors="ignore")
+    if not mid:
+        continue
 
-        # cari match id
-        mid = re.search(r'\d{6,8}',data)
+    match_id = mid.group()
 
-        if not mid:
-            continue
+    teams = re.findall(r'[A-Za-z\s]{3,}',data)
 
-        match_id = mid.group()
+    home = teams[0] if len(teams)>0 else "Team1"
+    away = teams[1] if len(teams)>1 else "Team2"
 
-        # cari nama tim
-        teams = re.findall(r'[A-Za-z\s]+\([a-z]\)|[A-Za-z\s]+',data)
+    title = f"{home} vs {away}"
 
-        home = teams[0] if len(teams)>0 else "Home"
-        away = teams[1] if len(teams)>1 else "Away"
+    logo = ""
 
-        title = f"{home} vs {away}"
+    for s in servers:
 
-        # cari logo
-        logos = re.findall(r'https:\/\/img\.thesports\.com\/[^"]+\.png',data)
+        stream = f"{s}{match_id}/index.m3u8"
 
-        logo = logos[0] if logos else ""
+        playlist.append(
+            f'#EXTINF:-1 tvg-id="{match_id}" tvg-logo="{logo}" group-title="{group}",{title}'
+        )
 
-        for s in servers:
+        playlist.append(stream)
 
-            stream = f"{s}{match_id}/index.m3u8"
-
-            playlist.append(
-                f'#EXTINF:-1 tvg-id="{match_id}" tvg-logo="{logo}" group-title="Football",{title}'
-            )
-
-            playlist.append(stream)
-
-    except:
-        pass
-
-with open(output,"w") as f:
-    f.write("\n".join(playlist))
+open(output,"w").write("\n".join(playlist))
 
 print("playlist dibuat:",output)
