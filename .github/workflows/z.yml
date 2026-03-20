@@ -1,45 +1,33 @@
-name: XOILAC LIVE SCRAPER
+name: Run Z Playlist
 
 on:
-  workflow_dispatch:
   schedule:
-    - cron: "*/10 * * * *"
+    - cron: '0 * * * *'   # tiap jam
+  workflow_dispatch:       # bisa run manual
 
 jobs:
-  scrape:
+  build:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout Repository
-        uses: actions/checkout@v4
+      - name: Checkout repo
+        uses: actions/checkout@v3
 
       - name: Setup Python
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v4
         with:
           python-version: "3.11"
 
-      - name: Install Dependencies
+      - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
           pip install aiohttp
 
-      - name: Run Scraper
-        run: |
-          python z.py
+      - name: Run z.py
+        run: python z.py
 
-      - name: Upload Playlist Artifact
-        uses: actions/upload-artifact@v4
+      - name: Upload z.m3u artifact
+        uses: actions/upload-artifact@v3
         with:
           name: playlist
           path: z.m3u
-
-      - name: Commit Playlist
-        run: |
-          git config --global user.name "github-actions"
-          git config --global user.email "actions@github.com"
-
-          git add z.m3u
-
-          git diff --quiet && git diff --staged --quiet || git commit -m "Update playlist $(date)"
-
-          git push
