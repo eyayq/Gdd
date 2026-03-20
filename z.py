@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 BASE_URL = "https://api.xoilactv.vip"
 
-LIST_API = "https://api.xoilactv.vip/livestream/full?value=6"
+LIST_API = "https://api.xoilactv.vip/livestream/full?value={}"
 DETAIL_API = "https://be.qptv1.com/livestream/full/md?link="
 
 OUTPUT_FILE = "z.m3u"
@@ -127,17 +127,25 @@ async def main():
 
         all_matches = []
 
-        try:
+        for i in range(1, 13):
 
-            async with session.get(LIST_API) as resp:
+            try:
 
-                payload = await resp.json()
+                url = LIST_API.format(i)
 
-                all_matches = payload["data"]["results"]
+                async with session.get(url) as resp:
 
-        except Exception as e:
+                    payload = await resp.json()
 
-            log(f"API ERROR {e}")
+                    results = payload.get("data", {}).get("results", [])
+
+                    log(f"value={i} matches={len(results)}")
+
+                    all_matches.extend(results)
+
+            except Exception as e:
+
+                log(f"value={i} ERROR {e}")
 
         log(f"Matches: {len(all_matches)}")
 
@@ -166,7 +174,6 @@ async def main():
                     group = "🏁 FINISHED"
                     order = 3
                 else:
-                    # Semua upcoming/live 2 masuk sini
                     group = "🔴 LIVE"
                     order = 1
 
@@ -174,16 +181,13 @@ async def main():
 
                 if ts:
                     dt = datetime.utcfromtimestamp(int(ts)) + timedelta(hours=7)
-                    # format: [01:30 WIB 22/03/2026]
                     time_info = dt.strftime("[%H:%M WIB %d/%m/%Y]")
 
-                    # Jika status bukan FT dan waktu > sekarang, jadikan LIVE 2
                     now = datetime.utcnow() + timedelta(hours=7)
                     if dt > now and status != "FT":
                         group = "🔴 LIVE 2"
                         order = 2
 
-                # Ubah posisi time_info di belakang match
                 title = f"{league} {home} vs {away} {time_info}"
 
                 streams = set()
