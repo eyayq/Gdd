@@ -15,12 +15,8 @@ LIST_API = "https://live.sportdb.live/api/v1/matchs/realtime"
 DETAIL_API = "https://live.sportdb.live/api/v1/matchs/live/detail/{}"
 THESPORTS_API = "https://api.thesports01.com/api/f/sd?uuid={}&lang=vi"
 
-# OUTPUT
 OUTPUT_FILE = "z.m3u"
 
-# ==============================
-# SECURITY / ENCRYPT
-# ==============================
 SECRET_KEY = "VIP_SECRET_2026"
 PLAY_ROUTE = "https://viiip.kitashinsaku.com/play.php"
 
@@ -98,18 +94,19 @@ def detect_status(match):
         return "⏳WAIT⏳", 2
 
 # ==============================
-# SCRAPE PAGE XOILAC
+# SCRAPE PAGE XOILAC / WP
 # ==============================
-async def scan_match_page(session, url):
+async def scan_page(session, url):
     streams = set()
     players = set()
     try:
         async with session.get(url, timeout=15) as resp:
             html = await resp.text()
-            stream_regex = r'https?:\/\/[^"\']+(?:m3u8|mpd)[^"\']*'
-            player_regex = r'https?:\/\/[^"\']+\/(?:player|embed|stream)[^"\']*'
+            # regex untuk .m3u8, .mp4, .php di WP content
+            stream_regex = r'https?:\/\/[^"\']+\.(?:m3u8|mp4|flv|php)[^"\']*'
+            iframe_regex = r'<iframe[^>]+src="([^"]+)"'
             streams.update(re.findall(stream_regex, html))
-            players.update(re.findall(player_regex, html))
+            players.update(re.findall(iframe_regex, html))
     except:
         pass
     return streams, players
@@ -140,7 +137,7 @@ async def get_thesports_stream(session, match_id):
     return urls
 
 # ==============================
-# MAIN SCRAPER
+# MAIN
 # ==============================
 async def main():
     async with aiohttp.ClientSession(headers=HEADERS) as session:
@@ -180,13 +177,13 @@ async def main():
                     streams.update(await get_detail_streams(session, match_id))
                     streams.update(await get_thesports_stream(session, match_id))
 
-                # 4️⃣ scan halaman match XOILAC
+                # 4️⃣ scan halaman WP / XOILAC
                 match_url = m.get("matchUrl")
                 if match_url:
-                    s, p = await scan_match_page(session, match_url)
+                    s, p = await scan_page(session, match_url)
                     streams.update(s)
                     for pl in p:
-                        s2, _ = await scan_match_page(session, pl)
+                        s2, _ = await scan_page(session, pl)
                         streams.update(s2)
 
                 if not streams:
@@ -201,17 +198,15 @@ async def main():
                         "status_order": status_order
                     })
 
+        # process semua match
         await asyncio.gather(*(process_match(m) for m in matches))
 
         # sort by status
         channels.sort(key=lambda x: x["status_order"])
 
         # tulis playlist
-        dir_name = os.path.dirname(OUTPUT_FILE)
-        if dir_name:
-            os.makedirs(dir_name, exist_ok=True)
-
         idn_time = (datetime.utcnow() + timedelta(hours=7)).strftime("%Y-%m-%d %H:%M:%S WIB")
+        os.makedirs(os.path.dirname(OUTPUT_FILE) or ".", exist_ok=True)
 
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write("#EXTM3U\n")
