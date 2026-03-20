@@ -11,10 +11,11 @@ from datetime import datetime, timedelta
 # CONFIG BASE URL & API
 # ==============================
 BASE_URL = "https://xoilaczzezxpt.tv"
-LIST_API = "https://live.sportdb.live/api/v1/matchs/thesport/live?format=json"
+LIST_API = "https://live.sportdb.live/api/v1/matchs/realtime"
 DETAIL_API = "https://live.sportdb.live/api/v1/matchs/live/detail/{}"
 THESPORTS_API = "https://api.thesports01.com/api/f/sd?uuid={}&lang=vi"
 
+# OUTPUT
 OUTPUT_FILE = "z.m3u"
 
 # ==============================
@@ -32,10 +33,9 @@ REFERER_STRING = f"{BASE_URL}/"
 
 HEADERS = {
     "User-Agent": UA_STRING,
-    "Accept": "*/*",
+    "Accept": "application/json, text/plain, */*",
     "Referer": REFERER_STRING,
-    "Origin": BASE_URL,
-    "X-Requested-With": "XMLHttpRequest"
+    "Origin": BASE_URL
 }
 
 # ==============================
@@ -98,7 +98,7 @@ def detect_status(match):
         return "⏳WAIT⏳", 2
 
 # ==============================
-# SCRAPE PAGE XOILAC (PHP => Python)
+# SCRAPE PAGE XOILAC
 # ==============================
 async def scan_match_page(session, url):
     streams = set()
@@ -145,42 +145,49 @@ async def get_thesports_stream(session, match_id):
 async def main():
     async with aiohttp.ClientSession(headers=HEADERS) as session:
 
-        # 1️⃣ ambil semua match live
+        # 1️⃣ ambil semua match realtime
         matches = []
         try:
             async with session.get(LIST_API, timeout=15) as resp:
                 if resp.status == 200:
                     payload = await resp.json()
-                    matches = payload.get("result", [])  # endpoint terbaru
+                    data = payload.get("data", {})
+                    matches = list(data.values()) if isinstance(data, dict) else data
         except:
             print("Gagal ambil match list")
 
         print(f"Match ditemukan: {len(matches)}")
-        if not matches:
-            with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
-                f.write("#EXTM3U\n# Playlist kosong\n")
-            return
-
         channels = []
+
         sem = asyncio.Semaphore(10)
 
         async def process_match(m):
             async with sem:
                 if not isinstance(m, dict):
                     return
-                match_id = m.get("matchId")
+                # Fix match_id
+                match_id = (
+                    m.get("matchId")
+                    or m.get("match_id")
+                    or m.get("id")
+                    or m.get("uuid")
+                )
+
                 live_tag, status_order = detect_status(m)
                 time_info = get_wib_time(m.get("matchTime"))
                 home = m.get("homeTeamName", "Home")
                 away = m.get("awayTeamName", "Away")
                 title = f"{time_info} {live_tag} {home} vs {away}".strip()
 
+                # extract stream dari match JSON
                 streams = extract_stream_urls(m)
 
+                # ambil detail API
                 if match_id:
                     streams.update(await get_detail_streams(session, match_id))
                     streams.update(await get_thesports_stream(session, match_id))
 
+                # scan halaman match XOILAC (fallback)
                 match_url = m.get("matchUrl")
                 if match_url:
                     s, p = await scan_match_page(session, match_url)
@@ -192,6 +199,8 @@ async def main():
                 if not streams:
                     return
 
+                print(f"Streams ditemukan: {len(streams)}")
+
                 for i, url in enumerate(sorted(streams)):
                     channels.append({
                         "name": f"{title} [SVR-BHNS-{i+1}]",
@@ -202,8 +211,11 @@ async def main():
                     })
 
         await asyncio.gather(*(process_match(m) for m in matches))
+
+        # sort by status
         channels.sort(key=lambda x: x["status_order"])
 
+        # tulis playlist
         idn_time = (datetime.utcnow() + timedelta(hours=7)).strftime("%Y-%m-%d %H:%M:%S WIB")
         os.makedirs(os.path.dirname(OUTPUT_FILE) or ".", exist_ok=True)
 
