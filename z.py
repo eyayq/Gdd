@@ -42,7 +42,6 @@ HEADERS = {
 # UTILITIES
 # ==============================
 def encrypt_url(url):
-    """Encrypt URL sama seperti script lama"""
     if ".m3u8" in url.lower():
         return url
     current_time = int(time.time())
@@ -99,7 +98,7 @@ def detect_status(match):
         return "⏳WAIT⏳", 2
 
 # ==============================
-# SCRAPE PAGE XOILAC (PHP => Python)
+# SCRAPE PAGE XOILAC
 # ==============================
 async def scan_match_page(session, url):
     streams = set()
@@ -181,12 +180,11 @@ async def main():
                     streams.update(await get_detail_streams(session, match_id))
                     streams.update(await get_thesports_stream(session, match_id))
 
-                # 4️⃣ scan halaman match XOILAC (fallback)
+                # 4️⃣ scan halaman match XOILAC
                 match_url = m.get("matchUrl")
                 if match_url:
                     s, p = await scan_match_page(session, match_url)
                     streams.update(s)
-                    # scan embed/player lagi
                     for pl in p:
                         s2, _ = await scan_match_page(session, pl)
                         streams.update(s2)
@@ -209,8 +207,11 @@ async def main():
         channels.sort(key=lambda x: x["status_order"])
 
         # tulis playlist
+        dir_name = os.path.dirname(OUTPUT_FILE)
+        if dir_name:
+            os.makedirs(dir_name, exist_ok=True)
+
         idn_time = (datetime.utcnow() + timedelta(hours=7)).strftime("%Y-%m-%d %H:%M:%S WIB")
-        os.makedirs(os.path.dirname(OUTPUT_FILE), exist_ok=True)
 
         with open(OUTPUT_FILE, "w", encoding="utf-8") as f:
             f.write("#EXTM3U\n")
