@@ -8,7 +8,7 @@ from datetime import datetime, timedelta
 
 BASE_URL = "https://api.xoilactv.vip"
 
-LIST_API = "https://api.xoilactv.vip/livestream/full?value={}"
+LIST_API = "https://api.xoilactv.vip/livestream/full?value=6"
 DETAIL_API = "https://be.qptv1.com/livestream/full/md?link="
 
 OUTPUT_FILE = "z.m3u"
@@ -39,7 +39,7 @@ def log(msg):
 
 def encrypt_url(url):
 
-    if ".m3u8" in url.lower():
+    if ".mp3" in url.lower():
         return url
 
     current_time = int(time.time())
@@ -127,25 +127,17 @@ async def main():
 
         all_matches = []
 
-        for i in range(1, 13):
+        try:
 
-            try:
+            async with session.get(LIST_API) as resp:
 
-                url = LIST_API.format(i)
+                payload = await resp.json()
 
-                async with session.get(url) as resp:
+                all_matches = payload["data"]["results"]
 
-                    payload = await resp.json()
+        except Exception as e:
 
-                    results = payload.get("data", {}).get("results", [])
-
-                    log(f"value={i} matches={len(results)}")
-
-                    all_matches.extend(results)
-
-            except Exception as e:
-
-                log(f"value={i} ERROR {e}")
+            log(f"API ERROR {e}")
 
         log(f"Matches: {len(all_matches)}")
 
@@ -181,9 +173,11 @@ async def main():
 
                 if ts:
                     dt = datetime.utcfromtimestamp(int(ts)) + timedelta(hours=7)
+
                     time_info = dt.strftime("[%H:%M WIB %d/%m/%Y]")
 
                     now = datetime.utcnow() + timedelta(hours=7)
+
                     if dt > now and status != "FT":
                         group = "🔴 LIVE 2"
                         order = 2
@@ -204,10 +198,10 @@ async def main():
                 for i,url in enumerate(streams):
 
                     channels.append({
-                        "name": f"{title} [SVR-BHNS{i+1}]",
+                        "name": f"⚽{title} [SVR-BHNS{i+1}]⚽",
                         "url": encrypt_url(url),
                         "logo": logo,
-                        "group": group,
+                        "group": f"⚽{group}⚽",
                         "order": order
                     })
 
@@ -223,6 +217,10 @@ async def main():
 
             f.write("#EXTM3U\n")
             f.write(f"# Updated: {idn_time}\n\n")
+
+            # DONASI HEADER
+            f.write(f'#EXTINF:-1 tvg-logo="{DONASI_LOGO}" group-title="⚽DONASI⚽",⚽DUKUNG SERVER⚽\n')
+            f.write(f'{DONASI_URL}\n\n')
 
             for c in channels:
 
