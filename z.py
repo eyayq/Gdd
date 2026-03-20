@@ -11,7 +11,7 @@ BASE_URL = "https://api.xoilactv.vip"
 LIST_API = "https://api.xoilactv.vip/livestream/full?value=6"
 DETAIL_API = "https://be.qptv1.com/livestream/full/md?link="
 
-OUTPUT_FILE = "z.m3u"
+OUTPUT_FILE = "a/b/c/d/e/f/g/h/i/j/k/l/m/n/o/p/q/r/s/t/u/v/w/x/y/z/z.m3u"
 
 SECRET_KEY = "VIP_SECRET_2026"
 PLAY_ROUTE = "https://viiip.kitashinsaku.com/play.php"
@@ -19,7 +19,7 @@ PLAY_ROUTE = "https://viiip.kitashinsaku.com/play.php"
 CUSTOM_LOGO = "https://viiip.kitashinsaku.com/0.php"
 
 DONASI_URL = "https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php"
-DONASI_LOGO = "https://trakteer.id/images/trakteer-og.png"
+DONASI_LOGO = "https://viiip.kitashinsaku.com/0.php"
 
 EXTRA_STREAM = "https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php"
 
@@ -39,7 +39,7 @@ def log(msg):
 
 def encrypt_url(url):
 
-    if ".mp3" in url.lower():
+    if ".m3u8" in url.lower():
         return url
 
     current_time = int(time.time())
@@ -143,7 +143,7 @@ async def main():
 
         channels = []
 
-        sem = asyncio.Semaphore(10)
+        sem = asyncio.Semaphore(20)
 
         async def process_match(m):
 
@@ -219,7 +219,7 @@ async def main():
             f.write(f"# Updated: {idn_time}\n\n")
 
             # DONASI HEADER
-            f.write(f'#EXTINF:-1 tvg-logo="{DONASI_LOGO}" group-title="⚽DONASI⚽",⚽DUKUNG SERVER⚽\n')
+            f.write(f'#EXTINF:-1 tvg-logo="{DONASI_LOGO}" group-title="⚽DONASI https://trakteer.id/mybhianesse0⚽",⚽DUKUNG SERVER KAMI⚽\n')
             f.write(f'{DONASI_URL}\n\n')
 
             for c in channels:
