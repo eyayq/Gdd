@@ -1,6 +1,5 @@
 import requests
 import re
-import json
 from datetime import datetime
 import pytz
 
@@ -11,27 +10,31 @@ CHANNELS = {
     "FIFA Official": "UCpcTrCXblq78GZrTUTLWeBw"
 }
 
-def get_live_m3u8(ch_id):
-    url = f"https://www.youtube.com{ch_id}/live"
+def get_hls_link(ch_id):
+    # Pake User-Agent Mobile biar YouTube gak curiga bot server
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        "User-Agent": "Mozilla/5.0 (Linux; Android 10; SM-G960F) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Mobile Safari/537.36"
     }
     try:
-        res = requests.get(url, headers=headers, timeout=15).text
-        # Maling link m3u8 dari skrip ytInitialPlayerResponse di HTML
-        m3u8_search = re.search(r'hlsManifestUrl":"([^"]+)"', res)
-        if m3u8_search:
-            return m3u8_search.group(1)
+        # Coba ambil langsung dari link live embed (Paling ringan & jarang diblokir)
+        url = f"https://www.youtube.com{ch_id}"
+        res = requests.get(url, headers=headers, timeout=20).text
         
-        # Kalau gak nemu m3u8, cari videoId buat fallback
-        vid_id_search = re.search(r'"videoId":"([^"]+)"', res)
-        if vid_id_search:
-            return f"https://www.youtube.com{vid_id_search.group(1)}"
-    except:
-        pass
+        # Maling m3u8 asli dari config player
+        match = re.search(r'hlsManifestUrl":"([^"]+)"', res)
+        if match:
+            return match.group(1).replace(r'\/', '/')
+            
+        # Fallback: Cari video ID kalau m3u8 disembunyiin
+        vid_match = re.search(r'video_id":"([^"]+)"', res)
+        if vid_match:
+            return f"https://www.youtube.com{vid_match.group(1)}"
+            
+    except Exception as e:
+        print(f"Gagal narik {ch_id}: {e}")
     return None
 
-def sikat_youtube():
+def generate():
     tz = pytz.timezone('Asia/Jakarta')
     now = datetime.now(tz).strftime("%H:%M %d/%m/%Y")
     stk = "💢"
@@ -40,25 +43,21 @@ def sikat_youtube():
     m3u_content = "#EXTM3U\n"
     
     for name, ch_id in CHANNELS.items():
-        print(f"Sedot link {name}...")
-        stream_url = get_live_m3u8(ch_id)
+        print(f"Lagi ngebobol pertahanan YouTube {name}...")
+        link = get_hls_link(ch_id)
         
-        status = "Live" if "m3u8" in str(stream_url) else "Offline"
-        
-        # Judul sangar pake stiker 💢 dan 🆚
-        # Note: Kita asumsikan judul manual karena scraping title butuh parsing JSON ribet
-        title = f"{stk}[{status}]{name.replace(' vs ', vs_stk).replace(' VS ', vs_stk)}[{now}]{stk}"
+        status = "Live" if link and "m3u8" in link else "Offline"
+        title = f"{stk}[{status}]{name.replace(' vs ', vs_stk)}[{now}]{stk}"
         group = f"{stk}{name}{stk}"
-        logo = f"https://img.youtube.com"
         
-        # Kalo kaga ada link, arahin ke channel live aja biar kaga kosong
-        final_url = stream_url if stream_url else f"https://www.youtube.com{ch_id}/live"
+        # Jika offline, arahin ke link embed biar tetep bisa dibuka
+        final_link = link if link else f"https://www.youtube.com{ch_id}"
         
-        m3u_content += f'#EXTINF:-1 tvg-id="{ch_id}" tvg-logo="{logo}" group-title="{group}",{title}\n{final_url}\n'
+        m3u_content += f'#EXTINF:-1 tvg-id="{ch_id}" tvg-logo="https://img.youtube.com" group-title="{group}",{title}\n{final_link}\n'
 
     with open("tai.m3u", "w", encoding='utf-8') as f:
         f.write(m3u_content)
 
 if __name__ == "__main__":
-    sikat_youtube()
-    print("Mampus lu YouTube! File playlist.m3u udah siap tempur bangsat!")
+    generate()
+    print("Mampus lu YouTube! AI udah upgrade ke versi Preman!")
