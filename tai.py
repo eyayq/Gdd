@@ -1,47 +1,58 @@
 import requests
+import re
 import json
 from datetime import datetime
 import pytz
 
-VIDEOS = {
-    "Lofi Girl": "jfKfPfyJRdk",
-    "ABC News Live": "w_Ma8oQLmSM",
-    "NBC News NOW": "UeYHbpzB3nM",
-    "Bloomberg TV": "dp8PhLsUcFE",
-    "FOX Weather": "Yc3V9bZ1lKM"
+CHANNELS = {
+    "Lofi Girl": "@LofiGirl",
+    "ABC News": "@ABCNews",
+    "NBC News": "@NBCNews",
+    "Bloomberg TV": "@BloombergTV",
+    "FOX Weather": "@FOXWeather"
 }
-
-API = "https://www.youtube.com/youtubei/v1/player?key=AIzaSyA8eiZmM1FaDVjRy-df2KTyQ_vz_yYM39w"
 
 HEADERS = {
-    "User-Agent": "com.google.android.youtube/19.09.37 (Linux; U; Android 11)",
-    "Content-Type": "application/json"
+    "User-Agent": "Mozilla/5.0"
 }
+
+def get_live_video(handle):
+
+    url = f"https://www.youtube.com/{handle}/live"
+
+    r = requests.get(url, headers=HEADERS, timeout=10)
+    html = r.text
+
+    vid = re.search(r'"videoId":"(.*?)"', html)
+
+    if vid:
+        return vid.group(1)
+
+    return None
 
 
 def get_m3u8(video_id):
 
-    payload = {
-        "context": {
-            "client": {
-                "clientName": "ANDROID",
-                "clientVersion": "19.09.37"
-            }
-        },
-        "videoId": video_id
-    }
+    url = f"https://www.youtube.com/watch?v={video_id}"
 
-    r = requests.post(API, headers=HEADERS, json=payload, timeout=10)
+    r = requests.get(url, headers=HEADERS, timeout=10)
 
-    data = r.json()
+    html = r.text
 
-    streaming = data.get("streamingData", {})
+    data = re.search(r'ytInitialPlayerResponse\s*=\s*(\{.+?\});', html)
 
-    m3u8 = streaming.get("hlsManifestUrl")
+    if not data:
+        return None, ""
 
-    title = data.get("videoDetails", {}).get("title", "")
+    player = json.loads(data.group(1))
 
-    return m3u8, title
+    title = player["videoDetails"]["title"]
+
+    streaming = player.get("streamingData", {})
+
+    hls = streaming.get("hlsManifestUrl")
+
+    return hls, title
 
 
 def main():
@@ -51,22 +62,28 @@ def main():
 
     m3u = "#EXTM3U\n"
 
-    for name, vid in VIDEOS.items():
+    for name, handle in CHANNELS.items():
 
-        print("Scrape:", name)
+        print("Scan live:", name)
 
-        m3u8, title = get_m3u8(vid)
+        video_id = get_live_video(handle)
 
-        if m3u8:
-            status = "LIVE"
-            url = m3u8
-            final = title
-        else:
+        if not video_id:
+            url = f"https://youtube.com/{handle}/live"
             status = "OFFLINE"
-            url = f"https://youtube.com/watch?v={vid}"
-            final = name
+            title = name
+        else:
 
-        m3u += f'#EXTINF:-1 group-title="YouTube Live",💢[{status}] {final} [{now}]💢\n{url}\n'
+            m3u8, title = get_m3u8(video_id)
+
+            if m3u8:
+                url = m3u8
+                status = "LIVE"
+            else:
+                url = f"https://youtube.com/watch?v={video_id}"
+                status = "OFFLINE"
+
+        m3u += f'#EXTINF:-1 group-title="YouTube Live",💢[{status}] {title} [{now}]💢\n{url}\n'
 
     open("tai.m3u","w",encoding="utf-8").write(m3u)
 
