@@ -1,9 +1,9 @@
 #EXTM3U
-#EXTINF:-1 tvg-logo="https://img.youtube.comyD2XGcWM_rY/maxresdefault.jpg" group-title="💢BWF Court 1💢", 💢[OFFLINE]BWF Court 1[18:19 21/03/2026]💢
-https://www.youtube.comyD2XGcWM_rY
-#EXTINF:-1 tvg-logo="https://img.youtube.comUCC9Ge99E0-r3sh_nAnuYp_Q/maxresdefault.jpg" group-title="💢BWF Badminton💢", 💢[OFFLINE]BWF Badminton[18:19 21/03/2026]💢
-https://www.youtube.comUCC9Ge99E0-r3sh_nAnuYp_Q
-#EXTINF:-1 tvg-logo="https://img.youtube.comUCNMg6XDhRZI2QzL4pWOvP_w/maxresdefault.jpg" group-title="💢Volleyball World💢", 💢[OFFLINE]Volleyball World[18:19 21/03/2026]💢
-https://www.youtube.comUCNMg6XDhRZI2QzL4pWOvP_w
-#EXTINF:-1 tvg-logo="https://img.youtube.comUCUZHFZ9jIKrLroW8LcyJEQQ/maxresdefault.jpg" group-title="💢Arah Kita💢", 💢[OFFLINE]Arah Kita[18:19 21/03/2026]💢
-https://www.youtube.comUCUZHFZ9jIKrLroW8LcyJEQQ
+#EXTINF:-1 tvg-logo="https://img.youtube.com/yD2XGcWM_rY/maxresdefault.jpg" group-title="💢BWF Court 1💢",💢[OFFLINE]BWF Court 1[18:24 21/03/2026]💢
+https://www.youtube.com/yD2XGcWM_rY
+#EXTINF:-1 tvg-logo="https://img.youtube.com/live/maxresdefault.jpg" group-title="💢BWF Badminton💢",💢[OFFLINE]BWF Badminton[18:24 21/03/2026]💢
+https://www.youtube.com/UCC9Ge99E0-r3sh_nAnuYp_Q/live
+#EXTINF:-1 tvg-logo="https://img.youtube.com/live/maxresdefault.jpg" group-title="💢Volleyball World💢",💢[OFFLINE]Volleyball World[18:24 21/03/2026]💢
+https://www.youtube.com/UCNMg6XDhRZI2QzL4pWOvP_w/live
+#EXTINF:-1 tvg-logo="https://img.youtube.com/live/maxresdefault.jpg" group-title="💢Arah Kita💢",💢[OFFLINE]Arah Kita[18:24 21/03/2026]💢
+https://www.youtube.com/UCUZHFZ9jIKrLroW8LcyJEQQ/live
