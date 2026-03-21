@@ -16,6 +16,7 @@ HEADERS = {
     "User-Agent": "Mozilla/5.0"
 }
 
+
 def get_live_video(handle):
 
     url = f"https://www.youtube.com/{handle}/live"
@@ -36,21 +37,24 @@ def get_m3u8(video_id):
     url = f"https://www.youtube.com/watch?v={video_id}"
 
     r = requests.get(url, headers=HEADERS, timeout=10)
-
     html = r.text
 
-    data = re.search(r'ytInitialPlayerResponse\s*=\s*(\{.+?\});', html)
+    # cari player response
+    match = re.search(r'ytInitialPlayerResponse\s*=\s*({.*?})\s*;', html)
 
-    if not data:
+    if not match:
         return None, ""
 
-    player = json.loads(data.group(1))
-
-    title = player["videoDetails"]["title"]
+    try:
+        player = json.loads(match.group(1))
+    except:
+        return None, ""
 
     streaming = player.get("streamingData", {})
 
     hls = streaming.get("hlsManifestUrl")
+
+    title = player.get("videoDetails", {}).get("title", "")
 
     return hls, title
 
@@ -69,23 +73,30 @@ def main():
         video_id = get_live_video(handle)
 
         if not video_id:
-            url = f"https://youtube.com/{handle}/live"
+
             status = "OFFLINE"
+            url = f"https://youtube.com/{handle}/live"
             title = name
+
         else:
 
             m3u8, title = get_m3u8(video_id)
 
             if m3u8:
-                url = m3u8
+
                 status = "LIVE"
+                url = m3u8
+
             else:
-                url = f"https://youtube.com/watch?v={video_id}"
+
                 status = "OFFLINE"
+                url = f"https://youtube.com/watch?v={video_id}"
+                title = name
 
         m3u += f'#EXTINF:-1 group-title="YouTube Live",💢[{status}] {title} [{now}]💢\n{url}\n'
 
-    open("tai.m3u","w",encoding="utf-8").write(m3u)
+    with open("tai.m3u", "w", encoding="utf-8") as f:
+        f.write(m3u)
 
 
 if __name__ == "__main__":
