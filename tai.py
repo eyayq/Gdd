@@ -10,65 +10,104 @@ CHANNELS = {
     "Arah Kita": "UCUZHFZ9jIKrLroW8LcyJEQQ"
 }
 
-def get_hls_stream(target):
-    # Gunakan Piped API buat dapetin link .m3u8 MURNI
-    api_list = [
-        "https://pipedapi.kavin.rocks",
-        "https://api.piped.victr.me",
-        "https://piped-api.lunar.icu"
-    ]
-    
-    # Deteksi apakah ID Video atau ID Channel
-    vid_id = target if len(target) == 11 else None
-    
-    # Kalo Channel ID, cari Video ID yang lagi LIVE dulu lewat Invidious
-    if not vid_id:
-        try:
-            ch_data = requests.get(f"https://inv.tux.rs{target}/live", timeout=5).json()
-            vid_id = ch_data.get("videoId")
-        except:
-            pass
+INVIDIOUS = [
+    "https://inv.tux.pizza",
+    "https://invidious.jing.rocks",
+    "https://vid.puffyan.us"
+]
 
-    if vid_id:
-        for base in api_list:
-            try:
-                # Ambil data stream asli dari Piped
-                res = requests.get(base + vid_id, timeout=8).json()
-                if "hls" in res:
-                    # INI LINK M3U8 MURNI YANG LU MAU BANGSAT!
-                    return res["hls"], True, res.get("title", "Live Stream")
-            except:
-                continue
-    
-    # Fallback kalo emang lagi OFFLINE atau kena blokir massal
+
+def get_live_video(channel_id):
+    for base in INVIDIOUS:
+        try:
+            r = requests.get(
+                f"{base}/api/v1/channels/{channel_id}/live",
+                timeout=8
+            ).json()
+
+            if "videoId" in r:
+                return r["videoId"]
+        except:
+            continue
+    return None
+
+
+def get_hls(video_id):
+    for base in INVIDIOUS:
+        try:
+            r = requests.get(
+                f"{base}/api/v1/videos/{video_id}",
+                timeout=8
+            ).json()
+
+            if r.get("liveNow"):
+                return r.get("hlsUrl"), r.get("title", "")
+        except:
+            continue
+
+    return None, ""
+
+
+def get_stream(target):
+
+    # kalau langsung video ID
     if len(target) == 11:
-        fallback = f"https://www.youtube.com/{target}"
-    else:
-        fallback = f"https://www.youtube.com/{target}/live"
-    return fallback, False, ""
+        hls, title = get_hls(target)
+        if hls:
+            return hls, True, title
+        return f"https://youtube.com/watch?v={target}", False, ""
+
+    # kalau channel ID
+    video_id = get_live_video(target)
+
+    if video_id:
+        hls, title = get_hls(video_id)
+        if hls:
+            return hls, True, title
+
+    return f"https://youtube.com/channel/{target}/live", False, ""
+
 
 def main():
-    tz = pytz.timezone('Asia/Jakarta')
+
+    tz = pytz.timezone("Asia/Jakarta")
     now = datetime.now(tz).strftime("%H:%M %d/%m/%Y")
-    stk, vs = "💢", "🆚"
-    
+
+    stk = "💢"
+    vs = "🆚"
+
     m3u = "#EXTM3U\n"
+
     for name, target in CHANNELS.items():
-        print(f"Sedot streaming murni {name}...")
-        url, is_live, v_title = get_hls_stream(target)
-        
+
+        print("Ambil stream:", name)
+
+        url, is_live, title = get_stream(target)
+
         status = "LIVE" if is_live else "OFFLINE"
-        raw_title = v_title if is_live else name
-        clean_title = re.sub(r'\s+vs\s+', vs, raw_title, flags=re.IGNORECASE)
-        
+        raw_title = title if is_live else name
+
+        clean_title = re.sub(
+            r"\s+vs\s+",
+            vs,
+            raw_title,
+            flags=re.IGNORECASE
+        )
+
         final_title = f"{stk}[{status}]{clean_title}[{now}]{stk}"
+
         group = f"💢{name}💢"
-        logo = f"https://img.youtube.com/{target if len(target)==11 else 'live'}/maxresdefault.jpg"
-        
+
+        if len(target) == 11:
+            logo = f"https://img.youtube.com/vi/{target}/maxresdefault.jpg"
+        else:
+            logo = "https://i.ibb.co/7QpKsCX/youtube-live.png"
+
         m3u += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{group}",{final_title}\n{url}\n'
 
-    with open("tai.m3u", "w", encoding='utf-8') as f:
+    with open("tai.m3u", "w", encoding="utf-8") as f:
         f.write(m3u)
+
 
 if __name__ == "__main__":
     main()
