@@ -1,5 +1,6 @@
 import requests
 import re
+import json
 from datetime import datetime
 import pytz
 
@@ -10,58 +11,67 @@ CHANNELS = {
     "Arah Kita": "UCUZHFZ9jIKrLroW8LcyJEQQ"
 }
 
-INVIDIOUS = [
-    "https://inv.tux.pizza",
-    "https://invidious.jing.rocks",
-    "https://vid.puffyan.us"
-]
+HEADERS = {
+    "User-Agent": "Mozilla/5.0"
+}
 
 
 def get_live_video(channel_id):
-    for base in INVIDIOUS:
-        try:
-            r = requests.get(
-                f"{base}/api/v1/channels/{channel_id}/live",
-                timeout=8
-            ).json()
+    url = f"https://www.youtube.com/channel/{channel_id}/live"
 
-            if "videoId" in r:
-                return r["videoId"]
-        except:
-            continue
+    try:
+        html = requests.get(url, headers=HEADERS, timeout=10).text
+        vid = re.search(r'"videoId":"(.*?)"', html)
+        if vid:
+            return vid.group(1)
+    except:
+        pass
+
     return None
 
 
 def get_hls(video_id):
-    for base in INVIDIOUS:
-        try:
-            r = requests.get(
-                f"{base}/api/v1/videos/{video_id}",
-                timeout=8
-            ).json()
 
-            if r.get("liveNow"):
-                return r.get("hlsUrl"), r.get("title", "")
-        except:
-            continue
+    url = f"https://www.youtube.com/watch?v={video_id}"
 
-    return None, ""
+    try:
+        html = requests.get(url, headers=HEADERS, timeout=10).text
+
+        data = re.search(
+            r'ytInitialPlayerResponse\s*=\s*(\{.+?\});',
+            html
+        )
+
+        if not data:
+            return None, ""
+
+        player = json.loads(data.group(1))
+
+        title = player["videoDetails"]["title"]
+
+        hls = player["streamingData"].get("hlsManifestUrl")
+
+        return hls, title
+
+    except:
+        return None, ""
 
 
 def get_stream(target):
 
-    # kalau langsung video ID
     if len(target) == 11:
         hls, title = get_hls(target)
+
         if hls:
             return hls, True, title
+
         return f"https://youtube.com/watch?v={target}", False, ""
 
-    # kalau channel ID
-    video_id = get_live_video(target)
+    vid = get_live_video(target)
 
-    if video_id:
-        hls, title = get_hls(video_id)
+    if vid:
+        hls, title = get_hls(vid)
+
         if hls:
             return hls, True, title
 
@@ -73,40 +83,25 @@ def main():
     tz = pytz.timezone("Asia/Jakarta")
     now = datetime.now(tz).strftime("%H:%M %d/%m/%Y")
 
-    stk = "💢"
-    vs = "🆚"
-
     m3u = "#EXTM3U\n"
 
     for name, target in CHANNELS.items():
 
-        print("Ambil stream:", name)
+        print("Ambil:", name)
 
-        url, is_live, title = get_stream(target)
+        url, live, title = get_stream(target)
 
-        status = "LIVE" if is_live else "OFFLINE"
-        raw_title = title if is_live else name
+        status = "LIVE" if live else "OFFLINE"
 
-        clean_title = re.sub(
-            r"\s+vs\s+",
-            vs,
-            raw_title,
-            flags=re.IGNORECASE
-        )
-
-        final_title = f"{stk}[{status}]{clean_title}[{now}]{stk}"
+        final = title if live else name
 
         group = f"💢{name}💢"
 
-        if len(target) == 11:
-            logo = f"https://img.youtube.com/vi/{target}/maxresdefault.jpg"
-        else:
-            logo = "https://i.ibb.co/7QpKsCX/youtube-live.png"
+        logo = "https://i.ibb.co/7QpKsCX/youtube-live.png"
 
-        m3u += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{group}",{final_title}\n{url}\n'
+        m3u += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{group}",💢[{status}] {final} [{now}]💢\n{url}\n'
 
-    with open("tai.m3u", "w", encoding="utf-8") as f:
-        f.write(m3u)
+    open("tai.m3u", "w", encoding="utf-8").write(m3u)
 
 
 if __name__ == "__main__":
