@@ -1,72 +1,64 @@
 from seleniumbase import SB
-import json
 import base64
 
 TARGET = "https://textileaffairs.com"
 
 def gass_sadap_hardcore():
-    with SB(uc=True, headless=True, ad_block=True) as sb:
-        print(f"[*] Menyerang: {TARGET}")
-        
+    # Gunakan uc=True dan pastikan tidak terdeteksi
+    with SB(uc=True, headless=False, ad_block=True) as sb:
         captured_data = []
 
-        # HANDLER: Nyadap Request & RESPONSE (Isi datanya)
-        def response_listener(params):
-            request_id = params["requestId"]
-            url = params["response"]["url"]
-            
-            # Filter kata kunci api pertandingan & player
-            keywords = ["api", "schedule", "match", "player", "live", "stream", "getlink"]
-            if any(k in url.lower() for k in keywords):
-                try:
-                    # Ambil isi body response (JSON/Text)
-                    body = sb.driver.execute_cdp_cmd('Network.getResponseBody', {'requestId': request_id})
-                    content = body['body']
-                    if body.get('base64Encoded'):
-                        content = base64.b64decode(content).decode('utf-8', errors='ignore')
+        def response_handler(params):
+            try:
+                request_id = params["requestId"]
+                url = params["response"]["url"]
+                
+                # Filter kata kunci
+                keywords = ["api", "schedule", "match", "player", "live", "stream"]
+                if any(k in url.lower() for k in keywords):
+                    # Ambil body response via CDP
+                    res = sb.driver.execute_cdp_cmd("Network.getResponseBody", {"requestId": request_id})
+                    body = res.get("body", "")
                     
-                    captured_data.append({"url": url, "content": content[:1000]}) # Ambil 1000 karakter pertama
-                    print(f"  [!] API DITEMUKAN: {url}")
-                except: pass
+                    if res.get("base64Encoded"):
+                        body = base64.b64decode(body).decode('utf-8', errors='ignore')
+                    
+                    captured_data.append({"url": url, "content": body[:500]})
+                    print(f"[!] KETANGKEP: {url[:70]}...")
+            except:
+                pass
 
-        sb.driver.execute_cdp_cmd("Network.enable", {})
-        sb.driver.add_cdp_listener("Network.responseReceived", response_listener)
+        # Buka target dulu agar driver terinisialisasi
+        sb.uc_open_with_reconnect(TARGET, 10)
         
-        try:
-            sb.uc_open_with_reconnect(TARGET, 20)
-            sb.sleep(15)
+        # Aktifkan Network Tracking setelah page mulai loading
+        sb.driver.execute_cdp_cmd("Network.enable", {})
+        sb.driver.add_cdp_listener("Network.responseReceived", response_handler)
 
-            # 1. Pancing daftar pertandingan (Scroll kebawah biar API schedule kepanggil)
-            print("[*] Scrolling buat pancing API jadwal...")
-            sb.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-            sb.sleep(5)
+        print("[*] Scrolling & Interaksi...")
+        for _ in range(3):
+            sb.press_keys("body", "\ue00f") # Page Down
+            sb.sleep(3)
 
-            # 2. Masuk ke Iframe Player (Cari API Player)
-            iframes = sb.find_elements("iframe")
-            for i in range(len(iframes)):
-                try:
-                    sb.switch_to_frame(i)
-                    print(f"[*] Masuk ke Iframe {i} (Cari link player...)")
-                    # Klik apapun yang ada di tengah (biasanya tombol play)
-                    sb.click_at("body", 0, 0) 
-                    sb.sleep(5)
-                    sb.switch_to_parent_frame()
-                except: pass
+        # Klik Iframe secara brutal tapi aman
+        iframes = sb.find_elements("iframe")
+        for i in range(len(iframes)):
+            try:
+                sb.switch_to_frame(i)
+                sb.click_at("body", 0, 0) # Trigger play/load
+                sb.sleep(2)
+                sb.switch_to_parent_frame()
+            except:
+                continue
 
-            # 3. Simpan SEMUA hasil sadap ke file
-            with open("hasil_scan.txt", "w") as f:
-                if captured_data:
-                    for item in captured_data:
-                        f.write(f"URL: {item['url']}\n")
-                        f.write(f"DATA: {item['content']}\n")
-                        f.write("-" * 50 + "\n")
-                    print(f"\n[GAS] {len(captured_data)} API Berhasil di-dump!")
-                else:
-                    f.write("Zonk! Gak ada response API yang ketangkep.")
-
-        except Exception as e:
-            print(f"[!] Error: {e}")
+        # Simpan Hasil
+        with open("hasil_scan.txt", "w") as f:
+            if captured_data:
+                for item in captured_data:
+                    f.write(f"URL: {item['url']}\nDATA: {item['content']}\n{'-'*50}\n")
+                print(f"\n[GAS] {len(captured_data)} API Berhasil di-dump!")
+            else:
+                print("\n[!] Masih Zonk. Coba matikan headless atau cek koneksi.")
 
 if __name__ == "__main__":
     gass_sadap_hardcore()
-
