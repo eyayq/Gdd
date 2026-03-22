@@ -3,62 +3,63 @@ import base64
 
 TARGET = "https://textileaffairs.com"
 
-def gass_sadap_hardcore():
-    # Gunakan uc=True dan pastikan tidak terdeteksi
+def gass_sadap_pro():
+    # Gunakan uc=True dan pastikan browser terlihat (headless=False)
     with SB(uc=True, headless=False, ad_block=True) as sb:
+        print(f"[*] Membuka: {TARGET}")
+        
+        # 1. Buka URL dengan Reconnect (Bypass Pertama)
+        sb.uc_open_with_reconnect(TARGET, 10)
+        
+        # 2. Jika masih terjebak di "Checking your browser", panggil bantuan GUI
+        try:
+            sb.uc_gui_click_captcha() # Mencari & klik kotak 'Verify you are human'
+            print("[*] Mencoba klik Captcha otomatis...")
+        except:
+            pass
+
+        # 3. Masuk ke CDP Mode (Lebih sakti untuk sadap Network)
+        sb.activate_cdp_mode(TARGET)
+        print("[*] CDP Mode Aktif - Mulai sadap trafik...")
+
         captured_data = []
 
-        def response_handler(params):
+        def response_listener(params):
             try:
-                request_id = params["requestId"]
                 url = params["response"]["url"]
+                keywords = ["api", "match", "schedule", "player", "json"]
                 
-                # Filter kata kunci
-                keywords = ["api", "schedule", "match", "player", "live", "stream"]
                 if any(k in url.lower() for k in keywords):
-                    # Ambil body response via CDP
-                    res = sb.driver.execute_cdp_cmd("Network.getResponseBody", {"requestId": request_id})
-                    body = res.get("body", "")
+                    request_id = params["requestId"]
+                    # Menggunakan eksekusi CDP langsung
+                    body_data = sb.driver.execute_cdp_cmd("Network.getResponseBody", {"requestId": request_id})
+                    content = body_data.get("body", "")
                     
-                    if res.get("base64Encoded"):
-                        body = base64.b64decode(body).decode('utf-8', errors='ignore')
+                    if body_data.get("base64Encoded"):
+                        content = base64.b64decode(content).decode('utf-8', errors='ignore')
                     
-                    captured_data.append({"url": url, "content": body[:500]})
-                    print(f"[!] KETANGKEP: {url[:70]}...")
+                    captured_data.append({"url": url, "content": content[:300]})
+                    print(f"[!] DAPAT API: {url[:50]}")
             except:
                 pass
 
-        # Buka target dulu agar driver terinisialisasi
-        sb.uc_open_with_reconnect(TARGET, 10)
-        
-        # Aktifkan Network Tracking setelah page mulai loading
-        sb.driver.execute_cdp_cmd("Network.enable", {})
-        sb.driver.add_cdp_listener("Network.responseReceived", response_handler)
+        # Pasang listener pada trafik Network
+        sb.driver.add_cdp_listener("Network.responseReceived", response_listener)
 
-        print("[*] Scrolling & Interaksi...")
-        for _ in range(3):
-            sb.press_keys("body", "\ue00f") # Page Down
+        # 4. Simulasi Interaksi Manusia (Scroll perlahan)
+        for i in range(3):
             sb.sleep(3)
+            sb.execute_script(f"window.scrollBy(0, {400 + (i*100)});")
+            print(f"[*] Scrolling ke-{i+1}...")
 
-        # Klik Iframe secara brutal tapi aman
-        iframes = sb.find_elements("iframe")
-        for i in range(len(iframes)):
-            try:
-                sb.switch_to_frame(i)
-                sb.click_at("body", 0, 0) # Trigger play/load
-                sb.sleep(2)
-                sb.switch_to_parent_frame()
-            except:
-                continue
-
-        # Simpan Hasil
-        with open("hasil_scan.txt", "w") as f:
-            if captured_data:
+        # Simpan hasil jika ada yang tersangkut
+        if captured_data:
+            with open("hasil_sadap_pro.txt", "w") as f:
                 for item in captured_data:
-                    f.write(f"URL: {item['url']}\nDATA: {item['content']}\n{'-'*50}\n")
-                print(f"\n[GAS] {len(captured_data)} API Berhasil di-dump!")
-            else:
-                print("\n[!] Masih Zonk. Coba matikan headless atau cek koneksi.")
+                    f.write(f"URL: {item['url']}\nDATA: {item['content']}\n{'-'*30}\n")
+            print(f"\n[SUKSES] {len(captured_data)} API tersimpan!")
+        else:
+            print("\n[!] Masih belum ada API yang cocok. Coba klik manual di browser yang terbuka.")
 
 if __name__ == "__main__":
-    gass_sadap_hardcore()
+    gass_sadap_pro()
