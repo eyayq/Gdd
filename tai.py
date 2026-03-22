@@ -10,11 +10,11 @@ def sikat_target_final():
         "https": "socks5h://127.0.0.1:4000"
     }
     
-    url = "https://xlz.livecdnem.com"
+    url = "https://xlz.livecdnem.com/ajax/chanel/type/5/link/channel40/off-tvc"
     
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        "Referer": "https://xlz.livecdnem.com", # Ini kartu pass-nya bangsat
+        "Referer": "https://xlz.livecdnem.com/ajax/chanel/type/5/link/channel40/off-tvc", # Ini kartu pass-nya bangsat
         "Accept": "*/*",
         "Accept-Language": "en-US,en;q=0.9",
     }
