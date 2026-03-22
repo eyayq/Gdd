@@ -12,38 +12,37 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install WARP & Tools (Anti-GPG-Error)
+      - name: Install WARP & Playwright
         run: |
-          # Bypass GPG Drama pake Trusted Repo
-          echo "deb [trusted=yes] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+          # 1. Install Cloudflare WARP
+          curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(ls_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
           sudo apt-get update
-          sudo apt-get install cloudflare-warp netcat-openbsd xvfb -y
-          pip install curl_cffi
-
-      - name: Hidupkan Terowongan WARP (Anti-Refused)
-        run: |
-          # 1. Jalankan daemon WARP di background bangsat
-          sudo warp-svc > /dev/null 2>&1 &
-          sleep 5
+          sudo apt-get install cloudflare-warp xvfb -y
           
-          # 2. Registrasi & Konek
+          # 2. Install Python Deps & Browser
+          pip install playwright playwright-stealth curl_cffi
+          playwright install chromium
+          sudo playwright install-deps chromium
+
+      - name: Start WARP Tunnel
+        run: |
+          sudo systemctl start warp-svc
+          sleep 2
           warp-cli --accept-tos registration new
           warp-cli --accept-tos mode proxy
           warp-cli --accept-tos connect
           
-          # 3. Tunggu sampe Port 4000 beneran kebuka (Max 1 menit)
-          echo "🔄 Nunggu Port 4000 Ready..."
-          for i in {1..20}; do
-            if nc -z 127.0.0.1 4000; then
-              echo "✅ PORT 4000 IDUP ANJING!"
+          # Tunggu sampe konek (Max 30 detik)
+          for i in {1..10}; do
+            if warp-cli --accept-tos status | grep -q "Connected"; then
+              echo "✅ WARP IDUP BANGSAT!"
               break
             fi
-            echo "Masih usaha... ($i)"
             sleep 3
           done
-          
-          # 4. Cek IP, pastiin bukan IP Azure lagi
-          curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me || echo "Gagal Ganti IP"
+          curl -x socks5h://127.0.0.1:4000 -s https://ifconfig.me || echo "IP Gagal Ganti"
 
-      - name: Eksekusi Scraper Brutal
+      - name: Eksekusi Scraper
+        # Pake xvfb-run biar browser nganggep ada layar
         run: xvfb-run python tai.py
