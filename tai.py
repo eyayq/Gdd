@@ -1,54 +1,59 @@
 from curl_cffi import requests
 import re
-import base64
+import json
 
-def bongkar_situs_anjing():
-    # Tunnel lewat SOCKS5 WARP
+def sikat_anjing():
+    # Tunnel lewat SOCKS5 WARP (Port 4000)
     proxies = {
         "http": "socks5h://127.0.0.1:4000",
         "https": "socks5h://127.0.0.1:4000"
     }
     
     url = "https://xlz.livecdnem.com"
+    
+    # Header super lengkap biar mirip Chrome asli
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Referer": "https://xlz.livecdnem.com",
-        "Accept": "*/*",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
+        "Connection": "keep-alive",
+        "Upgrade-Insecure-Requests": "1",
     }
 
-    print("🚀 Menyerang pake Jalur Internal Cloudflare...")
+    print("🚀 Menyerang target lewat terowongan WARP...")
+    
     try:
-        # Niru sidik jari Chrome 110 biar gak kedeteksi bot
+        # impersonate='chrome110' buat nembus TLS/JA3 Fingerprint Cloudflare
         r = requests.get(url, headers=headers, proxies=proxies, impersonate="chrome110", timeout=30)
         
-        print(f"Status Code: {r.status_code}")
+        print(f"Status HTTP: {r.status_code}")
         
         if r.status_code == 200:
-            print("✅ TEMBUS PROTEKSI!")
+            print("✅ TEMBUS PROTEKSI! Mencari link video...")
             html = r.text
             
-            # 1. Cari link m3u8 langsung
-            m3u8_links = re.findall(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', html)
+            # Cari link m3u8 pake Regex brutal
+            links = re.findall(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', html)
             
-            # 2. Cari pola Base64 (Kalau link-nya diumpetin)
-            b64_pattern = re.findall(r'atob\("([A-Za-z0-9+/=]+)"\)', html)
+            # Cari juga kalau ada link di dalem source player (Clappr/JWPlayer)
+            source_match = re.search(r'source\s*:\s*["\'](https?://[^"\']+)["\']', html)
             
-            if m3u8_links:
-                for link in m3u8_links: print(f"🔗 LINK M3U8: {link}")
-            
-            if b64_pattern:
-                for b in b64_pattern:
-                    decoded = base64.b64decode(b).decode('utf-8')
-                    print(f"🔓 DECODED LINK: {decoded}")
-            
-            if not m3u8_links and not b64_pattern:
-                print("⚠️ Link gak ketemu. Coba cek isi script-nya:")
-                print(html[:1500]) # Intip isinya
+            if links:
+                for idx, l in enumerate(list(set(links))):
+                    print(f"🔗 LINK M3U8 #{idx+1}: {l}")
+            elif source_match:
+                print(f"🔗 SOURCE FOUND: {source_match.group(1)}")
+            else:
+                print("⚠️ Link gak langsung ketemu. Ini cuplikan kodenya, cek sendiri bangsat:")
+                print(html[:2000])
         else:
-            print(f"❌ Masih gagal bangsat. Status: {r.status_code}")
-            
+            print(f"❌ Gagal Total. Status: {r.status_code}")
+            if "Cloudflare" in r.text:
+                print("Dihantam Cloudflare Challenge!")
+                
     except Exception as e:
-        print(f"💥 Error: {e}")
+        print(f"💥 Error Fatal: {e}")
 
 if __name__ == "__main__":
-    bongkar_situs_anjing()
+    sikat_anjing()
