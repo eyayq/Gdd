@@ -1,63 +1,31 @@
-name: SikatIframeFinal
-on: [workflow_dispatch]
+name: Auto API Scanner
+
+on:
+  workflow_dispatch: # Biar bisa kamu klik manual "Run Workflow"
+  schedule:
+    - cron: '0 * * * *' # Jalan otomatis tiap jam kalau mau
 
 jobs:
-  tempur:
+  build:
     runs-on: ubuntu-latest
+
     steps:
-      - uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v3
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Set up Python
+      uses: actions/set-up-python@v4
+      with:
+        python-version: '3.9'
 
-      - name: Install WARP & Playwright (Anti-GPG Error)
-        run: |
-          # 1. Tambah Repo pake Trusted=Yes biar gak ribet urusan GPG key bangsat!
-          echo "deb [trusted=yes] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
-          sudo apt-get update
-          sudo apt-get install cloudflare-warp xvfb -y
-          
-          # 2. Install Library Python & Browser Engine
-          pip install playwright playwright-stealth curl_cffi
-          playwright install chromium
-          sudo playwright install-deps chromium
+    - name: Install Dependencies
+      run: pip install requests
 
-      - name: Hidupkan Terowongan WARP
-        run: |
-          # Start daemon resmi
-          sudo systemctl start warp-svc
-          sleep 5
-          
-          # Registrasi & Konek
-          warp-cli --accept-tos registration new
-          warp-cli --accept-tos mode proxy
-          warp-cli --accept-tos set-proxy-port 4000
-          warp-cli --accept-tos connect
-          
-          # Loop nunggu koneksi stabil (Max 30 detik)
-          echo "🔄 Nunggu Tunnel WARP Ready..."
-          for i in {1..15}; do
-            STATUS=$(warp-cli --accept-tos status)
-            echo "$STATUS"
-            if [[ "$STATUS" == *"Connected"* ]]; then
-              echo "✅ WARP CONNECTED BANGSAT!"
-              break
-            fi
-            sleep 3
-          done
-          
-          # Cek IP (Harus muncul IP Cloudflare Network)
-          curl -x socks5h://127.0.0.1:4000 -s https://ifconfig.me || echo "Tunnel Gagal!"
+    - name: Run Scanner
+      run: python scanner.py
 
-      - name: Eksekusi Scraper Brutal
-        # Gunakan xvfb-run biar browser mikir ada layar monitor
-        run: xvfb-run python tai.py
-
-      - name: Simpan Hasil API (Artifact)
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: api-identitas-temuan
-          path: api_temuan.json
+    - name: Upload Hasil Scan
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-endpoints-target
+        path: hasil_scan.txt
