@@ -22,7 +22,7 @@ jobs:
       run: pip install requests
 
     - name: Run Scanner
-      run: python scanner.py
+      run: python tai.py
 
     - name: Upload Hasil Scan
       uses: actions/upload-artifact@v4
