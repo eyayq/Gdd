@@ -1,7 +1,7 @@
 from seleniumbase import SB
 import base64
 
-TARGET = "https://textileaffairs.com"
+TARGET = "https://tv12.idlixku.com/"
 
 def gass_sadap_pro():
     # Gunakan uc=True dan pastikan browser terlihat (headless=False)
