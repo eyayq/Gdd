@@ -1,71 +1,72 @@
 from seleniumbase import SB
 import json
-import time
+import base64
 
-# Target website streaming lu
 TARGET = "https://textileaffairs.com"
 
-def gass_sadap():
-    # uc=True: Undetected mode buat bypass Cloudflare
-    # headless=True: Jalan di background (wajib buat GitHub Actions)
-    # devtools=True: Aktifin fitur buat nyadap traffic network
-    with SB(uc=True, headless=True, devtools=True, ad_block=True) as sb:
-        print(f"[*] Membuka target: {TARGET}")
+def gass_sadap_hardcore():
+    with SB(uc=True, headless=True, ad_block=True) as sb:
+        print(f"[*] Menyerang: {TARGET}")
+        
+        captured_data = []
+
+        # HANDLER: Nyadap Request & RESPONSE (Isi datanya)
+        def response_listener(params):
+            request_id = params["requestId"]
+            url = params["response"]["url"]
+            
+            # Filter kata kunci api pertandingan & player
+            keywords = ["api", "schedule", "match", "player", "live", "stream", "getlink"]
+            if any(k in url.lower() for k in keywords):
+                try:
+                    # Ambil isi body response (JSON/Text)
+                    body = sb.driver.execute_cdp_cmd('Network.getResponseBody', {'requestId': request_id})
+                    content = body['body']
+                    if body.get('base64Encoded'):
+                        content = base64.b64decode(content).decode('utf-8', errors='ignore')
+                    
+                    captured_data.append({"url": url, "content": content[:1000]}) # Ambil 1000 karakter pertama
+                    print(f"  [!] API DITEMUKAN: {url}")
+                except: pass
+
+        sb.driver.execute_cdp_cmd("Network.enable", {})
+        sb.driver.add_cdp_listener("Network.responseReceived", response_listener)
         
         try:
-            # 1. Buka website & tunggu Cloudflare lewat
-            sb.uc_open_with_reconnect(TARGET, 15)
-            sb.sleep(15) 
-            
-            # 2. Ambil semua log network (sebelum klik)
-            print("[*] Menyadap traffic awal...")
-            
-            # 3. Pancing API: Cari tombol Play/Streaming dan klik otomatis
-            # Kita cari elemen yang umum di situs live sports
-            print("[*] Mencoba memancing API keluar...")
-            selectors = ["button", ".play-button", ".vjs-play-control", "video", "iframe"]
-            for selector in selectors:
-                if sb.is_element_visible(selector):
-                    try:
-                        sb.click(selector)
-                        print(f"  [+] Klik terpancing: {selector}")
-                        sb.sleep(5)
-                    except:
-                        pass
+            sb.uc_open_with_reconnect(TARGET, 20)
+            sb.sleep(15)
 
-            # 4. Ekstrak data dari Performance Logs
-            logs = sb.driver.get_log("performance")
-            found_links = set()
-            
-            for entry in logs:
+            # 1. Pancing daftar pertandingan (Scroll kebawah biar API schedule kepanggil)
+            print("[*] Scrolling buat pancing API jadwal...")
+            sb.execute_script("window.scrollTo(0, document.body.scrollHeight);")
+            sb.sleep(5)
+
+            # 2. Masuk ke Iframe Player (Cari API Player)
+            iframes = sb.find_elements("iframe")
+            for i in range(len(iframes)):
                 try:
-                    msg = json.loads(entry["message"])["message"]
-                    if "Network.requestWillBeSent" in msg["method"]:
-                        url = msg["params"]["request"]["url"]
-                        
-                        # Filter target: m3u8 (streaming), API, atau JSON
-                        if any(x in url.lower() for x in ["api", "m3u8", ".json", "stream", "live", "get-player"]):
-                            if "google" not in url and "facebook" not in url: # Buang sampah ads
-                                found_links.add(url)
-                                print(f"  [!] DETECTED: {url}")
-                except:
-                    continue
+                    sb.switch_to_frame(i)
+                    print(f"[*] Masuk ke Iframe {i} (Cari link player...)")
+                    # Klik apapun yang ada di tengah (biasanya tombol play)
+                    sb.click_at("body", 0, 0) 
+                    sb.sleep(5)
+                    sb.switch_to_parent_frame()
+                except: pass
 
-            # 5. Simpan hasil ke file buat di-upload GitHub
+            # 3. Simpan SEMUA hasil sadap ke file
             with open("hasil_scan.txt", "w") as f:
-                if found_links:
-                    f.write(f"--- BERHASIL NYADAP {len(found_links)} ENDPOINT ---\n\n")
-                    for link in sorted(found_links):
-                        f.write(link + "\n")
-                    print(f"\n[SUKSES] {len(found_links)} link berhasil diciduk!")
+                if captured_data:
+                    for item in captured_data:
+                        f.write(f"URL: {item['url']}\n")
+                        f.write(f"DATA: {item['content']}\n")
+                        f.write("-" * 50 + "\n")
+                    print(f"\n[GAS] {len(captured_data)} API Berhasil di-dump!")
                 else:
-                    f.write("Zonk! Gak ada API/Stream yang ketangkep. Coba cek target lagi.")
-                    print("[-] Hasil kosong. Mungkin butuh koordinat klik yang lebih spesifik.")
+                    f.write("Zonk! Gak ada response API yang ketangkep.")
 
         except Exception as e:
             print(f"[!] Error: {e}")
-            with open("hasil_scan.txt", "w") as f:
-                f.write(f"Script Error: {str(e)}")
 
 if __name__ == "__main__":
-    gass_sadap()
+    gass_sadap_hardcore()
+
