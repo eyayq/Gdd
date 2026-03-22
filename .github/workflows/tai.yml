@@ -1,8 +1,8 @@
-name: SikatIframeBrutal
+name: SikatIframeDajjal
 on: [workflow_dispatch]
 
 jobs:
-  eksekusi:
+  eksekusi_brutal:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,40 +12,24 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install WARP & Tools (Anti-Gagal)
+      - name: Install WARP Tanpa GPG Drama
         run: |
-          # 1. Inject GPG Key Cloudflare secara manual biar gak drama GPG Error
-          curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor -o /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-          
-          # 2. Tambahin Repo
-          echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
-          
-          # 3. Update & Install WARP + XVFB
+          # Tambahin repo pake mode TRUSTED biar gak nanya kunci GPG bangsat
+          echo "deb [trusted=yes] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
           sudo apt-get update
           sudo apt-get install cloudflare-warp xvfb -y
-          
-          # 4. Install Library Python Tempur
           pip install curl_cffi playwright
           playwright install chromium
 
-      - name: Konek ke Jaringan Cloudflare
+      - name: Konek WARP (Ganti IP Azure ke Cloudflare)
         run: |
-          # Register & Konek WARP
           warp-cli --accept-tos registration new
           warp-cli --accept-tos mode proxy
           warp-cli --accept-tos connect
-          
-          # Tunggu koneksi sampe IP beneran ganti
-          echo "Tunggu koneksi WARP..."
-          for i in {1..10}; do
-            if curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me > /dev/null; then
-              echo "✅ WARP Konek! IP: $(curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me)"
-              break
-            fi
-            sleep 3
-          done
+          echo "Tunggu koneksi WARP stabil..."
+          sleep 15
+          # Cek IP, kalau berhasil harusnya IP Cloudflare
+          curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me || echo "Gagal ganti IP anjing"
 
-      - name: Jalankan Scraper SIKAT
-        run: |
-          # Jalankan pake xvfb-run biar dikira ada monitor beneran
-          xvfb-run python tai.py
+      - name: Eksekusi Script Scraper
+        run: xvfb-run python tai.py
