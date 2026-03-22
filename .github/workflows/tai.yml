@@ -1,17 +1,26 @@
-name: ScraperSiluman
-on: [workflow_dispatch] # Jalankan manual biar gak dicurigai
+name: SikatIframeCloudflare
+on: [workflow_dispatch]
 
 jobs:
   sikat:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install Tor & Python
+
+      - name: Install Cloudflare WARP & Python
         run: |
-          sudo apt-get update
-          sudo apt-get install -y tor
+          curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+          sudo apt-get update && sudo apt-get install cloudflare-warp -y
           pip install curl_cffi
-      - name: Jalankan Tor
-        run: sudo service tor start && sleep 10 # Tunggu Tor konek
-      - name: Eksekusi Script
+
+      - name: Connect to WARP (Ganti IP ke Cloudflare)
+        run: |
+          warp-cli --accept-tos registration new
+          warp-cli --accept-tos mode proxy
+          warp-cli --accept-tos connect
+          sleep 10 # Tunggu koneksi stabil bangsat
+          curl -x socks5://127.0.0.1:4000 ifconfig.me # Cek IP, harusnya IP Cloudflare
+
+      - name: Run Scraper
         run: python tai.py
