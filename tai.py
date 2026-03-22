@@ -1,61 +1,69 @@
 from seleniumbase import SB
 import base64
 
-TARGET = "https://tv12.idlixku.com/"
+TARGET = "https://tv12.idlixku.com"
 
-def gass_idlix_debug():
-    # Gunakan virtual_display=True karena kamu di GitHub Runner/Linux tanpa monitor
-    with SB(uc=True, headless=False, ad_block=True, virtual_display=True) as sb:
-        print(f"[*] Menyerang IDLIX: {TARGET}")
+def gass_idlix_runner():
+    # xvfb=True adalah pengganti virtual_display untuk environment Linux/GitHub Actions
+    with SB(uc=True, headless=False, ad_block=True, xvfb=True) as sb:
+        print(f"[*] Membuka IDLIX di Runner: {TARGET}")
         
-        # Buka halaman
+        # Buka URL & Bypass Cloudflare
         sb.uc_open_with_reconnect(TARGET, 20)
-        sb.sleep(10) # Kasih waktu lebih lama buat loading
+        sb.sleep(10)
         
-        # Aktifkan CDP untuk sadap SEMUA trafik
+        # Aktifkan CDP Mode untuk sadap trafik Network
         sb.activate_cdp_mode(TARGET)
-        all_requests = []
+        all_links = []
 
-        def request_logger(params):
+        def logger(params):
             try:
                 url = params["response"]["url"]
-                # Simpan SEMUA URL yang mengandung 'm3u8', 'mp4', atau 'ajax'
-                if any(x in url.lower() for x in ["m3u8", "mp4", "ajax", "v1", "v2", "play"]):
-                    all_requests.append(url)
-                    print(f"[+] TERDETEKSI: {url[:80]}...")
+                # Tangkap semua yang berbau video/api
+                if any(x in url.lower() for x in ["m3u8", "mp4", "ajax", "get_player", "v1", "v2"]):
+                    all_links.append(url)
+                    print(f"[+] KETANGKEP: {url[:70]}...")
             except:
                 pass
 
-        sb.driver.add_cdp_listener("Network.responseReceived", request_logger)
+        sb.driver.add_cdp_listener("Network.responseReceived", logger)
 
-        # Klik brutal di tengah layar untuk trigger player/iklan
-        print("[*] Mencoba trigger interaksi...")
+        # Simulasi Klik (IDLIX butuh klik di body buat pancing player)
+        print("[*] Mencoba klik pancingan...")
+        sb.execute_script("window.scrollTo(0, 500);")
+        
+        # Klik di tengah area player
         for _ in range(3):
-            # Klik di berbagai titik tengah
-            sb.execute_script("window.scrollBy(0, 400);")
-            sb.click_with_offset("body", 5, 5) 
-            sb.sleep(4)
+            try:
+                sb.click_with_offset("body", 10, 10)
+                sb.sleep(4)
+                # Jika terbuka tab baru (iklan), tutup biar ga berat
+                if len(sb.driver.window_handles) > 1:
+                    sb.driver.switch_to.window(sb.driver.window_handles[1])
+                    sb.driver.close()
+                    sb.driver.switch_to.window(sb.driver.window_handles[0])
+            except:
+                pass
 
-        # Cek iframes dan klik isinya
+        # Masuk ke semua iframe dan klik
         iframes = sb.find_elements("iframe")
-        print(f"[*] Ditemukan {len(iframes)} iframe. Mencoba masuk...")
         for i in range(len(iframes)):
             try:
                 sb.switch_to_frame(i)
-                sb.click_with_offset("body", 10, 10)
+                sb.click_with_offset("body", 5, 5)
                 sb.sleep(2)
                 sb.switch_to_parent_frame()
             except:
                 continue
 
-        # Simpan HASIL MENTAH
+        # Simpan hasil ke file
         with open("hasil_debug.txt", "w") as f:
-            if all_requests:
-                for link in set(all_requests): # Set biar gak duplikat
+            if all_links:
+                for link in set(all_links):
                     f.write(f"{link}\n")
-                print(f"\n[DOR] {len(all_requests)} Link mentah disimpan ke hasil_debug.txt")
+                print(f"\n[SUKSES] {len(all_links)} link unik disimpan!")
             else:
-                print("\n[!] Masih Zonk di Runner. Cloudflare kemungkinan memblokir IP GitHub.")
+                print("\n[!] Masih Zonk. Coba naikkan waktu sleep atau cek apakah IP GitHub diblokir.")
 
 if __name__ == "__main__":
-    gass_idlix_debug()
+    gass_idlix_runner()
