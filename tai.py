@@ -2,8 +2,9 @@ from curl_cffi import requests
 import re
 import base64
 
-def bongkar_maling():
-    # Jalur SOCKS5 WARP
+def sikat_target_final():
+    # Tunnel lewat SOCKS5 WARP (Port 4000)
+    # 'socks5h' artinya DNS resolution juga lewat proxy biar aman
     proxies = {
         "http": "socks5h://127.0.0.1:4000",
         "https": "socks5h://127.0.0.1:4000"
@@ -11,40 +12,39 @@ def bongkar_maling():
     
     url = "https://xlz.livecdnem.com"
     
-    # Header lengkap biar dikira Chrome 122 asli
     headers = {
         "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
-        "Referer": "https://xlz.livecdnem.com",
-        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
-        "Accept-Language": "en-US,en;q=0.5",
+        "Referer": "https://xlz.livecdnem.com", # Ini kartu pass-nya bangsat
+        "Accept": "*/*",
+        "Accept-Language": "en-US,en;q=0.9",
     }
 
-    print("🚀 Menyerang lewat terowongan Cloudflare WARP...")
+    print("🚀 Menyerang lewat terowongan WARP (Internal Cloudflare)...")
     
     try:
-        # impersonate='chrome110' WAJIB biar gak kebaca bot Python
+        # impersonate='chrome110' bikin TLS Fingerprint lo kembar ama Chrome asli
         r = requests.get(url, headers=headers, proxies=proxies, impersonate="chrome110", timeout=30)
         
         print(f"Status HTTP: {r.status_code}")
         
         if r.status_code == 200:
-            print("✅ TEMBUS BANGSAT! Mencari link video...")
-            html_content = r.text
+            print("✅ TEMBUS PROTEKSI BANGSAT! Mencari link video...")
+            html = r.text
             
-            # 1. Cari link .m3u8 (HLS Stream)
-            links = re.findall(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', html_content)
+            # Cari link .m3u8 (HLS)
+            m3u8_links = re.findall(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', html)
             
-            # 2. Cari link di dalem Base64 (Sering buat sembunyiin link)
-            b64_matches = re.findall(r'atob\("([A-Za-z0-9+/=]+)"\)', html_content)
+            # Cari link Base64 (Sering dipake buat nipu bot cupu)
+            b64_links = re.findall(r'atob\("([A-Za-z0-9+/=]+)"\)', html)
             
             found = False
-            if links:
-                for l in list(set(links)):
-                    print(f"🔗 LINK M3U8 DAPET: {l}")
+            if m3u8_links:
+                for l in list(set(m3u8_links)):
+                    print(f"🔗 LINK M3U8: {l}")
                     found = True
             
-            if b64_matches:
-                for b in b64_matches:
+            if b64_links:
+                for b in b64_links:
                     try:
                         decoded = base64.b64decode(b).decode('utf-8')
                         if "m3u8" in decoded or "http" in decoded:
@@ -53,15 +53,15 @@ def bongkar_maling():
                     except: pass
 
             if not found:
-                print("⚠️ Link gak langsung ketemu. Nih 1000 karakter pertama kodenya, analisa sendiri:")
-                print(html_content[:1000])
+                print("⚠️ Link gak langsung ketemu. Nih intip dalemannya:")
+                print(html[:1000]) # Kasih liat kodenya buat kita analisa lagi
         else:
-            print(f"❌ Masih kena blokir! Status: {r.status_code}")
+            print(f"❌ Masih 403 atau Gagal. Status: {r.status_code}")
             if "Cloudflare" in r.text:
-                print("Dihantam Cloudflare Challenge Page!")
-                
+                print("Terjebak di Cloudflare Challenge Page!")
+
     except Exception as e:
         print(f"💥 Error Fatal: {e}")
 
 if __name__ == "__main__":
-    bongkar_maling()
+    sikat_target_final()
