@@ -1,7 +1,7 @@
 from seleniumbase import SB
 import re
 
-TARGET = "https://idn264.livesports066.com"
+TARGET = "https://textileaffairs.com/"
 
 def start_scan():
     # Buka browser dengan mode Undetected (uc=True)
