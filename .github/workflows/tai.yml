@@ -1,29 +1,45 @@
-name: Pro API Scanner 2026
+name: Pro API Interceptor 2026
 
 on:
-  workflow_dispatch:
+  workflow_dispatch: # Biar bisa klik manual "Run Workflow"
+  schedule:
+    - cron: '0 */6 * * *' # Otomatis jalan tiap 6 jam (opsional)
 
 jobs:
-  scan:
+  intercept-scan:
     runs-on: ubuntu-latest
+    
     steps:
-      - uses: actions/checkout@v4
-      
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: '3.10'
 
-      - name: Install Chrome & Dependencies
+      - name: Install Chrome & Driver Dependencies
         run: |
           sudo apt-get update
+          # Install library sistem yang dibutuhin Chrome buat jalan di Linux
+          sudo apt-get install -y libgconf-2-4 libatk1.0-0 libatk-bridge2.0-0 libgdk-pixbuf2.0-0 libgtk-3-0 libgbm-dev libnss3-dev libxss1 asound2
+
+      - name: Install SeleniumBase & Requirements
+        run: |
           pip install seleniumbase
+          # Install browser driver otomatis lewat seleniumbase
+          sbase install chromedriver
 
-      - name: Run Stealth Scanner
-        run: python tai.py
+      - name: Run Interceptor Script
+        # Tambahin xvfb-run biar browser bisa jalan di environment tanpa layar (headless)
+        run: |
+          python tai.py
 
-      - name: Upload Hasil
+      - name: Upload Hasil Scan API
+        if: always() # Tetap upload meskipun script error/zonk
         uses: actions/upload-artifact@v4
         with:
-          name: hasil-tempur
-          path: hasil_scan.txt
+          name: api-intercept-results
+          path: |
+            hasil_scan.txt
+            saved_cookies.txt
