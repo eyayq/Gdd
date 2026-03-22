@@ -12,37 +12,52 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install WARP & Playwright
+      - name: Install WARP & Playwright (Anti-GPG Error)
         run: |
-          # 1. Install Cloudflare WARP
-          curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
-          echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(ls_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+          # 1. Tambah Repo pake Trusted=Yes biar gak ribet urusan GPG key bangsat!
+          echo "deb [trusted=yes] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
           sudo apt-get update
           sudo apt-get install cloudflare-warp xvfb -y
           
-          # 2. Install Python Deps & Browser
+          # 2. Install Library Python & Browser Engine
           pip install playwright playwright-stealth curl_cffi
           playwright install chromium
           sudo playwright install-deps chromium
 
-      - name: Start WARP Tunnel
+      - name: Hidupkan Terowongan WARP
         run: |
+          # Start daemon resmi
           sudo systemctl start warp-svc
-          sleep 2
+          sleep 5
+          
+          # Registrasi & Konek
           warp-cli --accept-tos registration new
           warp-cli --accept-tos mode proxy
+          warp-cli --accept-tos set-proxy-port 4000
           warp-cli --accept-tos connect
           
-          # Tunggu sampe konek (Max 30 detik)
-          for i in {1..10}; do
-            if warp-cli --accept-tos status | grep -q "Connected"; then
-              echo "✅ WARP IDUP BANGSAT!"
+          # Loop nunggu koneksi stabil (Max 30 detik)
+          echo "🔄 Nunggu Tunnel WARP Ready..."
+          for i in {1..15}; do
+            STATUS=$(warp-cli --accept-tos status)
+            echo "$STATUS"
+            if [[ "$STATUS" == *"Connected"* ]]; then
+              echo "✅ WARP CONNECTED BANGSAT!"
               break
             fi
             sleep 3
           done
-          curl -x socks5h://127.0.0.1:4000 -s https://ifconfig.me || echo "IP Gagal Ganti"
+          
+          # Cek IP (Harus muncul IP Cloudflare Network)
+          curl -x socks5h://127.0.0.1:4000 -s https://ifconfig.me || echo "Tunnel Gagal!"
 
-      - name: Eksekusi Scraper
-        # Pake xvfb-run biar browser nganggep ada layar
+      - name: Eksekusi Scraper Brutal
+        # Gunakan xvfb-run biar browser mikir ada layar monitor
         run: xvfb-run python tai.py
+
+      - name: Simpan Hasil API (Artifact)
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: api-identitas-temuan
+          path: api_temuan.json
