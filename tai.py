@@ -1,66 +1,53 @@
 from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
-import re
+import json
 
-def sikat_pake_stealth_REAL_FINAL():
+def ganyang_api_otomatis(url_target):
     with sync_playwright() as p:
-        # 1. Pastikan SOCKS5 WARP lu di port 4000 nyala!
-        browser = p.chromium.launch(
-            headless=False, 
-            proxy={"server": "socks5://127.0.0.1:4000"}
-        )
-        
-        context = browser.new_context(
-            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36"
-        )
+        # Gunakan proxy SOCKS5 lu biar IP asli nggak kena blacklist
+        browser = p.chromium.launch(headless=False, proxy={"server": "socks5://127.0.0.1:4000"})
+        context = browser.new_context()
         page = context.new_page()
-        stealth_sync(page) 
+        stealth_sync(page) # Sembunyikan identitas bot
 
-        # JANGAN LU GANTI JADI DOMAIN DOANG LAGI, ANJING!
-        url_target_halaman = "https://xlz.livecdnem.com"
-        url_target_ajax = "https://xlz.livecdnem.com/ajax/chanel/type/5/link/channel40/off-tvc"
+        api_endpoints = []
 
-        print(f"🌍 Step 1: Buka halaman channel...")
+        # Fungsi penyadap Network Request
+        def handle_request(request):
+            # Filter hanya request API (XHR/Fetch)
+            if request.resource_type in ["fetch", "xhr"]:
+                url = request.url
+                # Abaikan tracker/iklan sampah biar nggak pusing
+                if not any(x in url for x in ["google-analytics", "facebook", "doubleclick"]):
+                    print(f"📡 API KETEMU: {url}")
+                    api_endpoints.append({
+                        "url": url,
+                        "method": request.method,
+                        "headers": request.headers
+                    })
+
+        # Pasang penyadap ke page
+        page.on("request", handle_request)
+
+        print(f"🌍 Membuka {url_target}... Selesaikan Cloudflare kalo muncul!")
         try:
-            page.goto(url_target_halaman, wait_until="networkidle", timeout=60000)
-            print("⏳ Tunggu Cloudflare kelar...")
-            page.wait_for_timeout(7000) 
+            page.goto(url_target, wait_until="networkidle", timeout=60000)
+            
+            # Kasih waktu buat lu scroll atau klik-klik biar API rahasia muncul
+            print("🕵️  Lagi nyadap... Silakan lu interaksi sama webnya (scroll/klik).")
+            page.wait_for_timeout(15000) 
 
-            print(f"🚀 Step 2: Nyikat AJAX lewat console browser...")
-            # Ini narik data streaming murni (JSON)
-            content = page.evaluate(f"""
-                async () => {{
-                    const response = await fetch("{url_target_ajax}", {{
-                        "headers": {{
-                            "X-Requested-With": "XMLHttpRequest",
-                            "Referer": "{url_target_halaman}"
-                        }}
-                    }});
-                    return await response.text();
-                }}
-            """)
-
-            print("✅ RESPON DITERIMA!")
-            
-            # Bersihin backslash biar link m3u8-nya bener
-            clean_content = content.replace("\\/", "/")
-            
-            # Cari link m3u8 atau mpd
-            links = re.findall(r'https?://[^\s\'"<>]+(?:\.m3u8|\.ts|\.mpd)', clean_content)
-            
-            if links:
-                for l in set(links):
-                    print(f"🔥 [LINK M3U8 LU]: {l}")
-            else:
-                print("⚠️ Link kaga ketemu. Lu liat sendiri nih isi AJAX-nya:")
-                print(content[:1000])
+            # Simpan hasil temuan ke JSON
+            with open("api_temuan.json", "w") as f:
+                json.dump(api_endpoints, f, indent=4)
+            print(f"✅ Selesai! {len(api_endpoints)} API disimpan di api_temuan.json")
 
         except Exception as e:
             print(f"💥 Error: {e}")
         
-        input("Enter buat tutup...")
         browser.close()
 
 if __name__ == "__main__":
-    sikat_pake_stealth_REAL_FINAL()
-
+    # Ganti pake URL target lu bangsat
+    target = "https://xlz.livecdnem.com"
+    ganyang_api_otomatis(target)
