@@ -1,8 +1,8 @@
-name: SikatIframeDajjal
+name: SikatIframeFinal
 on: [workflow_dispatch]
 
 jobs:
-  eksekusi_brutal:
+  tempur:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,24 +12,38 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install WARP Tanpa GPG Drama
+      - name: Install WARP & Tools (Anti-GPG-Error)
         run: |
-          # Tambahin repo pake mode TRUSTED biar gak nanya kunci GPG bangsat
+          # Bypass GPG Drama pake Trusted Repo
           echo "deb [trusted=yes] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
           sudo apt-get update
-          sudo apt-get install cloudflare-warp xvfb -y
-          pip install curl_cffi playwright
-          playwright install chromium
+          sudo apt-get install cloudflare-warp netcat-openbsd xvfb -y
+          pip install curl_cffi
 
-      - name: Konek WARP (Ganti IP Azure ke Cloudflare)
+      - name: Hidupkan Terowongan WARP (Anti-Refused)
         run: |
+          # 1. Jalankan daemon WARP di background bangsat
+          sudo warp-svc > /dev/null 2>&1 &
+          sleep 5
+          
+          # 2. Registrasi & Konek
           warp-cli --accept-tos registration new
           warp-cli --accept-tos mode proxy
           warp-cli --accept-tos connect
-          echo "Tunggu koneksi WARP stabil..."
-          sleep 15
-          # Cek IP, kalau berhasil harusnya IP Cloudflare
-          curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me || echo "Gagal ganti IP anjing"
+          
+          # 3. Tunggu sampe Port 4000 beneran kebuka (Max 1 menit)
+          echo "🔄 Nunggu Port 4000 Ready..."
+          for i in {1..20}; do
+            if nc -z 127.0.0.1 4000; then
+              echo "✅ PORT 4000 IDUP ANJING!"
+              break
+            fi
+            echo "Masih usaha... ($i)"
+            sleep 3
+          done
+          
+          # 4. Cek IP, pastiin bukan IP Azure lagi
+          curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me || echo "Gagal Ganti IP"
 
-      - name: Eksekusi Script Scraper
+      - name: Eksekusi Scraper Brutal
         run: xvfb-run python tai.py
