@@ -1,26 +1,44 @@
-name: SikatIframeCloudflare
+name: SikatIframe2026
 on: [workflow_dispatch]
 
 jobs:
-  sikat:
+  sikat_anjing:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Cloudflare WARP & Python
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+
+      - name: Install Cloudflare WARP LENGKAP
         run: |
+          # 1. Ambil GPG Key DENGAN URL LENGKAP BANGSAT
           curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+          
+          # 2. Tambahin repo resmi Cloudflare (Paket Ubuntu Jammy/Focal sesuai runner)
           echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
-          sudo apt-get update && sudo apt-get install cloudflare-warp -y
+          
+          # 3. Update dan install WARP
+          sudo apt-get update
+          sudo apt-get install cloudflare-warp -y
+          
+          # 4. Install library Python penembus
           pip install curl_cffi
 
-      - name: Connect to WARP (Ganti IP ke Cloudflare)
+      - name: Konek WARP (Ganti IP)
         run: |
+          # Register device baru di server GitHub
           warp-cli --accept-tos registration new
+          # Set mode ke proxy (SOCKS5 di port 4000)
           warp-cli --accept-tos mode proxy
+          # Konek bangsat!
           warp-cli --accept-tos connect
-          sleep 10 # Tunggu koneksi stabil bangsat
-          curl -x socks5://127.0.0.1:4000 ifconfig.me # Cek IP, harusnya IP Cloudflare
+          # Tunggu koneksi beneran nyambung
+          sleep 15
+          # Cek apakah IP udah ganti (Harusnya IP Cloudflare sekarang)
+          curl -x socks5://127.0.0.1:4000 ifconfig.me
 
-      - name: Run Scraper
+      - name: Eksekusi Script Scraper
         run: python tai.py
