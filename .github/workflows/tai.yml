@@ -1,8 +1,8 @@
-name: SikatIframe2026
+name: SikatIframeBrutal
 on: [workflow_dispatch]
 
 jobs:
-  sikat_anjing:
+  eksekusi:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -12,33 +12,40 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Cloudflare WARP LENGKAP
+      - name: Install WARP & Tools (Anti-Gagal)
         run: |
-          # 1. Ambil GPG Key DENGAN URL LENGKAP BANGSAT
-          curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+          # 1. Inject GPG Key Cloudflare secara manual biar gak drama GPG Error
+          curl -fsSL https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor -o /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
           
-          # 2. Tambahin repo resmi Cloudflare (Paket Ubuntu Jammy/Focal sesuai runner)
+          # 2. Tambahin Repo
           echo "deb [signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
           
-          # 3. Update dan install WARP
+          # 3. Update & Install WARP + XVFB
           sudo apt-get update
-          sudo apt-get install cloudflare-warp -y
+          sudo apt-get install cloudflare-warp xvfb -y
           
-          # 4. Install library Python penembus
-          pip install curl_cffi
+          # 4. Install Library Python Tempur
+          pip install curl_cffi playwright
+          playwright install chromium
 
-      - name: Konek WARP (Ganti IP)
+      - name: Konek ke Jaringan Cloudflare
         run: |
-          # Register device baru di server GitHub
+          # Register & Konek WARP
           warp-cli --accept-tos registration new
-          # Set mode ke proxy (SOCKS5 di port 4000)
           warp-cli --accept-tos mode proxy
-          # Konek bangsat!
           warp-cli --accept-tos connect
-          # Tunggu koneksi beneran nyambung
-          sleep 15
-          # Cek apakah IP udah ganti (Harusnya IP Cloudflare sekarang)
-          curl -x socks5://127.0.0.1:4000 ifconfig.me
+          
+          # Tunggu koneksi sampe IP beneran ganti
+          echo "Tunggu koneksi WARP..."
+          for i in {1..10}; do
+            if curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me > /dev/null; then
+              echo "✅ WARP Konek! IP: $(curl -x socks5://127.0.0.1:4000 -s https://ifconfig.me)"
+              break
+            fi
+            sleep 3
+          done
 
-      - name: Eksekusi Script Scraper
-        run: python tai.py
+      - name: Jalankan Scraper SIKAT
+        run: |
+          # Jalankan pake xvfb-run biar dikira ada monitor beneran
+          xvfb-run python tai.py
