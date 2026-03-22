@@ -1,51 +1,45 @@
-from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth_sync
-import json
+import requests
 import re
+from urllib.parse import urljoin, urlparse
 
-def ganyang_api():
-    # URL PATH LENGKAP - JANGAN CUMA DOMAIN DOANG ANJING!
-    url_target = "https://m.chzzk.naver.com"
+# Target spesifik yang kamu kasih
+TARGET = "https://idn264.livesports066.com"
+DOMAIN = urlparse(TARGET).netloc
 
-    with sync_playwright() as p:
-        # Tunnel lewat WARP SOCKS5 Port 4000
-        browser = p.chromium.launch(
-            headless=True, 
-            proxy={"server": "socks5://127.0.0.1:4000"}
-        )
+visited = set()
+found_apis = set()
+
+def scan(url):
+    if url in visited or DOMAIN not in url or len(visited) > 500: # Limit biar gak kena banned GitHub
+        return
+    visited.add(url)
+    
+    try:
+        print(f"[*] Crawling: {url}")
+        res = requests.get(url, timeout=10, headers={'User-Agent': 'Mozilla/5.0'})
         
-        context = browser.new_context(viewport={'width': 1280, 'height': 720})
-        page = context.new_page()
-        stealth_sync(page) # Bypass Cloudflare Bot Detection
-
-        api_temuan = []
-
-        # Sadap Network Request
-        def handle_request(request):
-            if request.resource_type in ["fetch", "xhr"]:
-                url = request.url
-                if "ajax" in url or "off-tvc" in url:
-                    print(f"🎯 API KETEMU: {url}")
-                    api_temuan.append({"url": url, "method": request.method})
-
-        page.on("request", handle_request)
-
-        print(f"🌍 Membuka: {url_target}")
-        try:
-            page.goto(url_target, wait_until="networkidle", timeout=60000)
-            
-            # Kasih waktu buat browser loading AJAX di belakang layar
-            print("🕵️ Nyadap trafik network selama 20 detik...")
-            page.wait_for_timeout(20000) 
-
-            with open("api_temuan.json", "w") as f:
-                json.dump(api_temuan, f, indent=4)
-            print(f"✅ Selesai! {len(api_temuan)} API disimpan.")
-
-        except Exception as e:
-            print(f"💥 Error: {e}")
+        # Cari pola API, Player, m3u8, JSON, Config
+        patterns = [r'/(?:api|v[0-1]|v[0-2]|graphql|json|ajax)/[\w\-/]+', r'[\w\-/]+\.m3u8', r'[\w\-/]+\.json']
+        for p in patterns:
+            matches = re.findall(p, res.text)
+            for m in matches:
+                full = urljoin(url, m)
+                if full not in found_apis:
+                    found_apis.add(full)
+                    print(f"  [!] API FOUND: {full}")
         
-        browser.close()
+        # Cari link baru buat di-crawl
+        links = re.findall(r'href=["\'](http[s]?://.*?)["\']', res.text)
+        for link in links:
+            if DOMAIN in link:
+                scan(link)
+    except:
+        pass
 
 if __name__ == "__main__":
-    ganyang_api()
+    scan(TARGET)
+    # Simpan hasil ke file
+    with open("hasil_scan.txt", "w") as f:
+        for api in found_apis:
+            f.write(api + "\n")
+    print(f"\n--- SELESAI! {len(found_apis)} API DITEMUKAN ---")
