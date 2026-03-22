@@ -1,38 +1,40 @@
 from curl_cffi import requests
 import re
-import time
 
-def bongkar_iframe():
-    # Jalur Tor lokal (GitHub Actions bakal jalanin Tor di port 9050)
+def scrape_anjing():
+    # WARP default proxy port itu 4000 (SOCKS5)
     proxies = {
-        "http": "socks5h://127.0.0.1:9050",
-        "https": "socks5h://127.0.0.1:9050"
+        "http": "socks5h://127.0.0.1:4000",
+        "https": "socks5h://127.0.0.1:4000"
     }
     
     url = "https://xlz.livecdnem.com"
     headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/122.0.0.0",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
         "Referer": "https://xlz.livecdnem.com",
+        "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "Accept-Language": "en-US,en;q=0.5",
     }
 
-    print("🚀 Memulai serangan lewat jalur Tor...")
+    print("🚀 Menyerang pake jalur internal Cloudflare (WARP)...")
     try:
-        # impersonate='chrome110' wajib biar gak kedetek bot
+        # impersonate='chrome110' buat nembus JA3 fingerprinting
         r = requests.get(url, headers=headers, proxies=proxies, impersonate="chrome110", timeout=30)
         
         if r.status_code == 200:
-            print("✅ TEMBUS PROTEKSI BANGSAT!")
-            # Cari link m3u8 atau sumber video
-            m3u8 = re.findall(r'(https?://[^\s\'"]+\.m3u8[^\s\'"]*)', r.text)
+            print("✅ TEMBUS BANGSAT! Gak sia-sia gue mikir.")
+            # Cari link m3u8
+            m3u8 = re.findall(r'https?://[^\s\'"]+\.m3u8[^\s\'"]*', r.text)
             if m3u8:
-                print(f"🔗 LINK VIDEO DAPET: {m3u8[0]}")
+                for link in m3u8: print(f"🔗 DAPET: {link}")
             else:
-                print("❌ Link m3u8 di-obfuscate. Nih isi mentahnya buat lo bedah:")
-                print(r.text[:1000])
+                print("⚠️ Link m3u8 disembunyiin. Nih kode mentahnya:")
+                print(r.text[:2000]) # Intip dalemannya
         else:
-            print(f"⚠️ Gagal, Status: {r.status_code}. Cloudflare masih galak.")
+            print(f"❌ Masih 403/Gagal. Status: {r.status_code}")
+            
     except Exception as e:
         print(f"💥 Error: {e}")
 
 if __name__ == "__main__":
-    bongkar_iframe()
+    scrape_anjing()
