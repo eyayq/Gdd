@@ -2,7 +2,7 @@ import cloudscraper
 import re
 from urllib.parse import urljoin
 
-TARGET = "https://exodusinternational.org/truc-tiep/nu-cignal-hd-vs-nu-cool-smashers-luc-1730-ngay-21-03-2026/"
+TARGET = "https://textileaffairs.com/"
 
 def gass_scan():
     # Pake cloudscraper biar gak kena blokir Cloudflare (Error 403)
