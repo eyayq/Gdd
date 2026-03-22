@@ -3,84 +3,59 @@ import base64
 
 TARGET = "https://tv12.idlixku.com/"
 
-def gass_idlix():
-    # Gunakan uc=True dan pastikan browser terlihat (headless=False)
-    with SB(uc=True, headless=False, ad_block=True) as sb:
+def gass_idlix_debug():
+    # Gunakan virtual_display=True karena kamu di GitHub Runner/Linux tanpa monitor
+    with SB(uc=True, headless=False, ad_block=True, virtual_display=True) as sb:
         print(f"[*] Menyerang IDLIX: {TARGET}")
         
-        # 1. Buka Target & Bypass Cloudflare
-        sb.uc_open_with_reconnect(TARGET, 15)
-        sb.sleep(5)
+        # Buka halaman
+        sb.uc_open_with_reconnect(TARGET, 20)
+        sb.sleep(10) # Kasih waktu lebih lama buat loading
         
-        # Coba klik captcha otomatis jika muncul
-        try:
-            sb.uc_gui_click_captcha()
-        except:
-            pass
-
-        # 2. Masuk ke CDP Mode untuk Sadap Network
+        # Aktifkan CDP untuk sadap SEMUA trafik
         sb.activate_cdp_mode(TARGET)
-        captured_data = []
+        all_requests = []
 
-        def response_handler(params):
+        def request_logger(params):
             try:
                 url = params["response"]["url"]
-                # Filter luas untuk streaming & player
-                targets = [".m3u8", ".mp4", "api", "admin-ajax", "get_player", "playlist"]
-                
-                if any(t in url.lower() for t in targets):
-                    request_id = params["requestId"]
-                    res = sb.driver.execute_cdp_cmd("Network.getResponseBody", {"requestId": request_id})
-                    content = res.get("body", "")
-                    captured_data.append({"url": url, "content": content[:150]})
-                    print(f"[!] KETANGKEP: {url[:50]}...")
+                # Simpan SEMUA URL yang mengandung 'm3u8', 'mp4', atau 'ajax'
+                if any(x in url.lower() for x in ["m3u8", "mp4", "ajax", "v1", "v2", "play"]):
+                    all_requests.append(url)
+                    print(f"[+] TERDETEKSI: {url[:80]}...")
             except:
                 pass
 
-        sb.driver.add_cdp_listener("Network.responseReceived", response_handler)
+        sb.driver.add_cdp_listener("Network.responseReceived", request_logger)
 
-        # 3. Pancing Klik di Player (Area Tengah)
-        print("[*] Mencoba klik area Player...")
-        sb.execute_script("window.scrollTo(0, 600);") # Scroll ke posisi player
-        sb.sleep(2)
+        # Klik brutal di tengah layar untuk trigger player/iklan
+        print("[*] Mencoba trigger interaksi...")
+        for _ in range(3):
+            # Klik di berbagai titik tengah
+            sb.execute_script("window.scrollBy(0, 400);")
+            sb.click_with_offset("body", 5, 5) 
+            sb.sleep(4)
 
-        # Klik Tengah Body (Pancing Iklan/Play)
-        # Kita pakai click_with_offset(selector, x, y)
-        for i in range(2):
-            print(f"[*] Klik Pemicu {i+1}...")
-            try:
-                sb.click_with_offset("body", 0, 0) 
-                sb.sleep(3)
-                
-                # JIKA TERBUKA TAB BARU (IKLAN), TUTUP & BALIK KE TAB UTAMA
-                if len(sb.driver.window_handles) > 1:
-                    sb.driver.switch_to.window(sb.driver.window_handles[1])
-                    sb.driver.close()
-                    sb.driver.switch_to.window(sb.driver.window_handles[0])
-                    print("[*] Iklan pop-up ditutup.")
-            except:
-                pass
-
-        # 4. Cek Iframe
+        # Cek iframes dan klik isinya
         iframes = sb.find_elements("iframe")
-        for idx in range(len(iframes)):
+        print(f"[*] Ditemukan {len(iframes)} iframe. Mencoba masuk...")
+        for i in range(len(iframes)):
             try:
-                sb.switch_to_frame(idx)
-                print(f"[*] Klik di dalam Iframe {idx}...")
-                sb.click_with_offset("body", 0, 0)
-                sb.sleep(3)
+                sb.switch_to_frame(i)
+                sb.click_with_offset("body", 10, 10)
+                sb.sleep(2)
                 sb.switch_to_parent_frame()
             except:
                 continue
 
-        # Simpan Hasil
-        if captured_data:
-            with open("hasil_idlix.txt", "w") as f:
-                for item in captured_data:
-                    f.write(f"URL: {item['url']}\nDATA: {item['content']}\n{'-'*30}\n")
-            print(f"\n[DOR] {len(captured_data)} Link/API tersimpan di hasil_idlix.txt")
-        else:
-            print("\n[!] Masih Zonk. Klik tombol PLAY secara MANUAL di browser!")
+        # Simpan HASIL MENTAH
+        with open("hasil_debug.txt", "w") as f:
+            if all_requests:
+                for link in set(all_requests): # Set biar gak duplikat
+                    f.write(f"{link}\n")
+                print(f"\n[DOR] {len(all_requests)} Link mentah disimpan ke hasil_debug.txt")
+            else:
+                print("\n[!] Masih Zonk di Runner. Cloudflare kemungkinan memblokir IP GitHub.")
 
 if __name__ == "__main__":
-    gass_idlix()
+    gass_idlix_debug()
