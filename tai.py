@@ -2,45 +2,45 @@ from playwright.sync_api import sync_playwright
 from playwright_stealth import stealth_sync
 import json
 
-def ganyang_api_otomatis(url_target):
+def ganyang_api_otomatis():
+    # URL PATH LENGKAP TARGET LU
+    url_target = "https://m.chzzk.naver.com/"
+
     with sync_playwright() as p:
-        # Gunakan proxy SOCKS5 lu biar IP asli nggak kena blacklist
-        browser = p.chromium.launch(headless=False, proxy={"server": "socks5://127.0.0.1:4000"})
-        context = browser.new_context()
+        # Tunnel lewat SOCKS5 WARP Port 4000
+        browser = p.chromium.launch(
+            headless=True, 
+            proxy={"server": "socks5://127.0.0.1:4000"}
+        )
+        
+        context = browser.new_context(viewport={'width': 1920, 'height': 1080})
         page = context.new_page()
-        stealth_sync(page) # Sembunyikan identitas bot
+        stealth_sync(page) # Bypass Cloudflare Fingerprint
 
         api_endpoints = []
 
-        # Fungsi penyadap Network Request
+        # Intercept Network
         def handle_request(request):
-            # Filter hanya request API (XHR/Fetch)
             if request.resource_type in ["fetch", "xhr"]:
                 url = request.url
-                # Abaikan tracker/iklan sampah biar nggak pusing
-                if not any(x in url for x in ["google-analytics", "facebook", "doubleclick"]):
-                    print(f"📡 API KETEMU: {url}")
-                    api_endpoints.append({
-                        "url": url,
-                        "method": request.method,
-                        "headers": request.headers
-                    })
+                if "ajax" in url or "off-tvc" in url:
+                    print(f"🎯 API KETEMU: {url}")
+                    api_endpoints.append({"url": url, "method": request.method})
 
-        # Pasang penyadap ke page
         page.on("request", handle_request)
 
-        print(f"🌍 Membuka {url_target}... Selesaikan Cloudflare kalo muncul!")
+        print(f"🌍 Membuka: {url_target}")
         try:
             page.goto(url_target, wait_until="networkidle", timeout=60000)
             
-            # Kasih waktu buat lu scroll atau klik-klik biar API rahasia muncul
-            print("🕵️  Lagi nyadap... Silakan lu interaksi sama webnya (scroll/klik).")
+            # Simulasi scroll dikit biar trigger AJAX
+            page.mouse.wheel(0, 500)
+            print("🕵️ Nyadap trafik selama 15 detik...")
             page.wait_for_timeout(15000) 
 
-            # Simpan hasil temuan ke JSON
             with open("api_temuan.json", "w") as f:
                 json.dump(api_endpoints, f, indent=4)
-            print(f"✅ Selesai! {len(api_endpoints)} API disimpan di api_temuan.json")
+            print(f"✅ Selesai! {len(api_endpoints)} API kesimpen.")
 
         except Exception as e:
             print(f"💥 Error: {e}")
@@ -48,6 +48,4 @@ def ganyang_api_otomatis(url_target):
         browser.close()
 
 if __name__ == "__main__":
-    # Ganti pake URL target lu bangsat
-    target = "https://xlz.livecdnem.com"
-    ganyang_api_otomatis(target)
+    ganyang_api_otomatis()
