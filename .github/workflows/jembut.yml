@@ -2,14 +2,10 @@ name: Sikat Playlist Anime
 
 on:
   workflow_dispatch: 
-  schedule:
-    - cron: '0 */6 * * *'
 
 jobs:
   update-m3u:
     runs-on: ubuntu-latest
-
-    # Izin buat nge-push file hasil ke repo
     permissions:
       contents: write
 
@@ -25,13 +21,13 @@ jobs:
     - name: Install Dependencies
       run: |
         python -m pip install --upgrade pip
-        pip install playwright playwright-stealth
+        pip install playwright
+        pip install playwright-stealth==1.0.6 # Paksa versi stabil
         playwright install chromium
         playwright install-deps chromium
 
     - name: Run Script
       run: |
-        # xvfb-run biar Playwright berasa punya layar monitor
         xvfb-run python ensrip.py
 
     - name: Commit & Push Playlist
@@ -39,5 +35,5 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add playlist.m3u
-        git commit -m "Auto Update Playlist: $(date)" || echo "No changes"
+        git commit -m "Auto Update Playlist" || echo "No changes"
         git push
