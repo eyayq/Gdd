@@ -11,6 +11,7 @@ def sikat_paling_akhir():
         print(f"[*] Launching Browser (Headless: {is_headless})...")
         
         browser = p.chromium.launch(headless=is_headless)
+        # Bikin context dengan User Agent yang konsisten
         context = browser.new_context(
             user_agent='Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
         )
@@ -21,68 +22,80 @@ def sikat_paling_akhir():
         except:
             pass
         
-        # UPDATE API BASE LU, BANGSAT!
         api_base = "https://www.sankavollerei.com/plananimek/api"
 
         def get_json_safe(url):
             try:
-                print(f"[*] Navigasi ke: {url}")
+                print(f"[*] Sikat API: {url}")
+                # Pakai context yang sudah punya cookie dari goto sebelumnya
                 page.goto(url, wait_until="networkidle", timeout=60000)
-                time.sleep(4)
+                time.sleep(5) # Jeda biar CF gak kaget
+                
+                # Kadang JSON ada di dalam tag <pre>, kadang langsung di body
                 raw_text = page.locator("pre").inner_text() if page.locator("pre").is_visible() else page.inner_text("body")
                 raw_text = raw_text.strip()
-                if "cloudflare" in raw_text.lower() or "<!doctype" in raw_text.lower():
+                
+                if not raw_text or "cloudflare" in raw_text.lower() or "<!doctype" in raw_text.lower():
+                    print(f"[!!] Gagal tembus Cloudflare di {url}")
                     return None
+                
                 return json.loads(raw_text)
-            except:
+            except Exception as e:
+                print(f"[!!] Error pas narik JSON: {str(e)}")
                 return None
 
         try:
-            # 1. Pancing Cookie di Home
+            # 1. LANGKAH KRUSIAL: Pancing Cookie di Home sampai Cloudflare Lolos
+            print("[*] Membuka Home untuk pancing Cookie & Bypass CF...")
             page.goto("https://www.sankavollerei.com", wait_until="networkidle")
-            time.sleep(8)
+            
+            # Pura-pura jadi manusia: scroll dikit
+            page.mouse.wheel(0, 500)
+            time.sleep(15) # Kasih waktu 15 detik buat CF Challenge beres otomatis
+            
+            # Cek apakah cookienya dapet
+            cookies = context.cookies()
+            if not any(c['name'] == 'cf_clearance' for c in cookies):
+                print("[!] Warning: Cookie cf_clearance gak ketemu, mungkin bakal gagal.")
+            else:
+                print("[+] Cookie Cloudflare dapet, gas sikat API!")
 
             # 2. Ambil Recently Updated
             recent_data = get_json_safe(f"{api_base}/recently-updated")
             if not recent_data:
-                print("[!!] Gagal ambil Recently Updated.")
+                print("[!!] Gagal ambil Recently Updated. Coba cek log di atas.")
                 return
 
             anime_list = recent_data.get('results', []) if isinstance(recent_data, dict) else recent_data
             m3u_content = "#EXTM3U\n"
 
-            for anime in anime_list[:10]: # Sikat 10 biar mantap
+            for anime in anime_list[:10]:
                 a_id = anime.get('id') if isinstance(anime, dict) else None
                 if not a_id: continue
                 
                 print(f"\n[+] Sikat Anime: {a_id}")
                 
-                # Alur: Info -> Episodes -> Stream
                 info = get_json_safe(f"{api_base}/info?id={a_id}")
                 eps_data = get_json_safe(f"{api_base}/episodes/{a_id}")
 
                 if eps_data and info:
-                    # Ambil episode terbaru (biasanya yang index 0 atau terakhir)
-                    ep = eps_data[0] if isinstance(eps_data, list) and len(eps_data) > 0 else eps_data
-                    ep_id = ep.get('id') if isinstance(ep, dict) else None
+                    ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
+                    ep = ep_list[0] if len(ep_list) > 0 else {}
+                    ep_id = ep.get('id')
                     
                     if ep_id:
-                        # Path Stream sesuai yang lu kasih (Pake & buat server & type)
-                        stream_url = f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub"
-                        stream = get_json_safe(stream_url)
+                        stream = get_json_safe(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
                         
                         if stream:
                             sources = stream.get('sources', [])
                             raw_url = ""
-                            
-                            # Cek format sources
                             if isinstance(sources, list) and len(sources) > 0:
                                 raw_url = sources[0].get('file', '')
                             elif isinstance(sources, dict):
                                 raw_url = sources.get('file', '')
 
                             if raw_url:
-                                # Jika lewat proxy srx.sankavollerei.com/proxy?url=...
+                                # Fix split proxy
                                 if 'proxy?url=' in raw_url:
                                     final_url = unquote(raw_url.split('proxy?url=')[1])
                                 else:
@@ -90,18 +103,16 @@ def sikat_paling_akhir():
                                 
                                 title = info.get("title", "No Title")
                                 img = info.get("image", "")
-                                ep_num = ep.get("number", "?")
-                                
-                                m3u_content += f'#EXTINF:-1 tvg-logo="{img}" group-title="Update", {title} - Ep {ep_num}\n'
+                                m3u_content += f'#EXTINF:-1 tvg-logo="{img}" group-title="Update", {title} - Ep {ep.get("number", "?")}\n'
                                 m3u_content += f'{final_url}\n'
-                                print(f"[OK] Link dapet: {title}")
+                                print(f"[OK] Berhasil: {title}")
 
             with open('playlist.m3u', 'w', encoding='utf-8') as f:
                 f.write(m3u_content)
-            print("\n[++] BERHASIL! File playlist.m3u sudah ter-update otomatis.")
+            print("\n[++] MANTAP! File playlist.m3u sudah terbit.")
 
         except Exception as e:
-            print(f"[!!] Error: {str(e)}")
+            print(f"[!!] Error Utama: {str(e)}")
         
         browser.close()
 
