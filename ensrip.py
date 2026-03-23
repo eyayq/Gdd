@@ -2,8 +2,8 @@ import json
 import time
 from urllib.parse import unquote
 from playwright.sync_api import sync_playwright
-# Import yang bener biar gak TypeError bangsat
-from playwright_stealth import stealth_sync
+# Import cara aman biar gak ImportError bangsat
+import playwright_stealth
 
 def sikat_pake_browser():
     with sync_playwright() as p:
@@ -14,29 +14,26 @@ def sikat_pake_browser():
         )
         page = context.new_page()
         
-        # Panggil stealth_sync biar gak dianggap robot
-        stealth_sync(page)
+        # Panggil stealth pake cara ini biar gak TypeError atau ImportError
+        playwright_stealth.stealth_sync(page)
 
         api_base = "https://www.sankavollerei.com"
         
         try:
             print("[*] Buka web utama buat pancing cookie...")
             page.goto("https://www.sankavollerei.com", wait_until="networkidle", timeout=60000)
-            time.sleep(5)
+            time.sleep(10) # Kasih waktu lebih lama buat Cloudflare
 
             print("[*] Ambil data Recently Updated via Evaluate...")
             # Request dari dalem browser biar bypass Cloudflare 403
             recent_data = page.evaluate(f'async () => {{ const res = await fetch("{api_base}/recently-updated"); return res.json(); }}')
             
-            # Cek format data
-            if isinstance(recent_data, dict) and 'results' in recent_data:
-                anime_list = recent_data['results']
-            else:
-                anime_list = recent_data
+            # Cek apakah data list atau dict
+            anime_list = recent_data.get('results', recent_data) if isinstance(recent_data, dict) else recent_data
                 
             m3u_content = "#EXTM3U\n"
 
-            for anime in anime_list[:10]: # Ambil 10 aja biar gak kelamaan di Github Actions
+            for anime in anime_list[:10]:
                 try:
                     a_id = anime.get('id')
                     if not a_id: continue
@@ -52,8 +49,8 @@ def sikat_pake_browser():
                     eps_data = page.evaluate(f'async () => {{ const res = await fetch("{api_base}/episodes/{a_id}"); return res.json(); }}')
                     
                     if eps_data and len(eps_data) > 0:
-                        # Ambil episode pertama dari list (biasanya yang terbaru)
-                        ep = eps_data[0]
+                        # Ambil episode terbaru (biasanya index 0 atau object pertama)
+                        ep = eps_data[0] if isinstance(eps_data, list) else eps_data
                         ep_id = ep.get('id')
                         ep_num = ep.get('number')
                         
@@ -61,12 +58,7 @@ def sikat_pake_browser():
                         stream = page.evaluate(f'async () => {{ const res = await fetch("{api_base}/stream?id={a_id}?ep={ep_id}&server=hd-1&type=sub"); return res.json(); }}')
                         
                         sources = stream.get('sources', [])
-                        # Cari link file m3u8
-                        raw_url = ""
-                        if isinstance(sources, list) and len(sources) > 0:
-                            raw_url = sources[0].get('file', '')
-                        elif isinstance(sources, dict):
-                            raw_url = sources.get('file', '')
+                        raw_url = sources[0].get('file', '') if isinstance(sources, list) and sources else sources.get('file', '')
 
                         if raw_url:
                             final_url = unquote(raw_url) if 'proxy?url=' in raw_url else raw_url
