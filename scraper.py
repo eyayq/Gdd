@@ -1,7 +1,7 @@
 import requests
 import json
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone, timedelta
 
 API_MATCH = "https://vb.thapcamo.xyz/api/match/vb/featured"
 
@@ -20,10 +20,13 @@ def get(url):
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
         print("GET:", url, r.status_code)
+
         if r.status_code == 200:
             return r.text
+
     except Exception as e:
         print("ERROR:", e)
+
     return ""
 
 
@@ -42,9 +45,16 @@ def extract_stream(text):
 
 def convert_wib(timestamp):
 
+    if not timestamp:
+        return "00:00 WIB"
+
+    # FIX timestamp milliseconds
+    if timestamp > 1e12:
+        timestamp = timestamp / 1000
+
     utc = datetime.fromtimestamp(timestamp, tz=timezone.utc)
 
-    wib = utc + timedelta(hours=7)
+    wib = utc.astimezone(timezone(timedelta(hours=7)))
 
     return wib.strftime("%H:%M WIB")
 
@@ -52,6 +62,7 @@ def convert_wib(timestamp):
 def parse_match(match):
 
     match_id = match.get("id")
+
     title = match.get("name", "Match")
 
     timestamp = match.get("timestamp", 0)
