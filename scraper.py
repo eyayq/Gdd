@@ -1,76 +1,101 @@
 import requests
-import json
 import re
+import json
 
 HEADERS = {
-    "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json, text/plain, */*"
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+    "Accept": "application/json, text/plain, */*",
+    "Referer": "https://vebo.dev/",
+    "Origin": "https://vebo.dev",
+    "Accept-Language": "en-US,en;q=0.9"
 }
 
 playlist = []
-visited = set()
+visited_streams = set()
+visited_pages = set()
 channels = 0
 
 
-def get_json(url):
+def fetch(url):
+
     try:
         r = requests.get(url, headers=HEADERS, timeout=20)
+
         if r.status_code == 200:
-            return r.json()
-    except:
+            return r.text
+
+    except Exception:
         pass
-    return None
+
+    return ""
 
 
-def extract_streams(obj):
+def extract_streams(text):
 
     global channels
 
-    text = json.dumps(obj)
+    streams = re.findall(
+        r'https?://[^\s"\']+\.(?:m3u8|flv|mp4)[^\s"\']*',
+        text
+    )
 
-    pattern = r'https?://[^\s"]+\.(m3u8|flv|mp4)[^\s"]*'
+    for url in streams:
 
-    urls = re.findall(pattern, text)
-
-    urls_full = re.findall(r'https?://[^\s"]+\.(?:m3u8|flv|mp4)[^\s"]*', text)
-
-    for url in urls_full:
-
-        if url in visited:
+        if url in visited_streams:
             continue
 
-        visited.add(url)
-
-        name = f"Stream {channels+1}"
-
-        playlist.append(
-            f'#EXTINF:-1 group-title="Sports",{name}'
-        )
-        playlist.append(url)
+        visited_streams.add(url)
 
         channels += 1
+
+        playlist.append(
+            f'#EXTINF:-1 group-title="Sports",Stream {channels}'
+        )
+
+        playlist.append(url)
+
+
+def parse_iframe(text):
+
+    urls = re.findall(r'https?://[^\s"\']+', text)
+
+    for url in urls:
+
+        if url in visited_pages:
+            continue
+
+        if any(x in url for x in ["player", "embed", "4shares", "vebo"]):
+
+            visited_pages.add(url)
+
+            html = fetch(url)
+
+            if html:
+                extract_streams(html)
 
 
 def parse_match_detail(match_id):
 
-    url = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
+    api = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
 
-    data = get_json(url)
+    text = fetch(api)
 
-    if data:
-        extract_streams(data)
+    if not text:
+        return
+
+    extract_streams(text)
+
+    parse_iframe(text)
 
 
 def parse_featured():
 
-    url = "https://vb.thapcamo.xyz/api/match/vb/featured"
+    api = "https://vb.thapcamo.xyz/api/match/vb/featured"
 
-    data = get_json(url)
+    text = fetch(api)
 
-    if not data:
+    if not text:
         return
-
-    text = json.dumps(data)
 
     ids = re.findall(r'"id":"([^"]+)"', text)
 
@@ -78,9 +103,9 @@ def parse_featured():
         parse_match_detail(mid)
 
 
-def parse_other_apis():
+def parse_other_api():
 
-    urls = [
+    apis = [
 
         "https://vb.thapcamo.xyz/api/a/vebotv/bh",
 
@@ -95,14 +120,16 @@ def parse_other_apis():
         "https://api.thesports01.com/api/f/p?uuid=8yomo4h123jeq0j",
 
         "https://api.thesports01.com/api/f/vd?uuid=8yomo4h123jeq0j"
+
     ]
 
-    for url in urls:
+    for url in apis:
 
-        data = get_json(url)
+        text = fetch(url)
 
-        if data:
-            extract_streams(data)
+        if text:
+            extract_streams(text)
+            parse_iframe(text)
 
 
 def main():
@@ -111,9 +138,9 @@ def main():
 
     parse_featured()
 
-    parse_other_apis()
+    parse_other_api()
 
-    with open("playlist.m3u", "w") as f:
+    with open("playlist.m3u", "w", encoding="utf-8") as f:
 
         f.write("#EXTM3U\n")
 
