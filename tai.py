@@ -1,69 +1,80 @@
-from seleniumbase import SB
-import base64
+import requests
+import datetime
+import json
 
-TARGET = "https://tv12.idlixku.com"
+# --- KONFIGURASI DONASI ---
+TRAKTEER = "https://trakteer.id"
+# Visual AI Cewe Hijab Sholeha
+IMG_SHOLEHA = "https://image.pollinations.ai"
 
-def gass_idlix_runner():
-    # xvfb=True adalah pengganti virtual_display untuk environment Linux/GitHub Actions
-    with SB(uc=True, headless=False, ad_block=True, xvfb=True) as sb:
-        print(f"[*] Membuka IDLIX di Runner: {TARGET}")
+def get_wib():
+    return (datetime.datetime.utcnow() + datetime.timedelta(hours=7)).strftime("[%H:%M WIB]")
+
+def fetch_real_stream(slug_or_id):
+    """BONGKAR MANIFEST: Ambil link m3u8 asli dari Highwinds CDN"""
+    headers = {'User-Agent': 'Mozilla/5.0', 'Referer': 'https://hanime.tv'}
+    try:
+        # Tembak API detail buat dapet jeroan manifest
+        api_url = f"https://cached.freeanimehentai.net{slug_or_id}"
+        data = requests.get(api_url, headers=headers, timeout=10).json()
         
-        # Buka URL & Bypass Cloudflare
-        sb.uc_open_with_reconnect(TARGET, 20)
-        sb.sleep(10)
-        
-        # Aktifkan CDP Mode untuk sadap trafik Network
-        sb.activate_cdp_mode(TARGET)
-        all_links = []
+        # Masuk ke: videos_manifest -> servers -> streams
+        servers = data.get('videos_manifest', {}).get('servers', [])
+        if servers:
+            # Ambil server pertama (biasanya Golem/Highwinds)
+            streams = servers[0].get('streams', [])
+            if streams:
+                # Ambil resolusi tertinggi (720p)
+                best_stream = sorted(streams, key=lambda x: int(x.get('height', 0)), reverse=True)
+                return best_stream[0].get('url')
+    except:
+        pass
+    return None
 
-        def logger(params):
-            try:
-                url = params["response"]["url"]
-                # Tangkap semua yang berbau video/api
-                if any(x in url.lower() for x in ["m3u8", "mp4", "ajax", "get_player", "v1", "v2"]):
-                    all_links.append(url)
-                    print(f"[+] KETANGKEP: {url[:70]}...")
-            except:
-                pass
+def start_brutal_scrape():
+    jam = get_wib()
+    print("#EXTM3U")
+    
+    # --- 1. ITEM DONASI (URUTAN PERTAMA) ---
+    print(f'#EXTINF:-1 tvg-logo="{IMG_SHOLEHA}" group-title="DONASI SERVER {jam}", AYO BERDONASI SERVER PLAYLIST IPTV')
+    print(f'{TRAKTEER}')
 
-        sb.driver.add_cdp_listener("Network.responseReceived", logger)
+    # --- 2. JALUR API PATH (URUTAN SESUAI REQUEST) ---
+    api_paths = [
+        "https://cached.freeanimehentai.net",
+        "https://cached.freeanimehentai.net",
+        "https://cached.freeanimehentai.net"
+    ]
 
-        # Simulasi Klik (IDLIX butuh klik di body buat pancing player)
-        print("[*] Mencoba klik pancingan...")
-        sb.execute_script("window.scrollTo(0, 500);")
-        
-        # Klik di tengah area player
-        for _ in range(3):
-            try:
-                sb.click_with_offset("body", 10, 10)
-                sb.sleep(4)
-                # Jika terbuka tab baru (iklan), tutup biar ga berat
-                if len(sb.driver.window_handles) > 1:
-                    sb.driver.switch_to.window(sb.driver.window_handles[1])
-                    sb.driver.close()
-                    sb.driver.switch_to.window(sb.driver.window_handles[0])
-            except:
-                pass
+    headers = {'User-Agent': 'Mozilla/5.0', 'Referer': 'https://hanime.tv'}
 
-        # Masuk ke semua iframe dan klik
-        iframes = sb.find_elements("iframe")
-        for i in range(len(iframes)):
-            try:
-                sb.switch_to_frame(i)
-                sb.click_with_offset("body", 5, 5)
-                sb.sleep(2)
-                sb.switch_to_parent_frame()
-            except:
-                continue
+    for path in api_paths:
+        try:
+            res = requests.get(path, headers=headers, timeout=15).json()
+            
+            # Parsing isi JSON (List Video)
+            videos = res.get('hentai_videos') or res.get('results') or res.get('hentai_playlist', {}).get('hentai_videos', [])
+            
+            for v in videos:
+                name = v.get('name', 'Anime').replace('"', '')
+                logo = v.get('poster_url', v.get('cover_url', ''))
+                slug = v.get('slug', '')
 
-        # Simpan hasil ke file
-        with open("hasil_debug.txt", "w") as f:
-            if all_links:
-                for link in set(all_links):
-                    f.write(f"{link}\n")
-                print(f"\n[SUKSES] {len(all_links)} link unik disimpan!")
-            else:
-                print("\n[!] Masih Zonk. Coba naikkan waktu sleep atau cek apakah IP GitHub diblokir.")
+                if not slug: continue
+
+                # AMBIL LINK ASLI (.m3u8)
+                real_m3u8 = fetch_real_stream(slug)
+
+                if real_m3u8:
+                    print(f'#EXTINF:-1 tvg-logo="{logo}" group-title="{name}", {name}')
+                    print(f'{real_m3u8}')
+                else:
+                    # Fallback link play jika manifest gagal (biar gak kosong)
+                    print(f'#EXTINF:-1 tvg-logo="{logo}" group-title="{name}", {name}')
+                    print(f"https://cached.freeanimehentai.net{slug}/play")
+
+        except Exception:
+            continue
 
 if __name__ == "__main__":
-    gass_idlix_runner()
+    start_brutal_scrape()
