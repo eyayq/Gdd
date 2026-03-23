@@ -1,29 +1,47 @@
-name: Sikat M3U Animek
+name: Sikat Playlist Anime
+
 on:
-  workflow_dispatch:
+  push:
+    branches: [ main ]
+  workflow_dispatch: # Biar bisa lu klik manual dari tab Actions
 
 jobs:
   build:
     runs-on: ubuntu-latest
+
     steps:
-      - name: Checkout Code
-        uses: actions/checkout@v4
+    - name: Checkout Code
+      uses: actions/checkout@v4
 
-      - name: Setup Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.10'
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.10'
 
-      - name: Install Playwright
-        run: |
-          pip install playwright
-          playwright install chromium
+    - name: Install Dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install playwright playwright-stealth
+        playwright install chromium
+        playwright install-deps chromium
 
-      - name: Jalankan Script
-        run: python ensrip.py
+    - name: Run Script Bangsat
+      run: |
+        # Kita pakai xvfb-run biar Playwright mikir ada monitor beneran
+        xvfb-run python ensrip.py
+      env:
+        PYTHONUNBUFFERED: "1"
 
-      - name: Simpan Playlist
-        uses: actions/upload-artifact@v4
-        with:
-          name: animek-playlist
-          path: playlist.m3u
+    - name: Simpan Hasil M3U
+      uses: actions/upload-artifact@v4
+      with:
+        name: playlist-m3u
+        path: playlist.m3u
+
+    - name: Auto Commit Hasil (Opsional)
+      run: |
+        git config --local user.email "github-actions[bot]@users.noreply.github.com"
+        git config --local user.name "github-actions[bot]"
+        git add playlist.m3u
+        git commit -m "Update playlist otomatis [skip ci]" || echo "Gak ada perubahan"
+        git push
