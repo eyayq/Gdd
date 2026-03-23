@@ -3,7 +3,7 @@ import time
 import os
 from urllib.parse import unquote
 from playwright.sync_api import sync_playwright
-from playwright_stealth import stealth # <--- PAKAI INI SAJA
+import playwright_stealth # Import modul utamanya saja
 
 def sikat_paling_akhir():
     with sync_playwright() as p:
@@ -16,8 +16,13 @@ def sikat_paling_akhir():
         )
         page = context.new_page()
         
-        # INI CARA PANGGIL YANG BENER (Fix AttributeError)
-        stealth(page) 
+        # SOLUSI ANTI GOIB: Panggil fungsi stealth dari dalam modulnya
+        # Kita coba dua-duanya biar salah satu pasti nyangkut
+        try:
+            playwright_stealth.stealth_sync(page)
+        except AttributeError:
+            from playwright_stealth import stealth
+            stealth(page)
         
         api_base = "https://www.sankavollerei.com"
 
@@ -44,9 +49,7 @@ def sikat_paling_akhir():
             time.sleep(10)
 
             recent_data = get_json_safe(f"{api_base}/recently-updated")
-            if not recent_data:
-                print("[!!] Gagal ambil data awal.")
-                return
+            if not recent_data: return
 
             anime_list = recent_data.get('results', recent_data) if isinstance(recent_data, dict) else recent_data
             m3u_content = "#EXTM3U\n"
@@ -60,13 +63,11 @@ def sikat_paling_akhir():
                 eps_data = get_json_safe(f"{api_base}/episodes/{a_id}")
 
                 if eps_data and info:
-                    # Ambil satu episode
                     ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
-                    ep = ep_list[0] if ep_list else {}
-                    ep_id = ep.get('id')
-                    
-                    if ep_id:
-                        # URL Stream
+                    if len(ep_list) > 0:
+                        ep = ep_list[0]
+                        ep_id = ep.get('id')
+                        
                         stream = get_json_safe(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
                         
                         if stream:
