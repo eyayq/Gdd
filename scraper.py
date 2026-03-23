@@ -1,6 +1,5 @@
 import aiohttp
 import asyncio
-import json
 from datetime import datetime
 
 APIS = [
@@ -14,46 +13,67 @@ HEADERS = {
     "Accept": "application/json"
 }
 
+
 async def fetch(session, url):
     try:
-        async with session.get(url, headers=HEADERS, timeout=20) as r:
-            return await r.json()
-    except:
+        async with session.get(url, headers=HEADERS, timeout=30) as r:
+            return await r.json(content_type=None)
+    except Exception as e:
+        print("error:", url, e)
         return None
 
 
-async def parse_api(session, url):
+def extract_streams(match):
 
-    data = await fetch(session, url)
     channels = []
 
-    if not data:
-        return channels
+    title = match.get("title") or match.get("name") or "Match"
+    league = match.get("league", {}).get("name", "Sports")
+    logo = match.get("thumbnail", "")
 
-    matches = data.get("data", [])
+    # kemungkinan field stream
+    for key in ["streams", "channels", "links", "stream"]:
 
-    for match in matches:
+        if key not in match:
+            continue
 
-        title = match.get("title", "Match")
-        league = match.get("league", {}).get("name", "Sports")
-        logo = match.get("thumbnail", "")
+        for s in match[key]:
 
-        streams = match.get("streams", [])
+            url = (
+                s.get("url")
+                or s.get("link")
+                or s.get("play_url")
+                or s.get("m3u8")
+            )
 
-        for s in streams:
-
-            name = s.get("name", "Stream")
-            link = s.get("url")
-
-            if not link:
+            if not url:
                 continue
+
+            name = s.get("name") or s.get("label") or "Stream"
 
             channels.append({
                 "title": f"{title} - {name}",
                 "group": league,
                 "logo": logo,
-                "url": link
+                "url": url
             })
+
+    return channels
+
+
+async def parse_api(session, url):
+
+    data = await fetch(session, url)
+
+    if not data:
+        return []
+
+    matches = data.get("data") or data.get("matches") or []
+
+    channels = []
+
+    for match in matches:
+        channels.extend(extract_streams(match))
 
     return channels
 
@@ -75,9 +95,8 @@ async def main():
             f.write("#EXTM3U\n")
 
             for ch in channels:
-
                 f.write(
-                    f'#EXTINF:-1 tvg-logo="{ch["logo"]}" group-title="{ch["group"]}",{ch["title"]}\n'
+                    f'#EXTINF:-1 group-title="{ch["group"]}" tvg-logo="{ch["logo"]}",{ch["title"]}\n'
                 )
                 f.write(ch["url"] + "\n")
 
