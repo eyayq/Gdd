@@ -17,10 +17,11 @@ channels = 0
 def get(url):
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
+        print("GET:", url, "STATUS:", r.status_code)
         if r.status_code == 200:
             return r.text
-    except:
-        pass
+    except Exception as e:
+        print("ERROR:", e)
     return ""
 
 
@@ -28,9 +29,12 @@ def extract_streams(text):
 
     global channels
 
-    urls = re.findall(r'https?://[^"]+\.(?:m3u8|flv|mp4)[^"]*', text)
+    streams = re.findall(
+        r'https?://[^\s"\']+\.(?:m3u8|flv|mp4)[^\s"\']*',
+        text
+    )
 
-    for url in urls:
+    for url in streams:
 
         if url in seen:
             continue
@@ -42,22 +46,29 @@ def extract_streams(text):
         playlist.append(
             f'#EXTINF:-1 group-title="Sports",Stream {channels}'
         )
-
         playlist.append(url)
 
 
 def parse_uuid(text):
 
-    uuids = re.findall(r'"uuid":"([^"]+)"', text)
+    uuids = re.findall(r'uuid["\']?\s*:\s*["\']([^"\']+)', text)
 
     for uuid in uuids:
 
-        api = f"https://api.thesports01.com/api/f/vd?uuid={uuid}"
+        api_list = [
 
-        data = get(api)
+            f"https://api.thesports01.com/api/f/vd?uuid={uuid}",
+            f"https://api.thesports01.com/api/f/p?uuid={uuid}",
+            f"https://api.thesports01.com/api/f/sd?uuid={uuid}&lang=vi"
 
-        if data:
-            extract_streams(data)
+        ]
+
+        for api in api_list:
+
+            data = get(api)
+
+            if data:
+                extract_streams(data)
 
 
 def parse_match_detail(match_id):
@@ -69,8 +80,8 @@ def parse_match_detail(match_id):
     if not text:
         return
 
-    parse_uuid(text)
     extract_streams(text)
+    parse_uuid(text)
 
 
 def parse_featured():
@@ -84,8 +95,30 @@ def parse_featured():
 
     ids = re.findall(r'"id":"([^"]+)"', text)
 
+    print("matches found:", len(ids))
+
     for mid in ids:
         parse_match_detail(mid)
+
+
+def parse_other_api():
+
+    apis = [
+
+        "https://vb.thapcamo.xyz/api/a/vebotv/bh",
+        "https://api.thesports01.com/api/p/t",
+        "https://api.thesports01.com/api/p/uc?profile=47q3nhzxva1u8mx&domain=widget.vebo.dev",
+        "https://api.thesports01.com/api/f/c?profile=47q3nhzxva1u8mx"
+
+    ]
+
+    for api in apis:
+
+        text = get(api)
+
+        if text:
+            extract_streams(text)
+            parse_uuid(text)
 
 
 def main():
@@ -93,8 +126,9 @@ def main():
     print("collecting matches...")
 
     parse_featured()
+    parse_other_api()
 
-    with open("playlist.m3u","w") as f:
+    with open("playlist.m3u", "w", encoding="utf-8") as f:
 
         f.write("#EXTM3U\n")
 
