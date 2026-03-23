@@ -1,6 +1,5 @@
 import requests
 import json
-import re
 from datetime import datetime, timezone, timedelta
 
 API_MATCH = "https://vb.thapcamo.xyz/api/match/vb/featured"
@@ -16,29 +15,16 @@ HEADERS = {
 playlist = []
 
 
-def get(url):
+def get_json(url):
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
         print("GET:", url, r.status_code)
 
         if r.status_code == 200:
-            return r.text
+            return r.json()
 
     except Exception as e:
         print("ERROR:", e)
-
-    return ""
-
-
-def extract_stream(text):
-
-    streams = re.findall(
-        r'https?://[^\s"\']+\.(?:m3u8|flv|mp4)[^\s"\']*',
-        text
-    )
-
-    if streams:
-        return streams[0]
 
     return None
 
@@ -48,15 +34,35 @@ def convert_wib(timestamp):
     if not timestamp:
         return "00:00 WIB"
 
-    # FIX timestamp milliseconds
     if timestamp > 1e12:
         timestamp = timestamp / 1000
 
     utc = datetime.fromtimestamp(timestamp, tz=timezone.utc)
-
     wib = utc.astimezone(timezone(timedelta(hours=7)))
 
     return wib.strftime("%H:%M WIB")
+
+
+def get_stream(match_id):
+
+    url = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
+
+    data = get_json(url)
+
+    if not data:
+        return None
+
+    try:
+        servers = data.get("stream", [])
+
+        for s in servers:
+            link = s.get("url")
+            if link and ("m3u8" in link or "flv" in link):
+                return link
+    except:
+        pass
+
+    return None
 
 
 def parse_match(match):
@@ -75,14 +81,7 @@ def parse_match(match):
 
     logo = tournament.get("logo", "")
 
-    detail_api = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
-
-    text = get(detail_api)
-
-    stream = None
-
-    if text:
-        stream = extract_stream(text)
+    stream = get_stream(match_id)
 
     if not stream:
         stream = FALLBACK
@@ -96,12 +95,11 @@ def parse_match(match):
 
 def main():
 
-    text = get(API_MATCH)
+    data = get_json(API_MATCH)
 
-    if not text:
+    if not data:
+        print("API gagal")
         return
-
-    data = json.loads(text)
 
     matches = []
 
