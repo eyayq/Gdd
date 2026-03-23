@@ -1,23 +1,23 @@
 import requests
-import re
 import json
+import re
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json, text/plain, */*",
     "Referer": "https://vebo.dev/",
     "Origin": "https://vebo.dev"
 }
 
+FALLBACK_STREAM = "https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php"
+
 playlist = []
 seen = set()
-channels = 0
 
 
 def get(url):
     try:
         r = requests.get(url, headers=HEADERS, timeout=15)
-        print("GET:", url, "STATUS:", r.status_code)
+        print("GET:", url, r.status_code)
         if r.status_code == 200:
             return r.text
     except Exception as e:
@@ -25,63 +25,60 @@ def get(url):
     return ""
 
 
-def extract_streams(text):
-
-    global channels
+def extract_stream(text):
 
     streams = re.findall(
         r'https?://[^\s"\']+\.(?:m3u8|flv|mp4)[^\s"\']*',
         text
     )
 
-    for url in streams:
-
-        if url in seen:
-            continue
-
-        seen.add(url)
-
-        channels += 1
-
-        playlist.append(
-            f'#EXTINF:-1 group-title="Sports",Stream {channels}'
-        )
-        playlist.append(url)
+    return streams
 
 
-def parse_uuid(text):
+def parse_match_detail(match):
 
-    uuids = re.findall(r'uuid["\']?\s*:\s*["\']([^"\']+)', text)
+    match_id = match.get("id")
+    title = match.get("name", "Match")
 
-    for uuid in uuids:
+    group = "Sports"
+    if match.get("tournament"):
+        group = match["tournament"].get("name", "Sports")
 
-        api_list = [
+    detail_url = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
 
-            f"https://api.thesports01.com/api/f/vd?uuid={uuid}",
-            f"https://api.thesports01.com/api/f/p?uuid={uuid}",
-            f"https://api.thesports01.com/api/f/sd?uuid={uuid}&lang=vi"
+    text = get(detail_url)
 
-        ]
+    streams = []
 
-        for api in api_list:
+    if text:
+        streams = extract_stream(text)
 
-            data = get(api)
+    # jika ada stream asli
+    if streams:
 
-            if data:
-                extract_streams(data)
+        for url in streams:
 
+            if url in seen:
+                continue
 
-def parse_match_detail(match_id):
+            seen.add(url)
 
-    url = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
+            playlist.append(
+                f'#EXTINF:-1 group-title="{group}",{title}'
+            )
+            playlist.append(url)
 
-    text = get(url)
+    else:
 
-    if not text:
-        return
+        # gunakan fallback
+        if FALLBACK_STREAM not in seen:
 
-    extract_streams(text)
-    parse_uuid(text)
+            seen.add(FALLBACK_STREAM)
+
+            playlist.append(
+                f'#EXTINF:-1 group-title="{group}",{title}'
+            )
+            playlist.append(FALLBACK_STREAM)
 
 
 def parse_featured():
@@ -93,40 +90,22 @@ def parse_featured():
     if not text:
         return
 
-    ids = re.findall(r'"id":"([^"]+)"', text)
+    data = json.loads(text)
 
-    print("matches found:", len(ids))
+    matches = []
 
-    for mid in ids:
-        parse_match_detail(mid)
+    matches.extend(data.get("hot", []))
+    matches.extend(data.get("featured", []))
 
+    print("total matches:", len(matches))
 
-def parse_other_api():
-
-    apis = [
-
-        "https://vb.thapcamo.xyz/api/a/vebotv/bh",
-        "https://api.thesports01.com/api/p/t",
-        "https://api.thesports01.com/api/p/uc?profile=47q3nhzxva1u8mx&domain=widget.vebo.dev",
-        "https://api.thesports01.com/api/f/c?profile=47q3nhzxva1u8mx"
-
-    ]
-
-    for api in apis:
-
-        text = get(api)
-
-        if text:
-            extract_streams(text)
-            parse_uuid(text)
+    for match in matches:
+        parse_match_detail(match)
 
 
 def main():
 
-    print("collecting matches...")
-
     parse_featured()
-    parse_other_api()
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
 
@@ -136,7 +115,7 @@ def main():
             f.write(line + "\n")
 
     print("playlist.m3u generated")
-    print("channels:", channels)
+    print("total streams:", len(seen))
 
 
 if __name__ == "__main__":
