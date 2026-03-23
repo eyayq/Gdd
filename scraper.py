@@ -1,7 +1,7 @@
 import requests
 import json
 import re
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta
 
 API_MATCH = "https://vb.thapcamo.xyz/api/match/vb/featured"
 
@@ -45,14 +45,16 @@ def convert_wib(timestamp):
     if not timestamp:
         return "00:00 WIB"
 
-    # API pakai milliseconds
+    # timestamp API = milliseconds
     ts = int(timestamp) / 1000
 
-    utc = datetime.fromtimestamp(ts, tz=timezone.utc)
+    # UTC dari API
+    utc_time = datetime.utcfromtimestamp(ts)
 
-    wib = utc + timedelta(hours=7)
+    # tambah 7 jam
+    wib_time = utc_time + timedelta(hours=7)
 
-    return wib.strftime("%H:%M WIB")
+    return wib_time.strftime("%H:%M WIB")
 
 
 def parse_match(match):
