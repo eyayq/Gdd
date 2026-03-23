@@ -2,16 +2,17 @@ import requests
 import json
 import re
 
+API_MATCH = "https://vb.thapcamo.xyz/api/match/vb/featured"
+
+FALLBACK = "https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php"
+
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
     "Referer": "https://vebo.dev/",
     "Origin": "https://vebo.dev"
 }
 
-FALLBACK_STREAM = "https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php"
-
 playlist = []
-seen = set()
 
 
 def get(url):
@@ -26,12 +27,10 @@ def get(url):
 
 
 def extract_stream(text):
-
     streams = re.findall(
         r'https?://[^\s"\']+\.(?:m3u8|flv|mp4)[^\s"\']*',
         text
     )
-
     return streams
 
 
@@ -44,48 +43,29 @@ def parse_match_detail(match):
     if match.get("tournament"):
         group = match["tournament"].get("name", "Sports")
 
-    detail_url = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
+    detail_api = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
 
-    text = get(detail_url)
+    text = get(detail_api)
 
-    streams = []
+    stream = None
 
     if text:
         streams = extract_stream(text)
+        if streams:
+            stream = streams[0]
 
-    # jika ada stream asli
-    if streams:
+    if not stream:
+        stream = FALLBACK
 
-        for url in streams:
-
-            if url in seen:
-                continue
-
-            seen.add(url)
-
-            playlist.append(
-                f'#EXTINF:-1 group-title="{group}",{title}'
-            )
-            playlist.append(url)
-
-    else:
-
-        # gunakan fallback
-        if FALLBACK_STREAM not in seen:
-
-            seen.add(FALLBACK_STREAM)
-
-            playlist.append(
-                f'#EXTINF:-1 group-title="{group}",{title}'
-            )
-            playlist.append(FALLBACK_STREAM)
+    playlist.append(
+        f'#EXTINF:-1 group-title="{group}",{title}'
+    )
+    playlist.append(stream)
 
 
-def parse_featured():
+def main():
 
-    url = "https://vb.thapcamo.xyz/api/match/vb/featured"
-
-    text = get(url)
+    text = get(API_MATCH)
 
     if not text:
         return
@@ -94,18 +74,13 @@ def parse_featured():
 
     matches = []
 
-    matches.extend(data.get("hot", []))
-    matches.extend(data.get("featured", []))
+    matches += data.get("hot", [])
+    matches += data.get("featured", [])
 
-    print("total matches:", len(matches))
+    print("TOTAL MATCH:", len(matches))
 
     for match in matches:
         parse_match_detail(match)
-
-
-def main():
-
-    parse_featured()
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
 
@@ -115,7 +90,7 @@ def main():
             f.write(line + "\n")
 
     print("playlist.m3u generated")
-    print("total streams:", len(seen))
+    print("channels:", len(matches))
 
 
 if __name__ == "__main__":
