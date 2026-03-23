@@ -1,11 +1,9 @@
-name: Auto M3U Generator
+name: Sikat Pakai Browser Asli
 on:
   workflow_dispatch:
-  schedule:
-    - cron: '0 */6 * * *' # Jalan otomatis tiap 6 jam biar playlist update terus
 
 jobs:
-  build:
+  scrape:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -16,14 +14,16 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Jamu
-        run: pip install cloudscraper
+      - name: Install Tools & Browser
+        run: |
+          pip install playwright playwright-stealth
+          playwright install chromium
 
-      - name: Eksekusi Script
+      - name: Eksekusi Siluman
         run: python ensrip.py
 
-      - name: Upload Hasil M3U
+      - name: Upload M3U
         uses: actions/upload-artifact@v4
         with:
-          name: playlist-m3u-terbaru
-          path: update.m3u
+          name: m3u-siluman
+          path: playlist.m3u
