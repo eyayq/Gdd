@@ -1,6 +1,7 @@
 import requests
 import json
 import re
+from datetime import datetime, timedelta, timezone
 
 API_MATCH = "https://vb.thapcamo.xyz/api/match/vb/featured"
 
@@ -27,21 +28,41 @@ def get(url):
 
 
 def extract_stream(text):
+
     streams = re.findall(
         r'https?://[^\s"\']+\.(?:m3u8|flv|mp4)[^\s"\']*',
         text
     )
-    return streams
+
+    if streams:
+        return streams[0]
+
+    return None
 
 
-def parse_match_detail(match):
+def convert_wib(timestamp):
+
+    utc = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+
+    wib = utc + timedelta(hours=7)
+
+    return wib.strftime("%H:%M WIB")
+
+
+def parse_match(match):
 
     match_id = match.get("id")
     title = match.get("name", "Match")
 
-    group = "Sports"
-    if match.get("tournament"):
-        group = match["tournament"].get("name", "Sports")
+    timestamp = match.get("timestamp", 0)
+
+    time_wib = convert_wib(timestamp)
+
+    tournament = match.get("tournament", {})
+
+    group = tournament.get("name", "Sports")
+
+    logo = tournament.get("logo", "")
 
     detail_api = f"https://vb.thapcamo.xyz/api/match/vb/detail/{match_id}"
 
@@ -50,16 +71,15 @@ def parse_match_detail(match):
     stream = None
 
     if text:
-        streams = extract_stream(text)
-        if streams:
-            stream = streams[0]
+        stream = extract_stream(text)
 
     if not stream:
         stream = FALLBACK
 
     playlist.append(
-        f'#EXTINF:-1 group-title="{group}",{title}'
+        f'#EXTINF:-1 tvg-logo="{logo}" group-title="{group}",{title} ({time_wib})'
     )
+
     playlist.append(stream)
 
 
@@ -80,7 +100,7 @@ def main():
     print("TOTAL MATCH:", len(matches))
 
     for match in matches:
-        parse_match_detail(match)
+        parse_match(match)
 
     with open("playlist.m3u", "w", encoding="utf-8") as f:
 
