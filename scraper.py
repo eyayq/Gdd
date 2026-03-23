@@ -4,11 +4,10 @@ from datetime import datetime, timedelta
 
 BASE = "https://vb.thapcamo.xyz/api/match/vb"
 
-FEATURED = f"{BASE}/featured"
-LIVE = f"{BASE}/live"
-FIXTURE = f"{BASE}/fixture/{}"
-
-STREAM = f"{BASE}/stream/{{}}"
+FEATURED = BASE + "/featured"
+LIVE = BASE + "/live"
+FIXTURE = BASE + "/fixture/{}"
+STREAM = BASE + "/stream/{}"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
@@ -20,7 +19,8 @@ async def fetch(session, url):
     try:
         async with session.get(url, headers=HEADERS, timeout=30) as r:
             return await r.json(content_type=None)
-    except:
+    except Exception as e:
+        print("fetch error:", url, e)
         return None
 
 
@@ -31,7 +31,7 @@ def parse_matches(data):
     if not data:
         return matches
 
-    # hot
+    # hot matches
     for m in data.get("hot", []):
         matches.append({
             "id": m.get("id"),
@@ -39,7 +39,7 @@ def parse_matches(data):
             "league": m.get("tournament", {}).get("name", "Football")
         })
 
-    # schedule
+    # schedule matches
     for d in data.get("schedule", []):
         for t in d.get("tournaments", []):
             league = t.get("tournament", {}).get("name", "Football")
@@ -51,9 +51,9 @@ def parse_matches(data):
                     "league": league
                 })
 
-    # data[]
+    # generic data[]
     if isinstance(data.get("data"), list):
-        for m in data["data"]:
+        for m in data.get("data", []):
             matches.append({
                 "id": m.get("id"),
                 "name": m.get("name"),
@@ -109,8 +109,8 @@ async def main():
 
         urls = [FEATURED, LIVE]
 
-        # fixture 3 hari
-        for i in range(3):
+        # ambil fixture 5 hari ke depan
+        for i in range(5):
             date = (datetime.utcnow() + timedelta(days=i)).strftime("%Y%m%d")
             urls.append(FIXTURE.format(date))
 
@@ -123,18 +123,18 @@ async def main():
         for r in responses:
             matches.extend(parse_matches(r))
 
-        # remove duplicate id
+        # remove duplicate match
         seen = set()
-        uniq = []
+        unique_matches = []
 
         for m in matches:
             if m["id"] and m["id"] not in seen:
-                uniq.append(m)
+                unique_matches.append(m)
                 seen.add(m["id"])
 
-        print("matches found:", len(uniq))
+        print("matches found:", len(unique_matches))
 
-        tasks = [get_stream(session, m) for m in uniq]
+        tasks = [get_stream(session, m) for m in unique_matches]
 
         results = await asyncio.gather(*tasks)
 
@@ -157,4 +157,5 @@ async def main():
         print("channels:", len(channels))
 
 
-asyncio.run(main())
+if __name__ == "__main__":
+    asyncio.run(main())
