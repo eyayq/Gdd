@@ -1,27 +1,39 @@
 import aiohttp
 import asyncio
+import re
 from datetime import datetime, timedelta
 
-BASE = "https://vb.thapcamo.xyz/api/match/vb"
+BASE_API = "https://vb.thapcamo.xyz/api/match/vb"
+BASE_WEB = "https://ue.vebo8.buzz"
 
-FEATURED = BASE + "/featured"
-LIVE = BASE + "/live"
-FIXTURE = BASE + "/fixture/{}"
-STREAM = BASE + "/stream/{}"
+FEATURED = BASE_API + "/featured"
+LIVE = BASE_API + "/live"
+FIXTURE = BASE_API + "/fixture/{}"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
     "Accept": "application/json"
 }
 
+HTML_HEADERS = {
+    "User-Agent": "Mozilla/5.0"
+}
 
-async def fetch(session, url):
+
+async def fetch_json(session, url):
     try:
         async with session.get(url, headers=HEADERS, timeout=30) as r:
             return await r.json(content_type=None)
-    except Exception as e:
-        print("fetch error:", url, e)
+    except:
         return None
+
+
+async def fetch_text(session, url):
+    try:
+        async with session.get(url, headers=HTML_HEADERS, timeout=30) as r:
+            return await r.text()
+    except:
+        return ""
 
 
 def parse_matches(data):
@@ -31,76 +43,73 @@ def parse_matches(data):
     if not data:
         return matches
 
-    # hot matches
+    # hot
     for m in data.get("hot", []):
         matches.append({
             "id": m.get("id"),
             "name": m.get("name"),
+            "slug": m.get("slug"),
             "league": m.get("tournament", {}).get("name", "Football")
         })
 
-    # schedule matches
+    # schedule
     for d in data.get("schedule", []):
         for t in d.get("tournaments", []):
+
             league = t.get("tournament", {}).get("name", "Football")
 
             for m in t.get("matches", []):
                 matches.append({
                     "id": m.get("id"),
                     "name": m.get("name"),
+                    "slug": m.get("slug"),
                     "league": league
                 })
 
-    # generic data[]
+    # data[]
     if isinstance(data.get("data"), list):
-        for m in data.get("data", []):
+        for m in data["data"]:
             matches.append({
                 "id": m.get("id"),
                 "name": m.get("name"),
+                "slug": m.get("slug"),
                 "league": m.get("tournament", {}).get("name", "Football")
             })
 
     return matches
 
 
-async def get_stream(session, match):
+async def resolve_stream(session, match):
 
-    if not match["id"]:
-        return []
+    if not match["slug"]:
+        return None
 
-    url = STREAM.format(match["id"])
+    match_url = f"{BASE_WEB}/match/{match['slug']}"
 
-    data = await fetch(session, url)
+    html = await fetch_text(session, match_url)
 
-    channels = []
+    if not html:
+        return None
 
-    if not data:
-        return channels
+    iframe = re.search(r'<iframe[^>]+src="([^"]+)"', html)
 
-    streams = (
-        data.get("data", {}).get("channels")
-        or data.get("channels")
-        or []
-    )
+    if not iframe:
+        return None
 
-    for s in streams:
+    iframe_url = iframe.group(1)
 
-        link = (
-            s.get("url")
-            or s.get("link")
-            or s.get("play_url")
-        )
+    player_html = await fetch_text(session, iframe_url)
 
-        if not link:
-            continue
+    m3u8 = re.search(r'https://[^"]+\.m3u8', player_html)
 
-        channels.append({
-            "title": f'{match["name"]} - {s.get("name","Stream")}',
-            "group": match["league"],
-            "url": link
-        })
+    if not m3u8:
+        return None
 
-    return channels
+    return {
+        "title": match["name"],
+        "group": match["league"],
+        "url": m3u8.group(0)
+    }
 
 
 async def main():
@@ -109,12 +118,12 @@ async def main():
 
         urls = [FEATURED, LIVE]
 
-        # ambil fixture 5 hari ke depan
+        # fixture 5 hari ke depan
         for i in range(5):
             date = (datetime.utcnow() + timedelta(days=i)).strftime("%Y%m%d")
             urls.append(FIXTURE.format(date))
 
-        tasks = [fetch(session, u) for u in urls]
+        tasks = [fetch_json(session, u) for u in urls]
 
         responses = await asyncio.gather(*tasks)
 
@@ -123,25 +132,22 @@ async def main():
         for r in responses:
             matches.extend(parse_matches(r))
 
-        # remove duplicate match
+        # remove duplicate
         seen = set()
-        unique_matches = []
+        uniq = []
 
         for m in matches:
             if m["id"] and m["id"] not in seen:
-                unique_matches.append(m)
+                uniq.append(m)
                 seen.add(m["id"])
 
-        print("matches found:", len(unique_matches))
+        print("matches found:", len(uniq))
 
-        tasks = [get_stream(session, m) for m in unique_matches]
+        tasks = [resolve_stream(session, m) for m in uniq]
 
         results = await asyncio.gather(*tasks)
 
-        channels = []
-
-        for r in results:
-            channels.extend(r)
+        channels = [r for r in results if r]
 
         with open("playlist.m3u", "w", encoding="utf8") as f:
 
