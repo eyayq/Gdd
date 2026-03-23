@@ -1,7 +1,7 @@
 import requests
 import json
 import re
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone, timedelta
 
 API_MATCH = "https://vb.thapcamo.xyz/api/match/vb/featured"
 
@@ -40,13 +40,13 @@ def extract_stream(text):
     return None
 
 
-def convert_wib(timestamp):
+def current_wib():
 
-    utc = datetime.fromtimestamp(timestamp, tz=timezone.utc)
+    utc_now = datetime.now(timezone.utc)
 
-    wib = utc + timedelta(hours=7)
+    wib_now = utc_now + timedelta(hours=7)
 
-    return wib.strftime("%H:%M WIB")
+    return wib_now.strftime("%H:%M WIB")
 
 
 def parse_match(match):
@@ -54,9 +54,7 @@ def parse_match(match):
     match_id = match.get("id")
     title = match.get("name", "Match")
 
-    timestamp = match.get("timestamp", 0)
-
-    time_wib = convert_wib(timestamp)
+    time_wib = current_wib()
 
     tournament = match.get("tournament", {})
 
