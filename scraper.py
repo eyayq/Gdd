@@ -1,12 +1,14 @@
 import aiohttp
 import asyncio
-from datetime import datetime
+from datetime import datetime, timedelta
 
-APIS = [
-    "https://vb.thapcamo.xyz/api/match/vb/featured",
-    "https://vb.thapcamo.xyz/api/match/vb/fixture/20260323",
-    "https://vb.thapcamo.xyz/api/match/vb/live"
-]
+BASE = "https://vb.thapcamo.xyz/api/match/vb"
+
+FEATURED = f"{BASE}/featured"
+LIVE = f"{BASE}/live"
+FIXTURE = f"{BASE}/fixture/{}"
+
+STREAM = f"{BASE}/stream/{{}}"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
@@ -18,62 +20,85 @@ async def fetch(session, url):
     try:
         async with session.get(url, headers=HEADERS, timeout=30) as r:
             return await r.json(content_type=None)
-    except Exception as e:
-        print("error:", url, e)
+    except:
         return None
 
 
-def extract_streams(match):
+def parse_matches(data):
 
-    channels = []
+    matches = []
 
-    title = match.get("title") or match.get("name") or "Match"
-    league = match.get("league", {}).get("name", "Sports")
-    logo = match.get("thumbnail", "")
+    if not data:
+        return matches
 
-    # kemungkinan field stream
-    for key in ["streams", "channels", "links", "stream"]:
+    # hot
+    for m in data.get("hot", []):
+        matches.append({
+            "id": m.get("id"),
+            "name": m.get("name"),
+            "league": m.get("tournament", {}).get("name", "Football")
+        })
 
-        if key not in match:
-            continue
+    # schedule
+    for d in data.get("schedule", []):
+        for t in d.get("tournaments", []):
+            league = t.get("tournament", {}).get("name", "Football")
 
-        for s in match[key]:
+            for m in t.get("matches", []):
+                matches.append({
+                    "id": m.get("id"),
+                    "name": m.get("name"),
+                    "league": league
+                })
 
-            url = (
-                s.get("url")
-                or s.get("link")
-                or s.get("play_url")
-                or s.get("m3u8")
-            )
-
-            if not url:
-                continue
-
-            name = s.get("name") or s.get("label") or "Stream"
-
-            channels.append({
-                "title": f"{title} - {name}",
-                "group": league,
-                "logo": logo,
-                "url": url
+    # data[]
+    if isinstance(data.get("data"), list):
+        for m in data["data"]:
+            matches.append({
+                "id": m.get("id"),
+                "name": m.get("name"),
+                "league": m.get("tournament", {}).get("name", "Football")
             })
 
-    return channels
+    return matches
 
 
-async def parse_api(session, url):
+async def get_stream(session, match):
+
+    if not match["id"]:
+        return []
+
+    url = STREAM.format(match["id"])
 
     data = await fetch(session, url)
 
-    if not data:
-        return []
-
-    matches = data.get("data") or data.get("matches") or []
-
     channels = []
 
-    for match in matches:
-        channels.extend(extract_streams(match))
+    if not data:
+        return channels
+
+    streams = (
+        data.get("data", {}).get("channels")
+        or data.get("channels")
+        or []
+    )
+
+    for s in streams:
+
+        link = (
+            s.get("url")
+            or s.get("link")
+            or s.get("play_url")
+        )
+
+        if not link:
+            continue
+
+        channels.append({
+            "title": f'{match["name"]} - {s.get("name","Stream")}',
+            "group": match["league"],
+            "url": link
+        })
 
     return channels
 
@@ -82,11 +107,39 @@ async def main():
 
     async with aiohttp.ClientSession() as session:
 
-        tasks = [parse_api(session, api) for api in APIS]
+        urls = [FEATURED, LIVE]
+
+        # fixture 3 hari
+        for i in range(3):
+            date = (datetime.utcnow() + timedelta(days=i)).strftime("%Y%m%d")
+            urls.append(FIXTURE.format(date))
+
+        tasks = [fetch(session, u) for u in urls]
+
+        responses = await asyncio.gather(*tasks)
+
+        matches = []
+
+        for r in responses:
+            matches.extend(parse_matches(r))
+
+        # remove duplicate id
+        seen = set()
+        uniq = []
+
+        for m in matches:
+            if m["id"] and m["id"] not in seen:
+                uniq.append(m)
+                seen.add(m["id"])
+
+        print("matches found:", len(uniq))
+
+        tasks = [get_stream(session, m) for m in uniq]
 
         results = await asyncio.gather(*tasks)
 
         channels = []
+
         for r in results:
             channels.extend(r)
 
@@ -94,15 +147,14 @@ async def main():
 
             f.write("#EXTM3U\n")
 
-            for ch in channels:
+            for c in channels:
                 f.write(
-                    f'#EXTINF:-1 group-title="{ch["group"]}" tvg-logo="{ch["logo"]}",{ch["title"]}\n'
+                    f'#EXTINF:-1 group-title="{c["group"]}",{c["title"]}\n'
                 )
-                f.write(ch["url"] + "\n")
+                f.write(c["url"] + "\n")
 
         print("playlist.m3u generated")
         print("channels:", len(channels))
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(main())
