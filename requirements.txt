@@ -1,3 +1,5 @@
+aiohttp
+asyncio
 requests
 yt-dlp
 pytz
