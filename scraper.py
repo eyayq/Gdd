@@ -40,13 +40,19 @@ def extract_stream(text):
     return None
 
 
-def current_wib():
+def convert_wib(timestamp):
 
-    utc_now = datetime.now(timezone.utc)
+    if not timestamp:
+        return "00:00 WIB"
 
-    wib_now = utc_now + timedelta(hours=7)
+    # API pakai milliseconds
+    ts = int(timestamp) / 1000
 
-    return wib_now.strftime("%H:%M WIB")
+    utc = datetime.fromtimestamp(ts, tz=timezone.utc)
+
+    wib = utc + timedelta(hours=7)
+
+    return wib.strftime("%H:%M WIB")
 
 
 def parse_match(match):
@@ -54,7 +60,9 @@ def parse_match(match):
     match_id = match.get("id")
     title = match.get("name", "Match")
 
-    time_wib = current_wib()
+    timestamp = match.get("timestamp")
+
+    time_wib = convert_wib(timestamp)
 
     tournament = match.get("tournament", {})
 
