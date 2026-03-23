@@ -1,12 +1,12 @@
-name: Sikat Pakai Browser Asli
+name: Sikat M3U Animek
 on:
   workflow_dispatch:
 
 jobs:
-  scrape:
+  build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
+      - name: Checkout Code
         uses: actions/checkout@v4
 
       - name: Setup Python
@@ -14,17 +14,16 @@ jobs:
         with:
           python-version: '3.10'
 
-      - name: Install Tools & Browser
+      - name: Install Playwright
         run: |
-          pip install playwright playwright-stealth
+          pip install playwright
           playwright install chromium
 
-
-      - name: Eksekusi Siluman
+      - name: Jalankan Script
         run: python ensrip.py
 
-      - name: Upload M3U
+      - name: Simpan Playlist
         uses: actions/upload-artifact@v4
         with:
-          name: m3u-siluman
+          name: animek-playlist
           path: playlist.m3u
