@@ -1,129 +1,120 @@
-import aiohttp
-import asyncio
+import requests
+import json
 import re
-from datetime import datetime, timedelta
 
-BASE_API = "https://vb.thapcamo.xyz/api/match/vb"
-
-FEATURED = BASE_API + "/featured"
-LIVE = BASE_API + "/live"
-FIXTURE = BASE_API + "/fixture/{}"
+BASE = "https://vb.thapcamo.xyz"
 
 HEADERS = {
     "User-Agent": "Mozilla/5.0",
-    "Accept": "application/json"
+    "Accept": "application/json, text/plain, */*"
 }
 
-HTML_HEADERS = {
-    "User-Agent": "Mozilla/5.0"
-}
+playlist = []
+channels = 0
 
 
-async def fetch_json(session, url):
+def get_json(url):
     try:
-        async with session.get(url, headers=HEADERS, timeout=30) as r:
-            return await r.json(content_type=None)
+        r = requests.get(url, headers=HEADERS, timeout=15)
+        if r.status_code == 200:
+            return r.json()
     except:
-        return None
+        pass
+    return None
 
 
-async def fetch_text(session, url):
-    try:
-        async with session.get(url, headers=HTML_HEADERS, timeout=30) as r:
-            return await r.text()
-    except:
-        return ""
+def find_m3u8(data):
+    global channels
+
+    text = json.dumps(data)
+
+    urls = re.findall(r'https?://[^"]+\.m3u8[^"]*', text)
+
+    for url in urls:
+        name = f"Channel {channels+1}"
+        playlist.append(f'#EXTINF:-1 tvg-id="{channels+1}" group-title="Sports",{name}')
+        playlist.append(url)
+        channels += 1
 
 
-def parse_matches(data):
+def parse_thesports(uuid):
+    endpoints = [
+        f"https://api.thesports01.com/api/f/vd?uuid={uuid}",
+        f"https://api.thesports01.com/api/f/p?uuid={uuid}",
+        f"https://api.thesports01.com/api/f/sd?uuid={uuid}&lang=vi"
+    ]
 
-    matches = []
+    for url in endpoints:
+        data = get_json(url)
+        if data:
+            find_m3u8(data)
+
+
+def parse_match_detail(match_id):
+
+    url = f"{BASE}/api/match/vb/detail/{match_id}"
+
+    data = get_json(url)
 
     if not data:
-        return matches
+        return
 
-    for m in data.get("hot", []):
-        matches.append({
-            "name": m.get("name"),
-            "league": m.get("tournament", {}).get("name", "Football")
-        })
+    text = json.dumps(data)
 
-    for d in data.get("schedule", []):
-        for t in d.get("tournaments", []):
+    uuids = re.findall(r'"uuid":"([^"]+)"', text)
 
-            league = t.get("tournament", {}).get("name", "Football")
-
-            for m in t.get("matches", []):
-                matches.append({
-                    "name": m.get("name"),
-                    "league": league
-                })
-
-    if isinstance(data.get("data"), list):
-        for m in data["data"]:
-            matches.append({
-                "name": m.get("name"),
-                "league": m.get("tournament", {}).get("name", "Football")
-            })
-
-    return matches
+    for uuid in uuids:
+        parse_thesports(uuid)
 
 
-async def find_streams(session, url):
+def parse_featured():
 
-    html = await fetch_text(session, url)
+    url = f"{BASE}/api/match/vb/featured"
 
-    streams = re.findall(r'https://[^"]+\.m3u8', html)
+    data = get_json(url)
 
-    return streams
+    if not data:
+        return
 
+    text = json.dumps(data)
 
-async def main():
+    match_ids = re.findall(r'"id":"([^"]+)"', text)
 
-    async with aiohttp.ClientSession() as session:
-
-        urls = [FEATURED, LIVE]
-
-        for i in range(5):
-            date = (datetime.utcnow() + timedelta(days=i)).strftime("%Y%m%d")
-            urls.append(FIXTURE.format(date))
-
-        responses = await asyncio.gather(*[fetch_json(session, u) for u in urls])
-
-        matches = []
-
-        for r in responses:
-            matches.extend(parse_matches(r))
-
-        print("matches found:", len(matches))
-
-        # cari stream langsung dari homepage
-        streams = await find_streams(session, "https://ue.vebo8.buzz/home")
-
-        channels = []
-
-        for i, stream in enumerate(streams):
-
-            name = matches[i]["name"] if i < len(matches) else f"Match {i}"
-
-            channels.append({
-                "title": name,
-                "group": "Football",
-                "url": stream
-            })
-
-        with open("playlist.m3u", "w", encoding="utf8") as f:
-
-            f.write("#EXTM3U\n")
-
-            for c in channels:
-                f.write(
-                    f'#EXTINF:-1 group-title="{c["group"]}",{c["title"]}\n'
-                )
-                f.write(c["url"] + "\n")
-
-        print("playlist.m3u generated")
-        print("channels:", len(channels))
+    for mid in match_ids:
+        parse_match_detail(mid)
 
 
-asyncio.run(main())
+def parse_other():
+
+    urls = [
+        "https://vb.thapcamo.xyz/api/a/vebotv/bh",
+        "https://api.thesports01.com/api/p/t",
+        "https://api.thesports01.com/api/p/uc?profile=47q3nhzxva1u8mx&domain=widget.vebo.dev",
+        "https://api.thesports01.com/api/f/c?profile=47q3nhzxva1u8mx"
+    ]
+
+    for url in urls:
+        data = get_json(url)
+        if data:
+            find_m3u8(data)
+
+
+def main():
+
+    print("collecting matches...")
+
+    parse_featured()
+
+    parse_other()
+
+    with open("playlist.m3u", "w") as f:
+        f.write("#EXTM3U\n")
+        for line in playlist:
+            f.write(line + "\n")
+
+    print("playlist.m3u generated")
+    print("channels:", channels)
+
+
+if __name__ == "__main__":
+    main()
