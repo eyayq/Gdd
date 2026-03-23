@@ -4,7 +4,6 @@ import re
 from datetime import datetime, timedelta
 
 BASE_API = "https://vb.thapcamo.xyz/api/match/vb"
-BASE_WEB = "https://ue.vebo8.buzz"
 
 FEATURED = BASE_API + "/featured"
 LIVE = BASE_API + "/live"
@@ -43,16 +42,12 @@ def parse_matches(data):
     if not data:
         return matches
 
-    # hot
     for m in data.get("hot", []):
         matches.append({
-            "id": m.get("id"),
             "name": m.get("name"),
-            "slug": m.get("slug"),
             "league": m.get("tournament", {}).get("name", "Football")
         })
 
-    # schedule
     for d in data.get("schedule", []):
         for t in d.get("tournaments", []):
 
@@ -60,56 +55,27 @@ def parse_matches(data):
 
             for m in t.get("matches", []):
                 matches.append({
-                    "id": m.get("id"),
                     "name": m.get("name"),
-                    "slug": m.get("slug"),
                     "league": league
                 })
 
-    # data[]
     if isinstance(data.get("data"), list):
         for m in data["data"]:
             matches.append({
-                "id": m.get("id"),
                 "name": m.get("name"),
-                "slug": m.get("slug"),
                 "league": m.get("tournament", {}).get("name", "Football")
             })
 
     return matches
 
 
-async def resolve_stream(session, match):
+async def find_streams(session, url):
 
-    if not match["slug"]:
-        return None
+    html = await fetch_text(session, url)
 
-    match_url = f"{BASE_WEB}/match/{match['slug']}"
+    streams = re.findall(r'https://[^"]+\.m3u8', html)
 
-    html = await fetch_text(session, match_url)
-
-    if not html:
-        return None
-
-    iframe = re.search(r'<iframe[^>]+src="([^"]+)"', html)
-
-    if not iframe:
-        return None
-
-    iframe_url = iframe.group(1)
-
-    player_html = await fetch_text(session, iframe_url)
-
-    m3u8 = re.search(r'https://[^"]+\.m3u8', player_html)
-
-    if not m3u8:
-        return None
-
-    return {
-        "title": match["name"],
-        "group": match["league"],
-        "url": m3u8.group(0)
-    }
+    return streams
 
 
 async def main():
@@ -118,36 +84,33 @@ async def main():
 
         urls = [FEATURED, LIVE]
 
-        # fixture 5 hari ke depan
         for i in range(5):
             date = (datetime.utcnow() + timedelta(days=i)).strftime("%Y%m%d")
             urls.append(FIXTURE.format(date))
 
-        tasks = [fetch_json(session, u) for u in urls]
-
-        responses = await asyncio.gather(*tasks)
+        responses = await asyncio.gather(*[fetch_json(session, u) for u in urls])
 
         matches = []
 
         for r in responses:
             matches.extend(parse_matches(r))
 
-        # remove duplicate
-        seen = set()
-        uniq = []
+        print("matches found:", len(matches))
 
-        for m in matches:
-            if m["id"] and m["id"] not in seen:
-                uniq.append(m)
-                seen.add(m["id"])
+        # cari stream langsung dari homepage
+        streams = await find_streams(session, "https://ue.vebo8.buzz/home")
 
-        print("matches found:", len(uniq))
+        channels = []
 
-        tasks = [resolve_stream(session, m) for m in uniq]
+        for i, stream in enumerate(streams):
 
-        results = await asyncio.gather(*tasks)
+            name = matches[i]["name"] if i < len(matches) else f"Match {i}"
 
-        channels = [r for r in results if r]
+            channels.append({
+                "title": name,
+                "group": "Football",
+                "url": stream
+            })
 
         with open("playlist.m3u", "w", encoding="utf8") as f:
 
@@ -163,5 +126,4 @@ async def main():
         print("channels:", len(channels))
 
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(main())
