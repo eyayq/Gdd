@@ -3,8 +3,8 @@ import json
 import time
 from urllib.parse import unquote
 
-def sikat_goblok():
-    # Gunakan browser Chrome yang lebih spesifik biar nggak dicurigai
+def sikat_hardcore():
+    # Pake session biar cookie-nya ke-save pas navigasi
     scraper = cloudscraper.create_scraper(
         browser={
             'browser': 'chrome',
@@ -13,84 +13,83 @@ def sikat_goblok():
         }
     )
     
-    api_base = "https://www.sankavollerei.com"
+    # Base URL & API
+    base_url = "https://www.sankavollerei.com"
+    api_base = f"{base_url}/plananimek/api"
     
-    # Header tambahan biar makin mirip manusia asli bangsat
+    # Header yang bener-bener mirip browser pas lagi buka webnya
     headers = {
         'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36',
         'Accept': 'application/json, text/plain, */*',
-        'Accept-Language': 'en-US,en;q=0.9',
-        'Referer': 'https://www.sankavollerei.com',
-        'Origin': 'https://www.sankavollerei.com',
+        'Referer': f'{base_url}/',
+        'Origin': base_url,
+        'X-Requested-With': 'XMLHttpRequest', # PENTING: Biar disangka fetch internal
         'Sec-Fetch-Dest': 'empty',
         'Sec-Fetch-Mode': 'cors',
-        'Sec-Fetch-Site': 'same-origin'
+        'Sec-Fetch-Site': 'same-origin',
+        'Connection': 'keep-alive'
     }
 
     try:
-        print("[*] Fetching Recently Updated...")
+        # Langkah 1: Buka homepage dulu buat dapet cookie Cloudflare asli
+        print("[*] Melipir ke Homepage dulu biar gak dicurigai...")
+        scraper.get(base_url, headers={'User-Agent': headers['User-Agent']}, timeout=20)
+        time.sleep(3) # Kasih jeda kayak manusia baca web
+
+        # Langkah 2: Baru nembak API Recently Updated
+        print("[*] Fetching Recently Updated (Stealth)...")
+        # Cobain pake slash di akhir kalo 404 lagi
         response = scraper.get(f"{api_base}/recently-updated", headers=headers, timeout=30)
         
-        # Cek status code dulu sebelum di-json() biar gak error char 0
         if response.status_code != 200:
-            print(f"[!] Gagal Bangsat! Status: {response.status_code}")
-            print(f"[*] Response Body (potongan): {response.text[:200]}")
+            print(f"[!] Masih Gagal Bangsat! Status: {response.status_code}")
+            print(f"[*] Response: {response.text[:150]}")
             return
 
+        # Ambil data
         recent_data = response.json()
         anime_list = recent_data.get('results', recent_data) if isinstance(recent_data, dict) else recent_data
         
         m3u_content = "#EXTM3U\n"
 
-        for anime in anime_list[:10]:
+        for anime in anime_list[:5]: # Tes 5 dulu biar aman
             anime_id = anime.get('id')
             if not anime_id: continue
             
-            print(f"[*] Sikat Anime ID: {anime_id}")
-
-            # Path Info
-            info_res = scraper.get(f"{api_base}/info?id={anime_id}", headers=headers)
-            if info_res.status_code == 200:
-                info = info_res.json()
-                title = info.get('title', 'Unknown Anime')
-                logo = info.get('image', '')
-
-                # Path Episodes
-                eps_res = scraper.get(f"{api_base}/episodes/{anime_id}", headers=headers)
-                if eps_res.status_code == 200:
-                    eps_data = eps_res.json()
-                    
-                    for ep in eps_data:
-                        ep_id = ep.get('id')
-                        ep_num = ep.get('number')
-                        
-                        # Path Stream
-                        stream_res = scraper.get(f"{api_base}/stream?id={anime_id}?ep={ep_id}&server=hd-1&type=sub", headers=headers)
-                        if stream_res.status_code == 200:
-                            stream = stream_res.json()
-                            sources = stream.get('sources', [])
-                            
-                            # sources bisa list atau dict tergantung API-nya
-                            raw_url = ""
-                            if isinstance(sources, list) and len(sources) > 0:
-                                raw_url = sources[0].get('file', '')
-                            elif isinstance(sources, dict):
-                                raw_url = sources.get('file', '')
-
-                            if raw_url:
-                                final_url = unquote(raw_url) if 'proxy?url=' in raw_url else raw_url
-                                m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{title}", {title} - Episode {ep_num}\n'
-                                m3u_content += f'{final_url}\n'
+            print(f"[*] Sikat ID: {anime_id}")
             
-            # Kasih jeda lebih lama biar gak dicurigai spam
-            time.sleep(2)
+            # Update referer tiap masuk ke info anime tertentu
+            headers['Referer'] = f"{base_url}/anime/{anime_id}"
+            
+            # Path Info
+            info = scraper.get(f"{api_base}/info?id={anime_id}", headers=headers).json()
+            title = info.get('title', 'Unknown')
+            logo = info.get('image', '')
 
-        with open('update.m3u', 'w', encoding='utf-8') as f:
+            # Path Episodes
+            eps_data = scraper.get(f"{api_base}/episodes/{anime_id}", headers=headers).json()
+            
+            for ep in eps_data[:1]: # Ambil 1 episode terbaru aja buat tes
+                ep_id = ep.get('id')
+                # Path Stream
+                stream = scraper.get(f"{api_base}/stream?id={anime_id}?ep={ep_id}&server=hd-1&type=sub", headers=headers).json()
+                
+                sources = stream.get('sources', [])
+                if sources:
+                    raw_url = sources[0].get('file', '') if isinstance(sources, list) else sources.get('file', '')
+                    final_url = unquote(raw_url) if 'proxy?url=' in raw_url else raw_url
+                    
+                    m3u_content += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{title}", {title} - Ep {ep.get("number")}\n'
+                    m3u_content += f'{final_url}\n'
+            
+            time.sleep(5) # Jeda lebih lama biar gak kena trigger WAF
+
+        with open('playlist.m3u', 'w', encoding='utf-8') as f:
             f.write(m3u_content)
-        print("[++] KELAR! M3U Berhasil Dibuat.")
+        print("[++] KELAR! Berhasil bypass dan bikin M3U.")
 
     except Exception as e:
         print(f"[!!] Error: {str(e)}")
 
 if __name__ == "__main__":
-    sikat_goblok()
+    sikat_hardcore()
