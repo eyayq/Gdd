@@ -1,43 +1,42 @@
 import json
-import cloudscraper
-from urllib.parse import unquote
+import requests
+from urllib.parse import unquote, quote
 
 def sikat_paling_akhir():
-    # DAFTAR PROXY YANG BIASANYA TEMBUS CLOUDFLARE, BANGSAT!
-    # Kalau mati, cari lagi di proxyscrape.com (pilih SSL/HTTPS)
-    PROXIES = {
-        'http': 'http://167.71.218.151:80', # Contoh Proxy US
-        'https': 'http://167.71.218.151:80'
-    }
-
-    scraper = cloudscraper.create_scraper(
-        browser={'browser': 'chrome', 'platform': 'android', 'desktop': False}
-    )
-    
-    # Pasang Proxy ke Scraper
-    scraper.proxies.update(PROXIES)
+    # LINK WEB APP GOOGLE SCRIPT LU, BANGSAT!
+    GAS_URL = "ISI_LINK_WEB_APP_GOOGLE_LU_DI_SINI"
     
     api_base = "https://www.sankavollerei.com"
     m3u_content = "#EXTM3U\n"
 
+    def fetch_via_google(target_url):
+        try:
+            # Kita nembak ke Google, biar Google yang nembak ke Web Anime-nya
+            print(f"[*] Sikat via Google: {target_url}")
+            r = requests.get(f"{GAS_URL}?url={quote(target_url)}", timeout=30)
+            if r.status_code == 200:
+                return r.json()
+            return None
+        except:
+            return None
+
     try:
-        print("[*] Sikat Recently Updated via Proxy...")
-        r = scraper.get(f"{api_base}/planimek/api/recently-updated", timeout=30)
+        # 1. Recently Updated
+        recent_data = fetch_via_google(f"{api_base}/planimek/api/recently-updated")
         
-        if r.status_code != 200:
-            print(f"[!!] MASIH GAGAL! Status: {r.status_code}. Cloudflare pinter, Bangsat!")
+        if not recent_data:
+            print("[!!] Google pun gagal, Bangsat! Web-nya mungkin lagi down.")
             return
 
-        recent_data = r.json()
         anime_list = recent_data.get('results', []) if isinstance(recent_data, dict) else recent_data
 
-        for anime in anime_list[:5]:
+        for anime in anime_list[:10]:
             a_id = anime.get('id')
             if not a_id: continue
             
             print(f"[+] Sikat Anime: {a_id}")
-            info = scraper.get(f"{api_base}/info?id={a_id}").json()
-            eps_data = scraper.get(f"{api_base}/episodes/{a_id}").json()
+            info = fetch_via_google(f"{api_base}/info?id={a_id}")
+            eps_data = fetch_via_google(f"{api_base}/episodes/{a_id}")
 
             if eps_data and info:
                 ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
@@ -45,18 +44,19 @@ def sikat_paling_akhir():
                     ep = ep_list[0]
                     ep_id = ep.get('id')
                     
-                    stream = scraper.get(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub").json()
-                    sources = stream.get('sources', [])
-                    raw_url = sources[0].get('file', '') if isinstance(sources, list) and len(sources) > 0 else sources.get('file', '')
-                    
-                    if raw_url:
-                        final_url = unquote(raw_url.split('proxy?url=')[1]) if 'proxy?url=' in raw_url else raw_url
-                        m3u_content += f'#EXTINF:-1 tvg-logo="{info.get("image")}", {info.get("title")} - Ep {ep.get("number")}\n{final_url}\n'
-                        print(f"[OK] Dapet Link!")
+                    stream = fetch_via_google(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
+                    if stream:
+                        sources = stream.get('sources', [])
+                        raw_url = sources[0].get('file', '') if isinstance(sources, list) and len(sources) > 0 else sources.get('file', '')
+                        
+                        if raw_url:
+                            final_url = unquote(raw_url.split('proxy?url=')[1]) if 'proxy?url=' in raw_url else raw_url
+                            m3u_content += f'#EXTINF:-1 tvg-logo="{info.get("image")}", {info.get("title")} - Ep {ep.get("number")}\n{final_url}\n'
+                            print(f"[OK] Link dapet!")
 
         with open('playlist.m3u', 'w', encoding='utf-8') as f:
             f.write(m3u_content)
-        print("\n[++] AKHIRNYA BERHASIL, BANGSAT!")
+        print("\n[++] AKHIRNYA TEMBUS PAKE JALUR GOOGLE, BANGSAT!")
 
     except Exception as e:
         print(f"[!!] Error: {str(e)}")
