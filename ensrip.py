@@ -1,77 +1,80 @@
 import json
+import time
+import os
 import requests
 from urllib.parse import unquote, quote
 
 def sikat_paling_akhir():
-    # LINK WEB APP GOOGLE LU, PASTIKAN AKHIRNYA /exec
-    GAS_URL = "https://script.google.com/macros/s/AKfycbyxNLhEJ-FfvjVOkQtqg_6BPjm__Iri2e0VMELeNIblcLSClaYqzC_Pgd9t3A4Y01TE/exec"
-    
-    # PERHATIKAN PATH-NYA: plananimek (BUKAN planimek)
+    # PATH API TARGET
     api_base = "https://www.sankavollerei.com"
     m3u_content = "#EXTM3U\n"
 
-    def fetch_via_google(target_url):
+    def fetch_via_cache(target_url):
         try:
-            print(f"[*] Sikat via Google: {target_url}")
-            # Google butuh waktu, timeout 60 detik biar aman
-            r = requests.get(f"{GAS_URL}?url={quote(target_url)}", timeout=60)
+            # Tembak lewat Google Web Cache
+            cache_url = f"https://webcache.googleusercontent.com/search?q=cache:{quote(target_url)}"
+            print(f"[*] Sikat via Cache: {target_url}")
+            
+            headers = {
+                'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36'
+            }
+            r = requests.get(cache_url, headers=headers, timeout=30)
             
             if r.status_code == 200:
-                # Cek apakah isinya JSON atau malah HTML Cloudflare
-                if "<!DOCTYPE html>" in r.text or "Just a moment" in r.text:
-                    print("[!!] Google pun kena Cloudflare Challenge, Bangsat!")
-                    return None
-                return r.json()
-            else:
-                print(f"[!!] Google error status: {r.status_code}")
-                return None
-        except Exception as e:
-            print(f"[!!] Gagal konek ke Google: {str(e)}")
+                # Cache Google ngebungkus JSON di dalam HTML, kita ekstrak isinya
+                content = r.text
+                if "{" in content and "}" in content:
+                    start = content.find("{")
+                    end = content.rfind("}") + 1
+                    return json.loads(content[start:end])
+            return None
+        except:
             return None
 
     try:
-        # 1. Recently Updated
-        recent_data = fetch_via_google(f"{api_base}/plananimek/api/recently-updated")
+        # 1. Ambil Recently Updated via Cache
+        recent_data = fetch_via_cache(f"{api_base}/plananimek/api/recently-updated")
         
+        # Kalau cache kosong, coba tembak langsung pake Cloudscraper (Retry)
         if not recent_data:
-            print("[!!] Gagal total ambil data awal.")
-            return
+            print("[!] Cache kosong, coba pake Scraper API Gratisan...")
+            # Pake Scraperant atau Zenrows Free (Lu butuh API Key kalau mau beneran tembus)
+            # Sementara kita coba balik ke requests biasa tapi pake Header VVIP
+            r = requests.get(f"{api_base}/recently-updated", headers={'User-Agent': 'Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com)'})
+            try:
+                recent_data = r.json()
+            except:
+                print("[!!] MATI TOTAL! IP Github lu beneran di-ban mampus.")
+                return
 
         anime_list = recent_data.get('results', []) if isinstance(recent_data, dict) else recent_data
-        if not anime_list:
-            print("[!!] Data kosong, cek path API lagi!")
-            return
 
         for anime in anime_list[:10]:
             a_id = anime.get('id')
             if not a_id: continue
             
             print(f"[+] Sikat: {a_id}")
-            info = fetch_via_google(f"{api_base}/info?id={a_id}")
-            eps_data = fetch_via_google(f"{api_base}/episodes/{a_id}")
-
-            if eps_data and info:
-                ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
-                if len(ep_list) > 0:
-                    ep = ep_list[0]
-                    ep_id = ep.get('id')
+            # Tarik Info & Eps (Kita coba tembak langsung dulu)
+            info_r = requests.get(f"{api_base}/info?id={a_id}")
+            eps_r = requests.get(f"{api_base}/episodes/{a_id}")
+            
+            if info_r.status_code == 200 and eps_r.status_code == 200:
+                info = info_r.json()
+                ep = eps_r.json()[0]
+                
+                # Stream Link
+                stream_r = requests.get(f"{api_base}/stream?id={a_id}&ep={ep['id']}&server=hd-1&type=sub")
+                if stream_r.status_code == 200:
+                    stream = stream_r.json()
+                    raw_url = stream['sources'][0]['file']
+                    final_url = unquote(raw_url.split('proxy?url=')[1]) if 'proxy?url=' in raw_url else raw_url
                     
-                    stream = fetch_via_google(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
-                    if stream:
-                        sources = stream.get('sources', [])
-                        raw_url = sources[0].get('file', '') if isinstance(sources, list) and len(sources) > 0 else sources.get('file', '')
-                        
-                        if raw_url:
-                            # Bersihin link
-                            final_url = unquote(raw_url.split('proxy?url=')[1]) if 'proxy?url=' in raw_url else raw_url
-                            title = info.get("title", "No Title")
-                            img = info.get("image", "")
-                            m3u_content += f'#EXTINF:-1 tvg-logo="{img}" group-title="Update", {title} - Ep {ep.get("number")}\n{final_url}\n'
-                            print(f"[OK] Dapet Link!")
+                    m3u_content += f'#EXTINF:-1 tvg-logo="{info["image"]}", {info["title"]} - Ep {ep["number"]}\n{final_url}\n'
+                    print(f"[OK] Link dapet!")
 
         with open('playlist.m3u', 'w', encoding='utf-8') as f:
             f.write(m3u_content)
-        print("\n[++] BERHASIL, BANGSAT! Jalur VVIP Google tembus.")
+        print("\n[++] BERHASIL! File playlist.m3u sudah terbit.")
 
     except Exception as e:
         print(f"[!!] Error: {str(e)}")
