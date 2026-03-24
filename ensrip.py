@@ -14,18 +14,16 @@ session = requests.Session()
 session.headers.update({
  "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 Chrome/122 Safari/537.36",
  "Accept": "application/json, text/plain, */*",
- "Accept-Language": "en-US,en;q=0.9",
  "Referer": REFERER,
- "Origin": REFERER,
- "Connection": "keep-alive"
+ "Origin": REFERER
 })
 
 m3u = "#EXTM3U\n"
 
 
-def safe_delay():
-    t = random.uniform(3,8)
-    print("DELAY:", round(t,2),"sec")
+def delay():
+    t = random.uniform(2,5)
+    print("DELAY", round(t,2))
     time.sleep(t)
 
 
@@ -127,18 +125,26 @@ def main():
 
     for anime in anime_list:
 
-        a_id = anime.get("id")
+        # FIX ERROR STRING
+        if isinstance(anime, dict):
+            a_id = anime.get("id")
+
+        elif isinstance(anime, str):
+            a_id = anime
+
+        else:
+            continue
 
         if not a_id:
             continue
 
         print("ANIME:", a_id)
 
-        safe_delay()
+        delay()
 
         info = fetch(f"{API}/info?id={a_id}")
 
-        safe_delay()
+        delay()
 
         eps = fetch(f"{API}/episodes/{a_id}")
 
@@ -160,7 +166,7 @@ def main():
             if not ep_id:
                 continue
 
-            safe_delay()
+            delay()
 
             stream = fetch(
                 f"{API}/stream?id={a_id}?ep={ep_id}&server=hd-2&type=sub"
