@@ -5,7 +5,7 @@ from urllib.parse import quote, unquote
 
 ANT_API_KEY = "cf489396ecea4f10ad119710edae3847"
 
-API_BASE = "https://www.sankavollerei.com"
+API = "https://www.sankavollerei.com/plananimek/api"
 REFERER = "https://sankanime.com"
 
 m3u = "#EXTM3U\n"
@@ -57,35 +57,29 @@ def main():
 
     global m3u
 
-    recent = fetch(f"{API_BASE}/plananimek/api/recently-updated")
+    recent = fetch(f"{API}/recently-updated")
 
     if not recent:
         print("gagal ambil data")
         return
 
-    anime_list = recent.get("results", []) if isinstance(recent, dict) else recent
+    if isinstance(recent, dict):
+        anime_list = recent.get("data", [])
+    else:
+        anime_list = recent
 
     print("TOTAL ANIME:", len(anime_list))
 
     for anime in anime_list:
 
-        # FIX ERROR STRING
-        if isinstance(anime, dict):
-            a_id = anime.get("id")
-
-        elif isinstance(anime, str):
-            a_id = anime
-
-        else:
-            continue
-
+        a_id = anime.get("id")
         if not a_id:
             continue
 
         print("ANIME:", a_id)
 
-        info = fetch(f"{API_BASE}/plananimek/api/info?id={a_id}")
-        eps = fetch(f"{API_BASE}/plananimek/api/episodes/{a_id}")
+        info = fetch(f"{API}/info?id={a_id}")
+        eps = fetch(f"{API}/episodes/{a_id}")
 
         if not info or not eps:
             continue
@@ -93,7 +87,7 @@ def main():
         title = info.get("title", "Unknown")
         logo = info.get("image", "")
 
-        ep_list = eps if isinstance(eps, list) else [eps]
+        ep_list = eps.get("data", eps) if isinstance(eps, dict) else eps
 
         print("TOTAL EP:", len(ep_list))
 
@@ -106,7 +100,7 @@ def main():
                 continue
 
             stream = fetch(
-                f"{API_BASE}/plananimek/api/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub"
+                f"{API}/stream?id={a_id}?ep={ep_id}&server=hd-2&type=sub"
             )
 
             if not stream:
