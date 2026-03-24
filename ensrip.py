@@ -13,32 +13,45 @@ m3u = "#EXTM3U\n"
 
 def fetch(url):
 
-    ant = "https://api.scrapingant.com/v2/general"
-    target = quote(url, safe='')
-
-    full = f"{ant}?url={target}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
-
     headers = {
-        "Ant-Referer": f"{REFERER}/",
-        "Ant-Origin": REFERER
+        "User-Agent": "Mozilla/5.0",
+        "Referer": REFERER,
+        "Origin": REFERER
     }
-
-    print("REQUEST:", url)
 
     try:
 
-        r = requests.get(full, headers=headers, timeout=120)
+        # ===== TRY SCRAPINGANT =====
+        ant = "https://api.scrapingant.com/v2/general"
+        target = quote(url, safe='')
+
+        full = f"{ant}?url={target}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
+
+        print("REQUEST:", url)
+
+        r = requests.get(full, timeout=120)
+
+        if r.status_code == 200:
+
+            txt = r.text.strip()
+
+            if "{" in txt and "}" in txt:
+                start = txt.find("{")
+                end = txt.rfind("}") + 1
+                return json.loads(txt[start:end])
+
+        else:
+            print("SCRAPINGANT STATUS:", r.status_code)
+
+        # ===== FALLBACK DIRECT REQUEST =====
+
+        print("FALLBACK DIRECT")
+
+        r = requests.get(url, headers=headers, timeout=60)
 
         if r.status_code != 200:
-            print("STATUS:", r.status_code)
+            print("DIRECT STATUS:", r.status_code)
             return None
-
-        txt = r.text.strip()
-
-        if "{" in txt and "}" in txt:
-            start = txt.find("{")
-            end = txt.rfind("}") + 1
-            return json.loads(txt[start:end])
 
         return r.json()
 
