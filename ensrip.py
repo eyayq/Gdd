@@ -13,19 +13,19 @@ m3u = "#EXTM3U\n"
 
 def fetch(url):
 
+    ant = "https://api.scrapingant.com/v2/general"
+    target = quote(url, safe='')
+
+    full = f"{ant}?url={target}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
+
+    headers = {
+        "Ant-Referer": f"{REFERER}/",
+        "Ant-Origin": REFERER
+    }
+
+    print("REQUEST:", url)
+
     try:
-
-        ant = "https://api.scrapingant.com/v2/general"
-        target = quote(url, safe='')
-
-        full = f"{ant}?url={target}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
-
-        headers = {
-            "Ant-Referer": f"{REFERER}/",
-            "Ant-Origin": REFERER
-        }
-
-        print("REQUEST:", url)
 
         r = requests.get(full, headers=headers, timeout=120)
 
@@ -36,21 +36,36 @@ def fetch(url):
         txt = r.text.strip()
 
         if "{" in txt and "}" in txt:
-            try:
-                start = txt.find("{")
-                end = txt.rfind("}") + 1
-                return json.loads(txt[start:end])
-            except:
-                pass
+            start = txt.find("{")
+            end = txt.rfind("}") + 1
+            return json.loads(txt[start:end])
 
-        try:
-            return r.json()
-        except:
-            return None
+        return r.json()
 
     except Exception as e:
         print("ERROR:", e)
         return None
+
+
+def parse_anime_list(resp):
+
+    if not isinstance(resp, dict):
+        return []
+
+    if "data" in resp:
+
+        if isinstance(resp["data"], list):
+            return resp["data"]
+
+        if isinstance(resp["data"], dict):
+
+            if "results" in resp["data"]:
+                return resp["data"]["results"]
+
+    if "results" in resp:
+        return resp["results"]
+
+    return []
 
 
 def main():
@@ -63,16 +78,14 @@ def main():
         print("gagal ambil data")
         return
 
-    if isinstance(recent, dict):
-        anime_list = recent.get("data", [])
-    else:
-        anime_list = recent
+    anime_list = parse_anime_list(recent)
 
     print("TOTAL ANIME:", len(anime_list))
 
     for anime in anime_list:
 
         a_id = anime.get("id")
+
         if not a_id:
             continue
 
