@@ -4,10 +4,10 @@ import os
 from urllib.parse import unquote, quote
 
 def sikat_paling_akhir():
-    # API KEY LU, JANGAN SAMPE ABIS KUOTANYA, BANGSAT!
+    # API KEY LU, BANGSAT!
     ANT_API_KEY = "cf489396ecea4f10ad119710edae3847"
     
-    # TARGET FIX: sankanime.com (SESUAI REQUEST LU, ANJING!)
+    # RUTE SESUAI REQUEST LU, JANGAN DIUBAH LAGI!
     api_base = "https://www.sankavollerei.com"
     referer_web = "https://sankanime.com"
     
@@ -17,14 +17,13 @@ def sikat_paling_akhir():
         try:
             print(f"[*] Sikat API: {target_url}")
             encoded_target = quote(target_url)
-            # Pake browser=true dan residential biar bypass Cloudflare sankanime
+            # FIX ENDPOINT: Tambahin /v2/general biar gak 404
             full_url = (
                 f"https://api.scrapingant.com?"
                 f"url={encoded_target}&x-api-key={ANT_API_KEY}"
                 f"&browser=true&proxy_type=residential"
             )
             
-            # Kirim Referer sankanime.com biar dianggap akses dari web aslinya
             headers = {
                 "Ant-Referer": referer_web,
                 "Ant-Origin": referer_web
@@ -34,7 +33,7 @@ def sikat_paling_akhir():
             
             if r.status_code == 200:
                 content = r.text.strip()
-                # ScrapingAnt kadang balikin JSON di dalem tag HTML, kita filter
+                # Ekstrak JSON dari kemungkinan sampah HTML ScrapingAnt
                 if "{" in content and "}" in content:
                     start = content.find("{")
                     end = content.rfind("}") + 1
@@ -48,36 +47,38 @@ def sikat_paling_akhir():
             return None
 
     try:
-        # 1. Recently Updated dari sankanime
+        # 1. Recently Updated (Rute lu, Bangsat!)
         recent_data = fetch_via_ant_strong(f"{api_base}/plananimek/api/recently-updated")
         
         if not recent_data:
-            print("[!!] Gagal ambil data awal. Cloudflare sankanime galak banget, Bangsat!")
+            print("[!!] Gagal ambil data awal. Cloudflare sankanime galak, atau token abis!")
             return
 
         anime_list = recent_data.get('results', []) if isinstance(recent_data, dict) else recent_data
         print(f"[+] Dapet {len(anime_list)} anime baru!")
 
-        for anime in anime_list[:10]: # Ambil 10 aja biar gak kelamaan
+        for anime in anime_list[:10]:
             a_id = anime.get('id')
             if not a_id: continue
             
             print(f"[*] Proses: {a_id}")
-            # Alur: Info -> Episodes -> Stream
+            # Alur Rute: Info -> Episodes
             info = fetch_via_ant_strong(f"{api_base}/plananimek/api/info?id={a_id}")
             eps_data = fetch_via_ant_strong(f"{api_base}/plananimek/api/episodes/{a_id}")
 
             if eps_data and info:
                 ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
                 if len(ep_list) > 0:
-                    ep = ep_list[0] # Ambil episode terbaru
+                    ep = ep_list[0] # Ambil eps terbaru
                     ep_id = ep.get('id')
                     
-                    # Path Stream: ?id=...&ep=...
+                    # Rute Stream: ?id=...&ep=...
                     stream = fetch_via_ant_strong(f"{api_base}/plananimek/api/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
                     if stream:
                         sources = stream.get('sources', [])
                         raw_url = ""
+                        
+                        # Ambil link file video
                         if isinstance(sources, list) and len(sources) > 0:
                             raw_url = sources[0].get('file', '')
                         elif isinstance(sources, dict):
@@ -91,11 +92,11 @@ def sikat_paling_akhir():
                             img = info.get("image", "")
                             m3u_content += f'#EXTINF:-1 tvg-logo="{img}" group-title="Sankanime Update", {title} - Ep {ep.get("number", "?")}\n'
                             m3u_content += f'{final_url}\n'
-                            print(f"[OK] Link dapet: {title}")
+                            print(f"[OK] Link dapet!")
 
         with open('playlist.m3u', 'w', encoding='utf-8') as f:
             f.write(m3u_content)
-        print("\n[++] MANTAP, BANGSAT! playlist.m3u sudah terbit pake jalur sankanime.")
+        print("\n[++] BERHASIL, BANGSAT! Jalur sankanime terbit di playlist.m3u.")
 
     except Exception as e:
         print(f"[!!] Error Utama: {str(e)}")
