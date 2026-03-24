@@ -1,4 +1,4 @@
-name: Sikat Playlist Anime WARP Fix
+name: Sikat Playlist Anime WARP
 
 on:
   workflow_dispatch: 
@@ -18,7 +18,6 @@ jobs:
       with:
         python-version: '3.10'
 
-    # PASANG WARP MANUAL, JANGAN PAKE LIBRARY ANJING TADI
     - name: Install & Connect Cloudflare WARP
       run: |
         curl -fsSl https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
@@ -28,7 +27,7 @@ jobs:
         warp-cli --accept-tos mode proxy
         warp-cli --accept-tos connect
         sleep 10
-        curl -s https://www.cloudflare.com | grep ip # Cek apakah IP udah ganti
+        curl -s -x socks5://127.0.0.1:40000 https://www.cloudflare.com | grep ip
 
     - name: Install Dependencies
       run: |
