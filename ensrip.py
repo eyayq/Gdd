@@ -49,7 +49,7 @@ def sikat_paling_akhir():
 
     try:
         # 1. Recently Updated dari sankanime
-        recent_data = fetch_via_ant_strong(f"{api_base}/recently-updated")
+        recent_data = fetch_via_ant_strong(f"{api_base}/plananimek/api/recently-updated")
         
         if not recent_data:
             print("[!!] Gagal ambil data awal. Cloudflare sankanime galak banget, Bangsat!")
@@ -64,8 +64,8 @@ def sikat_paling_akhir():
             
             print(f"[*] Proses: {a_id}")
             # Alur: Info -> Episodes -> Stream
-            info = fetch_via_ant_strong(f"{api_base}/info?id={a_id}")
-            eps_data = fetch_via_ant_strong(f"{api_base}/episodes/{a_id}")
+            info = fetch_via_ant_strong(f"{api_base}/plananimek/api/info?id={a_id}")
+            eps_data = fetch_via_ant_strong(f"{api_base}/plananimek/api/episodes/{a_id}")
 
             if eps_data and info:
                 ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
@@ -74,7 +74,7 @@ def sikat_paling_akhir():
                     ep_id = ep.get('id')
                     
                     # Path Stream: ?id=...&ep=...
-                    stream = fetch_via_ant_strong(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
+                    stream = fetch_via_ant_strong(f"{api_base}/plananimek/api/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
                     if stream:
                         sources = stream.get('sources', [])
                         raw_url = ""
