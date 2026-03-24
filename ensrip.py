@@ -8,7 +8,7 @@ def sikat_paling_akhir():
     ANT_API_KEY = "cf489396ecea4f10ad119710edae3847"
     
     # WEB TARGET ASLI: sankanime.com
-    target_web = "https://sankanime.comhome"
+    target_web = "https://sankanime.com/home"
     api_base = "https://www.sankavollerei.com"
     
     m3u_content = "#EXTM3U\n"
