@@ -7,7 +7,7 @@ import playwright_stealth
 
 def sikat_paling_akhir():
     # TEMPEL COOKIE cf_clearance LU DI SINI, BANGSAT!
-    MY_CF_CLEARANCE = "k7IQEGlJ2z9_6d50bUhF_DanN8ozWxqG8sAXUC.XKCQ-1774306425-1.2.1.1-HbmKetnAvTzMc6Nilm_kR5yRdQXnl6i3d.ut4rKsrsHYd2egrJiEnTqEGlV_pcC_dcyJkTAX_NombkvP9YEuUoNm65WBTrLamoug2ZrAnA0N2uCF.5Ao6elxzklh4n1dcGLUzY.pVQNG7J_qt6ijJVgS186jx.iM.HENLzrK8gvaXx855u5B9_LhUul988vtEXUmuCwKmtzX5.j2QRfwqEeutia0lDlz2yYm5Q2JOjU" 
+    MY_CF_CLEARANCE = "LOIXKx0k0M8XOxmM1UY7brPxazeYiMTD_KGbQsrqy4Q-1774311384-1.2.1.1-oq2rYMvHRV.waVuM7AG.Ch9dOjgO67RBGrGLfiQeY8Xwjl3XLAoF2IwaDkz29XIMJSVNvPAsHoIK.yNqtVL9tyuY9g7B1g9gDsmTtITBieeusp4jDaTtHTJz1C2fAOGskfs5_LV_pTiLMxXjHtr4zpA9kuGz3JI.rZtfzR5yrN6BQ0CI92C2n6gC5_mYbLSTmb2N7FupkP1ssjMBU95.ACQA2fWn7IbV_QFmJPTYE4w" 
     
     with sync_playwright() as p:
         is_headless = os.getenv("GITHUB_ACTIONS") == "true"
