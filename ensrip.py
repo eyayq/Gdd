@@ -1,89 +1,99 @@
 import json
 import requests
-import re
+import os
 from urllib.parse import unquote, quote
 
 def sikat_paling_akhir():
-    # API KEY LU, BANGSAT!
+    # API KEY LU, JANGAN SAMPE MATI, BANGSAT!
     ANT_API_KEY = "cf489396ecea4f10ad119710edae3847"
     
-    # TARGET WEB ASLI
-    target_web = "https://sankanime.com"
-    api_base = "https://www.sankavollerei.com"
+    # RUTE ASLI (plananimek/api) & REFERER sankanime.com
+    api_base = "https://www.sankavollerei.com/plananimek/api"
+    referer_web = "https://sankanime.com"
     
     m3u_content = "#EXTM3U\n"
 
-    def fetch_via_ant(url):
+    def fetch_via_ant_strong(target_url):
         try:
-            # FORMAT URL YANG BENER-BENER BERSIH, BANGSAT!
-            target_encoded = quote(url)
-            # Pake /v2/general biar ScrapingAnt tau arahnya
-            full_url = f"https://api.scrapingant.com{target_encoded}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
+            # FORMAT URL YANG BENER, JANGAN DICAMPUR-ADUK LAGI!
+            ant_base = "https://api.scrapingant.com/v2/general"
+            encoded_target = quote(target_url, safe='')
+            # Susun parameter satu-satu biar gak typo
+            full_url = f"{ant_base}?url={encoded_target}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
             
-            print(f"[*] Sikat via ScrapingAnt: {url}")
+            print(f"[*] Sikat API: {target_url}")
             
-            # Tambahin header Ant-Referer biar dikira akses manual
-            headers = {"Ant-Referer": "https://sankanime.com"}
+            headers = {
+                "Ant-Referer": f"{referer_web}/",
+                "Ant-Origin": referer_web
+            }
+            
             r = requests.get(full_url, headers=headers, timeout=90)
             
             if r.status_code == 200:
-                return r.text
-            print(f"[!!] Status: {r.status_code} untuk {url}")
+                content = r.text.strip()
+                # Ekstrak JSON dari kemungkinan sampah HTML ScrapingAnt
+                if "{" in content and "}" in content:
+                    start = content.find("{")
+                    end = content.rfind("}") + 1
+                    return json.loads(content[start:end])
+                return r.json()
+            
+            print(f"[!!] Status: {r.status_code} untuk {target_url}")
             return None
         except Exception as e:
-            print(f"[!!] Error Koneksi: {str(e)}")
+            print(f"[!!] Error: {str(e)}")
             return None
 
     try:
-        # 1. Sikat Halaman Depan
-        html = fetch_via_ant(target_web)
-        if not html:
-            print("[!!] Gagal nembus Cloudflare sankanime, Bangsat!")
+        # 1. Recently Updated (Rute lu, Bangsat!)
+        recent_data = fetch_via_ant_strong(f"{api_base}/recently-updated")
+        
+        if not recent_data:
+            print("[!!] Gagal ambil data awal. Cek token atau path!")
             return
 
-        # 2. CARI ID ANIME (Biasanya di link /id/ atau di JSON script)
-        # Sankanime sering pake pola href="/id/anime-slug"
-        anime_ids = re.findall(r'href="/id/([^"]+)"', html)
-        if not anime_ids:
-            # Cari cadangan di JSON script tag
-            anime_ids = re.findall(r'"id":"([^"]+)"', html)
+        anime_list = recent_data.get('results', []) if isinstance(recent_data, dict) else recent_data
+        print(f"[+] Dapet {len(anime_list)} anime baru!")
+
+        for anime in anime_list[:10]:
+            a_id = anime.get('id')
+            if not a_id: continue
             
-        anime_ids = list(dict.fromkeys(anime_ids))
+            print(f"[*] Proses: {a_id}")
+            # Info & Episodes
+            info = fetch_via_ant_strong(f"{api_base}/info?id={a_id}")
+            eps_data = fetch_via_ant_strong(f"{api_base}/episodes/{a_id}")
 
-        if not anime_ids:
-            print("[!!] Zonk! Gak ketemu ID anime di HTML Sankanime.")
-            return
-
-        print(f"[+] Dapet {len(anime_ids)} ID Anime. Sikat link video!")
-
-        for a_id in anime_ids[:10]:
-            print(f"[*] Proses ID: {a_id}")
-            # Tembak API Stream (Gue pake path /plananimek/api/ yang lu kasih tadi)
-            stream_url = f"{api_base}/stream?id={a_id}&server=hd-1"
-            
-            stream_raw = fetch_via_ant(stream_url)
-            if stream_raw:
-                try:
-                    # Ambil JSON-nya aja
-                    start = stream_raw.find("{")
-                    end = stream_raw.rfind("}") + 1
-                    data = json.loads(stream_raw[start:end])
+            if eps_data and info:
+                ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
+                if len(ep_list) > 0:
+                    ep = ep_list[0] # Ambil eps terbaru
+                    ep_id = ep.get('id')
                     
-                    sources = data.get('sources', [])
-                    # Link video biasanya di sources[0]['file'] atau sources['file']
-                    raw_url = sources[0].get('file', '') if isinstance(sources, list) and sources else data.get('sources', {}).get('file', '')
-                    
-                    if raw_url:
-                        # Bersihkan proxy srx kalau ada
-                        final_url = unquote(raw_url.split('proxy?url=')[-1]) if 'proxy?url=' in raw_url else raw_url
-                        m3u_content += f'#EXTINF:-1, {a_id}\n{final_url}\n'
-                        print(f"[OK] Link dapet!")
-                except:
-                    continue
+                    # Stream Link: ?id=...&ep=...
+                    stream = fetch_via_ant_strong(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
+                    if stream:
+                        sources = stream.get('sources', [])
+                        raw_url = ""
+                        if isinstance(sources, list) and len(sources) > 0:
+                            raw_url = sources[0].get('file', '')
+                        elif isinstance(sources, dict):
+                            raw_url = sources.get('file', '')
+
+                        if raw_url:
+                            # Bersihkan link proxy srx
+                            final_url = unquote(raw_url.split('proxy?url=')[1]) if 'proxy?url=' in raw_url else raw_url
+                            
+                            title = info.get("title", "No Title")
+                            img = info.get("image", "")
+                            m3u_content += f'#EXTINF:-1 tvg-logo="{img}" group-title="Update", {title} - Ep {ep.get("number", "?")}\n'
+                            m3u_content += f'{final_url}\n'
+                            print(f"[OK] Link dapet!")
 
         with open('playlist.m3u', 'w', encoding='utf-8') as f:
             f.write(m3u_content)
-        print("\n[++] BERHASIL, BANGSAT! File playlist.m3u sudah terbit.")
+        print("\n[++] BERHASIL, BANGSAT! Jalur sankanime terbit di playlist.m3u.")
 
     except Exception as e:
         print(f"[!!] Error Utama: {str(e)}")
