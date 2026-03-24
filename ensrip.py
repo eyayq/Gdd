@@ -12,7 +12,9 @@ m3u = "#EXTM3U\n"
 
 
 def fetch(url):
+
     try:
+
         ant = "https://api.scrapingant.com/v2/general"
         target = quote(url, safe='')
 
@@ -58,7 +60,7 @@ def main():
     recent = fetch(f"{API_BASE}/plananimek/api/recently-updated")
 
     if not recent:
-        print("gagal ambil data anime")
+        print("gagal ambil data")
         return
 
     anime_list = recent.get("results", []) if isinstance(recent, dict) else recent
@@ -67,7 +69,16 @@ def main():
 
     for anime in anime_list:
 
-        a_id = anime.get("id")
+        # FIX ERROR STRING
+        if isinstance(anime, dict):
+            a_id = anime.get("id")
+
+        elif isinstance(anime, str):
+            a_id = anime
+
+        else:
+            continue
+
         if not a_id:
             continue
 
@@ -119,9 +130,7 @@ def main():
             else:
                 final = raw
 
-            m3u += (
-                f'#EXTINF:-1 tvg-logo="{logo}" group-title="{title}",{title} - Episode {number}\n'
-            )
+            m3u += f'#EXTINF:-1 tvg-logo="{logo}" group-title="{title}",{title} - Episode {number}\n'
             m3u += f"{final}\n"
 
             print("STREAM OK")
