@@ -4,7 +4,7 @@ from urllib.parse import unquote, quote
 
 def sikat_paling_akhir():
     # LINK WEB APP GOOGLE SCRIPT LU, BANGSAT!
-    GAS_URL = "ISI_LINK_WEB_APP_GOOGLE_LU_DI_SINI"
+    GAS_URL = "https://script.google.com/macros/s/AKfycbzztiV_yazv8BXB7mz4mKaX0OIWCYv8o4MWPGAoxS3Qc3CuvwYCwID8GJvRlUqrhOus/exec"
     
     api_base = "https://www.sankavollerei.com"
     m3u_content = "#EXTM3U\n"
