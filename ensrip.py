@@ -7,7 +7,7 @@ def sikat_paling_akhir():
     # API KEY LU, JANGAN SAMPE MATI, BANGSAT!
     ANT_API_KEY = "cf489396ecea4f10ad119710edae3847"
     
-    # RUTE ASLI (plananimek/api) & REFERER sankanime.com
+    # RUTE ASLI (Gue tambahin / di akhir api_base biar aman)
     api_base = "https://www.sankavollerei.com"
     referer_web = "https://sankanime.com"
     
@@ -15,13 +15,11 @@ def sikat_paling_akhir():
 
     def fetch_via_ant_strong(target_url):
         try:
-            # FORMAT URL YANG BENER, JANGAN DICAMPUR-ADUK LAGI!
+            print(f"[*] Sikat API: {target_url}")
             ant_base = "https://api.scrapingant.com/v2/general"
             encoded_target = quote(target_url, safe='')
-            # Susun parameter satu-satu biar gak typo
+            # Tambahin browser=true biar bypass Cloudflare Sankanime
             full_url = f"{ant_base}?url={encoded_target}&x-api-key={ANT_API_KEY}&browser=true&proxy_type=residential"
-            
-            print(f"[*] Sikat API: {target_url}")
             
             headers = {
                 "Ant-Referer": f"{referer_web}/",
@@ -32,7 +30,6 @@ def sikat_paling_akhir():
             
             if r.status_code == 200:
                 content = r.text.strip()
-                # Ekstrak JSON dari kemungkinan sampah HTML ScrapingAnt
                 if "{" in content and "}" in content:
                     start = content.find("{")
                     end = content.rfind("}") + 1
@@ -46,11 +43,11 @@ def sikat_paling_akhir():
             return None
 
     try:
-        # 1. Recently Updated (Rute lu, Bangsat!)
-        recent_data = fetch_via_ant_strong(f"{api_base}/plananimek/api/recently-updated")
+        # 1. Recently Updated
+        recent_data = fetch_via_ant_strong(f"{api_base}/recently-updated")
         
         if not recent_data:
-            print("[!!] Gagal ambil data awal. Cek token atau path!")
+            print("[!!] Gagal ambil data awal. Cek token atau rute!")
             return
 
         anime_list = recent_data.get('results', []) if isinstance(recent_data, dict) else recent_data
@@ -61,21 +58,23 @@ def sikat_paling_akhir():
             if not a_id: continue
             
             print(f"[*] Proses: {a_id}")
-            # Info & Episodes
-            info = fetch_via_ant_strong(f"{api_base}plananimek/api/info?id={a_id}")
-            eps_data = fetch_via_ant_strong(f"{api_base}/plananimek/api/episodes/{a_id}")
+            # FIX TYPO ROUTE DI SINI, BANGSAT!
+            info = fetch_via_ant_strong(f"{api_base}/info?id={a_id}")
+            eps_data = fetch_via_ant_strong(f"{api_base}/episodes/{a_id}")
 
             if eps_data and info:
+                # Pastikan eps_data itu list
                 ep_list = eps_data if isinstance(eps_data, list) else [eps_data]
                 if len(ep_list) > 0:
-                    ep = ep_list[0] # Ambil eps terbaru
+                    ep = ep_list[0] # Ambil eps terbaru (index 0)
                     ep_id = ep.get('id')
                     
-                    # Stream Link: ?id=...&ep=...
-                    stream = fetch_via_ant_strong(f"{api_base}/plananimek/api/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
+                    # Stream Link: id & ep
+                    stream = fetch_via_ant_strong(f"{api_base}/stream?id={a_id}&ep={ep_id}&server=hd-1&type=sub")
                     if stream:
                         sources = stream.get('sources', [])
                         raw_url = ""
+                        
                         if isinstance(sources, list) and len(sources) > 0:
                             raw_url = sources[0].get('file', '')
                         elif isinstance(sources, dict):
@@ -93,7 +92,7 @@ def sikat_paling_akhir():
 
         with open('playlist.m3u', 'w', encoding='utf-8') as f:
             f.write(m3u_content)
-        print("\n[++] BERHASIL, BANGSAT! Jalur sankanime terbit di playlist.m3u.")
+        print("\n[++] BERHASIL, BANGSAT! playlist.m3u sudah terbit.")
 
     except Exception as e:
         print(f"[!!] Error Utama: {str(e)}")
