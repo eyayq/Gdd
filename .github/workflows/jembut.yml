@@ -1,4 +1,4 @@
-name: Sikat Playlist Anime WARP
+name: Sikat Playlist Anime WARP Fix
 
 on:
   workflow_dispatch: 
@@ -18,11 +18,17 @@ jobs:
       with:
         python-version: '3.10'
 
-    # INI KUNCINYA, BANGSAT! PASANG WARP BIAR IP BERSIH
-    - name: Set up WARP
-      uses: fscarmen/warp-on-actions@v1.1
-      with:
-        stack: ipv4 # Pakai IPv4 biar standar
+    # PASANG WARP MANUAL, JANGAN PAKE LIBRARY ANJING TADI
+    - name: Install & Connect Cloudflare WARP
+      run: |
+        curl -fsSl https://pkg.cloudflareclient.com | sudo gpg --yes --dearmor --output /usr/share/keyrings/cloudflare-warp-archive-keyring.gpg
+        echo "deb [arch=amd64 signed-by=/usr/share/keyrings/cloudflare-warp-archive-keyring.gpg] https://pkg.cloudflareclient.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/cloudflare-client.list
+        sudo apt-get update && sudo apt-get install cloudflare-warp -y
+        warp-cli --accept-tos registration new
+        warp-cli --accept-tos mode proxy
+        warp-cli --accept-tos connect
+        sleep 10
+        curl -s https://www.cloudflare.com | grep ip # Cek apakah IP udah ganti
 
     - name: Install Dependencies
       run: |
@@ -40,5 +46,5 @@ jobs:
         git config --local user.email "github-actions[bot]@users.noreply.github.com"
         git config --local user.name "github-actions[bot]"
         git add playlist.m3u
-        git commit -m "Auto Update Playlist with WARP" || echo "No changes"
+        git commit -m "Auto Update Playlist with WARP Fix" || echo "No changes"
         git push
