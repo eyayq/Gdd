@@ -24,6 +24,7 @@ jobs:
         pip install playwright playwright-stealth
         playwright install chromium
         playwright install-deps chromium
+        pip install cloudscraper
 
     - name: Run Script
       run: |
