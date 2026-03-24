@@ -18,7 +18,7 @@ def sikat_paling_akhir():
     try:
         print("[*] Sikat Recently Updated...")
         # GANTI PATH NYA JANGAN TYPO LAGI, BANGSAT! (/plananimek/api/)
-        r = scraper.get(f"{api_base}/recently-updated", timeout=30)
+        r = scraper.get(f"{api_base}/planimek/api/recently-updated", timeout=30)
         
         if r.status_code != 200:
             print(f"[!!] Gagal Total! Status: {r.status_code}. IP Github diblokir permanen.")
