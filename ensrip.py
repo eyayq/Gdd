@@ -52,7 +52,7 @@ def sikat_paling_akhir():
                 return None
 
             # 2. Tarik Recently Updated (Pake Path Lengkap)
-            recent_data = get_json_safe(f"{api_base}plananimek/api/recently-updated")
+            recent_data = get_json_safe(f"{api_base}/plananimek/api/recently-updated")
             
             if not recent_data:
                 print("[!!] Github Gagal nembus CF sendirian. IP-nya beneran di-block!")
