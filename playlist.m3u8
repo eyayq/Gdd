@@ -1,183 +1,21 @@
 #EXTM3U
-#EXTINF:-1 tvg-id="donasi" tvg-name="Donasi" tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="Update V4: [11.59 WIB 25/10/26]",Donasi server playlist iptv v4 https://trakteer.id/mybhianesse0 dana ovo gopay 085795119808
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
 https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 1",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb10.m3u8?auth_key=1792925641-0-0-198f7635ac5a6b2a3722db2a2f977601
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 2",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912142_lsd.m3u8?auth_key=1792907646-0-0-1cd68cc9c944a81a7f854a68d8df724b
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 3",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 3 (SVR-BHNS 3)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912142_lhd.m3u8?auth_key=1792907646-0-0-bc326985ee447e96569e96aa6cd82b95
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 4",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 4 (SVR-BHNS 4)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-627718_lsd.m3u8?auth_key=1792907646-0-0-a61bebc7cb8e7dea8ddf268a9180968e
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 5",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 5 (SVR-BHNS 5)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-627718_lhd.m3u8?auth_key=1792907646-0-0-873bb06350a50eda451a9ed8c6ec8110
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 6",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 6 (SVR-BHNS 6)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912119_lsd.m3u8?auth_key=1792907646-0-0-54c5f0e920e5a3e50f30e5ffb9303ae3
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 7",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 7 (SVR-BHNS 7)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912119_lhd.m3u8?auth_key=1792907646-0-0-538e09f1e5c051d8cf415b9b1c9c07cf
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 8",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 8 (SVR-BHNS 8)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912091_lsd.m3u8?auth_key=1792907646-0-0-626ccc6747f406d663c8eb7eaa8120a5
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 9",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 9 (SVR-BHNS 9)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912091_lhd.m3u8?auth_key=1792907646-0-0-5ac3e83a64bf855b7439cc43d18dfc14
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 10",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 10 (SVR-BHNS 10)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-9912041_lsd.m3u8?txSecret=1c81db4959535d9ce5d902c6e3f26116&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 11",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 11 (SVR-BHNS 11)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-9912041_lhd.m3u8?txSecret=940194b044eedce9494a7e500724a468&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 12",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 12 (SVR-BHNS 12)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-536185_lsd.m3u8?auth_key=1792907646-0-0-e977dbb8fe628384367dc1ec33433d4a
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/pumas-unam-d0b145.png" group-title="[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 13",[LIVE 10:10 WIB 25/10/26] Pumas U.N.A.M. vs Tigres UANL | Server 13 (SVR-BHNS 13)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-536185_lhd.m3u8?auth_key=1792907646-0-0-3e388826c504e3c251e29b6daa512f0f
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/viamaterras-miyazaki-women-52e81e.png" group-title="[LIVE 10:30 WIB 25/10/26] Viamaterras Miyazaki Women vs Orca Kamogawa FC | Server 1",[LIVE 10:30 WIB 25/10/26] Viamaterras Miyazaki Women vs Orca Kamogawa FC | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb14.m3u8?auth_key=1792925641-0-0-21fd1c805b4ec47854ea940706350cb5
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/okayama-yunogo-belle-women-9ccde1.jpg" group-title="[LIVE 10:30 WIB 25/10/26] Okayama Yunogo Belle Women vs NGU Nagoya Women | Server 1",[LIVE 10:30 WIB 25/10/26] Okayama Yunogo Belle Women vs NGU Nagoya Women | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb13.m3u8?auth_key=1792925641-0-0-93bd880e180bb38bd16beb030653db9b
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/as-harima-albion-women-dc119e.png" group-title="[LIVE 10:30 WIB 25/10/26] AS Harima ALBION Women vs Yokohama FC Seagulls Women | Server 1",[LIVE 10:30 WIB 25/10/26] AS Harima ALBION Women vs Yokohama FC Seagulls Women | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb16.m3u8?auth_key=1792925582-0-0-9dc3a0c69c6fa925eebca8a8bbe1c25e
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/shizuoka-sangyo-university-women-605d75.png" group-title="[LIVE 10:30 WIB 25/10/26] Shizuoka Sangyo University Women vs VONDS Ichihara (W) | Server 1",[LIVE 10:30 WIB 25/10/26] Shizuoka Sangyo University Women vs VONDS Ichihara (W) | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb12.m3u8?auth_key=1792925641-0-0-c6c4a416a428bf43e18d23b156db42ae
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/ehime-fc-women-a3ce74.png" group-title="[LIVE 10:30 WIB 25/10/26] Ehime FC Women vs Setagaya SfidWomen | Server 1",[LIVE 10:30 WIB 25/10/26] Ehime FC Women vs Setagaya SfidWomen | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb17.m3u8?auth_key=1792925641-0-0-c5f5baf57582ac1b417eec19067b661a
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/gainare-tottori-686ebe.webp" group-title="[LIVE 10:30 WIB 25/10/26] Gainare Tottori vs Kochi United | Server 1",[LIVE 10:30 WIB 25/10/26] Gainare Tottori vs Kochi United | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb1e.m3u8?auth_key=1792925641-0-0-a85a1c5294736354427997ea67258ffa
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/roasso-kumamoto-3c3472.webp" group-title="[LIVE 10:30 WIB 25/10/26] Roasso Kumamoto vs FC Gifu | Server 1",[LIVE 10:30 WIB 25/10/26] Roasso Kumamoto vs FC Gifu | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb1f.m3u8?auth_key=1792925641-0-0-d2bcc44392524a1475130e817487a3bc
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/cairns-taipans-ba3456.webp" group-title="[LIVE 11:00 WIB 25/10/26] Cairns Taipans vs New Zealand Breakers | Server 1",[LIVE 11:00 WIB 25/10/26] Cairns Taipans vs New Zealand Breakers | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-558264_lsd.m3u8?txSecret=e7b862b3e4a2a34245ea76d8276c6f18&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/cairns-taipans-ba3456.webp" group-title="[LIVE 11:00 WIB 25/10/26] Cairns Taipans vs New Zealand Breakers | Server 2",[LIVE 11:00 WIB 25/10/26] Cairns Taipans vs New Zealand Breakers | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-558264_lhd.m3u8?txSecret=4bde76d4ff39240c345156f25757a0e6&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 1",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/sla/1-6abd2b0f5d732f70fce7cb11.m3u8?auth_key=1792925641-0-0-d1ecac71865f0bba0f0fea1d4ae96ca5
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 2",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-414317_lsd.m3u8?txSecret=5050aec437187f3661ae46f7770b99d5&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 3",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 3 (SVR-BHNS 3)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-414317_lhd.m3u8?txSecret=5b6d4212394cbdfaeaf0362cf2c0136b&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 4",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 4 (SVR-BHNS 4)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912144_lsd.m3u8?auth_key=1792907646-0-0-0b67b15a7212a71786570d00957eb171
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 5",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 5 (SVR-BHNS 5)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912144_lhd.m3u8?auth_key=1792907646-0-0-1bb3b0da52ba1397fbc18ac064993f22
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 6",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 6 (SVR-BHNS 6)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-622240_lsd.m3u8?auth_key=1792907646-0-0-f8eef5a8fa859dc9d0919b119930de97
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 7",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 7 (SVR-BHNS 7)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-622240_lhd.m3u8?auth_key=1792907646-0-0-37c8ef7bf7a870d28a79e2c59b1ce3bc
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 8",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 8 (SVR-BHNS 8)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-387694_lsd.m3u8?txSecret=61d08d768e1b0928423879e49fa8ecab&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 9",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 9 (SVR-BHNS 9)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-387694_lhd.m3u8?txSecret=46a3284f3f0006ae670f0f75708d906e&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 10",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 10 (SVR-BHNS 10)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912141_lsd.m3u8?auth_key=1792907646-0-0-852795ec8c8a15619788525f6311e7ae
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 11",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 11 (SVR-BHNS 11)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912141_lhd.m3u8?auth_key=1792907646-0-0-697ddfb9c5370376c723ed7facebe783
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 12",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 12 (SVR-BHNS 12)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-9912122_lsd.m3u8?txSecret=3aab7668867da0f53a13c7252a94cbda&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-fc-76e85f.webp" group-title="[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 13",[LIVE 11:00 WIB 25/10/26] Sydney FC vs Adelaide United | Server 13 (SVR-BHNS 13)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-9912122_lhd.m3u8?txSecret=7f4c18508b3733a2cd2fe43c9230e02a&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/south-coast-wolves-44aacd.png" group-title="[LIVE 11:00 WIB 25/10/26] South Coast Wolves vs South Hobart | Server 1",[LIVE 11:00 WIB 25/10/26] South Coast Wolves vs South Hobart | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-501412_lsd.m3u8?txSecret=987ef52f730f2fd2a0231784313503df&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/south-coast-wolves-44aacd.png" group-title="[LIVE 11:00 WIB 25/10/26] South Coast Wolves vs South Hobart | Server 2",[LIVE 11:00 WIB 25/10/26] South Coast Wolves vs South Hobart | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-501412_lhd.m3u8?txSecret=8e032573fe2cc7115a504b52d8b908a7&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-olympic-5c67e9.png" group-title="[LIVE 11:00 WIB 25/10/26] Sydney Olympic vs Bayswater City | Server 1",[LIVE 11:00 WIB 25/10/26] Sydney Olympic vs Bayswater City | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-623743_lsd.m3u8?auth_key=1792907646-0-0-e17cc1070aae685375c90ffa8a590813
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/sydney-olympic-5c67e9.png" group-title="[LIVE 11:00 WIB 25/10/26] Sydney Olympic vs Bayswater City | Server 2",[LIVE 11:00 WIB 25/10/26] Sydney Olympic vs Bayswater City | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-623743_lhd.m3u8?auth_key=1792907646-0-0-a785919034c60bca06f7181956021364
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/suwon-football-club-405c91.png" group-title="[LIVE 11:30 WIB 25/10/26] Suwon Football Club vs Chungnam Asan | Server 1",[LIVE 11:30 WIB 25/10/26] Suwon Football Club vs Chungnam Asan | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/143.0.0.0 Safari/537.36
-https://pull.fmp.live/bcdn_token=QA0Gykzw6ikvSjvRIlA2MYB2MIE_n6Z_AtMohMW3D8w&token_path=%2Fsla%2F&expires=1779040502/sla/1-69e8e984c0f96c63aa85a7fd.m3u8
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 1",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-235232_lsd.m3u8?auth_key=1792907646-0-0-41f193f6e503a30b6d96e44e1866ce85
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 2",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-235232_lhd.m3u8?auth_key=1792907646-0-0-53406d99f186df57371bd3dc1cdd4691
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 3",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 3 (SVR-BHNS 3)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912128_lsd.m3u8?auth_key=1792907646-0-0-e6fe26b010fd24128d0096942d701fe1
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 4",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 4 (SVR-BHNS 4)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912128_lhd.m3u8?auth_key=1792907646-0-0-a200c4cc56a52065934297fe7dbb4519
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 5",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 5 (SVR-BHNS 5)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-582342_lsd.m3u8?auth_key=1792907646-0-0-763cbbc31fa9dfd7e144c574f05e4021
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 6",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 6 (SVR-BHNS 6)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-582342_lhd.m3u8?auth_key=1792907646-0-0-3ec7aee35c97aa8fec94b383e60b3871
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 7",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 7 (SVR-BHNS 7)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-552832_lsd.m3u8?auth_key=1792907646-0-0-c9e9c7ca4b7f1400d5826ac2c0317f1e
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 8",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 8 (SVR-BHNS 8)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-552832_lhd.m3u8?auth_key=1792907646-0-0-7b7848f1eb7fb84ff0f95b2c1a8a6887
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 9",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 9 (SVR-BHNS 9)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-9912129_lsd.m3u8?txSecret=ad4b9a1d2911446e4ac0ec249622cdfe&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 10",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 10 (SVR-BHNS 10)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niur.live/live/stream-9912129_lhd.m3u8?txSecret=b895245241b1a8e3eb38a3f531f10a65&txTime=6adddfce
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 11",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 11 (SVR-BHNS 11)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912009_lsd.m3u8?auth_key=1792907646-0-0-2cb8244084a554a3277d140572c3363a
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/nagoya-grampus-c1c087.webp" group-title="[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 12",[LIVE 12:00 WIB 25/10/26] Nagoya Grampus vs Yokohama F. Marinos | Server 12 (SVR-BHNS 12)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912009_lhd.m3u8?auth_key=1792907646-0-0-27263f860c8d22575c7fbc48f0162fc9
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/kataller-toyama-ba1dd5.webp" group-title="[LIVE 12:00 WIB 25/10/26] Kataller Toyama vs Hokkaido Consadole Sapporo | Server 1",[LIVE 12:00 WIB 25/10/26] Kataller Toyama vs Hokkaido Consadole Sapporo | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-603914_lsd.m3u8?auth_key=1792907646-0-0-e958afd2fa18acf93cc67eec8b475c65
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/kataller-toyama-ba1dd5.webp" group-title="[LIVE 12:00 WIB 25/10/26] Kataller Toyama vs Hokkaido Consadole Sapporo | Server 2",[LIVE 12:00 WIB 25/10/26] Kataller Toyama vs Hokkaido Consadole Sapporo | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-603914_lhd.m3u8?auth_key=1792907646-0-0-7a91c8976f0de50ba05c54acc98f60aa
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/albirex-niigata-5b4587.png" group-title="[LIVE 12:00 WIB 25/10/26] Albirex Niigata vs Vegalta Sendai | Server 1",[LIVE 12:00 WIB 25/10/26] Albirex Niigata vs Vegalta Sendai | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-620504_lsd.m3u8?auth_key=1792907646-0-0-1469b3910335362bc2df7d251c6f070a
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/albirex-niigata-5b4587.png" group-title="[LIVE 12:00 WIB 25/10/26] Albirex Niigata vs Vegalta Sendai | Server 2",[LIVE 12:00 WIB 25/10/26] Albirex Niigata vs Vegalta Sendai | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-620504_lhd.m3u8?auth_key=1792907646-0-0-4b24c041f1176645e404d89475342da3
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/anyang-jungkwanjang-dc3ee1.webp" group-title="[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 1",[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 1 (SVR-BHNS 1)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912106_lsd.m3u8?auth_key=1792907646-0-0-40b97628b36c8a93cf6f98b4a894ea54
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/anyang-jungkwanjang-dc3ee1.webp" group-title="[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 2",[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 2 (SVR-BHNS 2)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912106_lhd.m3u8?auth_key=1792907646-0-0-37f7f7fa7e52a59399a7fda4be462c15
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/anyang-jungkwanjang-dc3ee1.webp" group-title="[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 3",[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 3 (SVR-BHNS 3)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912112_lsd.m3u8?auth_key=1792907646-0-0-e1ee095a11fa5d83535243015be8e0e3
-#EXTINF:-1 tvg-logo="https://cdn.1xapi.com/images/teams/anyang-jungkwanjang-dc3ee1.webp" group-title="[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 4",[LIVE 12:00 WIB 25/10/26] Anyang JungKwanJang vs Wonju DB | Server 4 (SVR-BHNS 4)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0.0.0 Safari/537.36
-https://pull.niues.live/live/stream-9912112_lhd.m3u8?auth_key=1792907646-0-0-25aa2129cf9ef3d78b5aa0fca5bdf7f1
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
+#EXTINF:-1 tvg-logo="http://viiip.kitashinsaku.com/0.php" group-title="👰🏻Support Me!👰🏻",👰🏻Support Server Dengan Donasi Agar Tetap Online [12:46:00 WIB]👰🏻
+https://bhns.bhns.workers.dev/?url=http://tvq.tvx.org:80/CC///CC.php
