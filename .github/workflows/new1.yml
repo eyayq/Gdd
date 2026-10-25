@@ -9,7 +9,7 @@ on:
       - main
     paths:
       - 'new.py'
-      - '.github/workflows/new.yml'
+      - '.github/workflows/new1.yml'
 
 jobs:
   merge-and-commit:
