@@ -1,33 +1,23 @@
 #EXTM3U
+#EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2021/04/Wan-Jie-Du-Zun-2026-768x1077.jpg" group-title="Wan Jie Du Zun [Ten Thousand Worlds]",Wan Jie Du Zun [Ten Thousand Worlds] — Wan Jie Du Zun [Ten Thousand Worlds] Episode 495 Indonesia, English Sub
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrjehi.m3u8?sec=5S6GzgtoFYBIhQDba3FqyER0Hzk5YtGw5ugAkFaSVsL23xYQIThD19BbrclltxRz5vL902JjPCr1H2tWlcRnYg&dmTs=278477&dmV1st=48182960B3B4FD5B19D7E1CDB5C0D792
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2023/05/Shrouding-the-Heavens-Arc-768x1077.jpg" group-title="Shrouding the Heavens",Shrouding the Heavens — Shrouding the Heavens Episode 187 Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbrj8ha.m3u8?sec=R2-wpeRcl552d7jJSD0KBhrntMH2Zv6wMheNoaXYgw6HfcBrdlOBE1x0O4ffUHFvfrU5LHo-WNrW6LQKHYuPkw&dmTs=941759&dmV1st=19B3A64DF2CC03AF95C4ECBB7484F1BB
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrj8ha.m3u8?sec=4Qa8EYBKocGYb5GMLsbvqnPFKK04KJRLym1kqS12JSjP8Cw1wvov5TL8A1VeG2pKKWI_vnLbKsp8ickBu24GyA&dmTs=315225&dmV1st=A21DAA874B283A27D33ECDECC530D4BB
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/07/TODG-S10-New.jpg" group-title="Tales of Demons and Gods Season 10",Tales of Demons and Gods Season 10 — Tales of Demons and Gods Season 10 Episode 46 [478] Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbrh3ei.m3u8?sec=eKomVopT-a3cb5jmcGxFHD7Ea1HL2QbOzsWc1_exkIQcNkH_CZ8LYZzEq_38V2pdf5ae5GJ1cW2-Zrq5ROMzyg&dmTs=517178&dmV1st=F4126CB502FD5CC0282C6F96A6E0363A
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrh3ei.m3u8?sec=T5zqdcYnP57iZe3IpzP-ufyonoFYozVtcjt9hiJ35DCzhPUiw2AxiDgQQc9Hz5B93fSplQuSIOFdIxeDm2nVgw&dmTs=106592&dmV1st=CC89C39A0ECC05CD9534DEA292DE4D6B
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2023/02/100.000-qi-04-26.jpg" group-title="100.000 Years of Refining Qi",100.000 Years of Refining Qi — 100.000 Years of Refining Qi Episode 389 Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbrg0e6.m3u8?sec=rZXiH5BWmgZqegy9kNMwRYwBalSUghv-wJA1sThmVX93CJfVngqia881U8I3ji5wR5clPX9qcb-P_2lnACd57w&dmTs=155561&dmV1st=D23503F74E1499D0B9B58D33F61CC0B8
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrg0e6.m3u8?sec=a102QBbpCfDkdY_xOzeiQWtECIRNLXGDfadfWTMBHWjeH30qVhvheRSmvxei1ZuhMcMvCuL-6FoGjPw7u9eLeg&dmTs=577934&dmV1st=C3CB217B94D8B0CE573AE518ECA0433D
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2020/03/Martial-Master-2026-768x1077.jpg" group-title="Martial Master",Martial Master — Martial Master Episode 704 Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbrfsz2.m3u8?sec=HqSgNHEALNkq92lyWYvdBG3qzwt5kforq70CBAqg1o--SxUHuiwUVHd8NvWWi6WaoaI651nPh1eDKqmKEUXOvQ&dmTs=659380&dmV1st=02F4201743C359371B7C90689E86984C
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrfsz2.m3u8?sec=cB-6l5cCmwcrIAKCi490fl-oFQcJ540y2670_7bqzT_9eaXfg8NNojaK8bgIXHoocAx9cOpsmaxANzr3Vz493A&dmTs=646680&dmV1st=F8FC22C399C9A0B3E45A7794BD657FF8
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2021/07/against-the-sky-supreme-768x1077.webp" group-title="Against the Sky Supreme",Against the Sky Supreme — Against the Sky Supreme Episode 561 Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbrb4my.m3u8?sec=mnRKgFsbTPTq7LO5PPM_8Nd3Gmpt9dmhSdwkIRy7ci3yuQCvtnolcTMEE1M6AWhSGn6LrcBBT3oLZEPQspXiPA&dmTs=46761&dmV1st=8627B48B5AE1F93F93D2D2087565017C
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrb4my.m3u8?sec=3IToAddopCsI6q20hyCxuQ7RVw_8UvYvZzzb4sCDmQZVyCI7Q3SmO_duykGqNs-qwGtiwzmojiwuqnZRVnLonw&dmTs=93564&dmV1st=8C43CB3A4A10120D25343C5B601EE5CD
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/02/Swallowed-Star-S5-768x1077.jpg" group-title="Swallowed Star Season 5",Swallowed Star Season 5 — Swallowed Star Season 5 Episode 39 [247] Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbrawhq.m3u8?sec=9z5n6IyOAVZ0iMVLhDZFEQ79XF2SCPoTy70uF-e-YaJwYp84gRB-tjY8joKfiGRJ_F5im8joyHpmk3SGzi3QhQ&dmTs=919812&dmV1st=5E8E7E6687549A510F270FF46EFFC8F6
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbrawhq.m3u8?sec=XIBu9JoubhCas4afgjFSlJmDTnU-YzQM-fRHn9XB_zojnos7l-fVpdxsbM228xtTSAi2WUSocpKsrFNDNqShQA&dmTs=628810&dmV1st=F54A5A4FAAC00D964FA375077BB59D47
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/07/Gu-An.jpg" group-title="Gu An",Gu An — Gu An Episode 15 Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbr87i6.m3u8?sec=b6GXIhl1l6jUNiEV5taaugYM8mRXuHezop7GR-pNWYSETJKZxsDkZbnQtSEqxgTwqvNrxfAx1fDMYDWtvwtdyA&dmTs=117586&dmV1st=908B0B461DB31D419638AA5284EF2C9A
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbr87i6.m3u8?sec=ZUsPLuzsxTO_ImkDiwT2lr3Il_gHafSiNCmQWjoj-wULjFh1nBuWCdddnv4IT2bzBsIW9D-RmRVJI0dWgNlJSg&dmTs=495170&dmV1st=9401282D787642AD1FEBFC2F5D828F74
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2020/05/Supreme-God-Emperor-Subtitle.webp" group-title="Supreme God Emperor",Supreme God Emperor — Supreme God Emperor Episode 652 Indonesia, English Sub
-#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
-https://cdndirector.dailymotion.com/cdn/manifest/video/xbr7uk2.m3u8?sec=f03e5gbAsa87sL6KkV6J84gBZeL4isO05YOzIdXAWeadrhjvP_UtMoCPG3fEIWebRhlmOABxpLwRr_FH5MWWPQ&dmTs=819340&dmV1st=0BEEB27AF82027353F051939D79259F8
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbr7uk2.m3u8?sec=SfJMy_teQTrMoBfOUXAxUMThkkr55iAO17-PKORDdjIL2ApldMA9PgPmwowlMbaqCNb3j0njk45PgtZq3RAJFw&dmTs=654791&dmV1st=849000DF9CD3BDA7280F7C482176C489
+#EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/07/The-Eternal-Supreme-Li-Yun-Xiao-HD-768x1289.jpg" group-title="The Eternal Supreme Li Yunxiao",The Eternal Supreme Li Yunxiao — The Eternal Supreme Li Yunxiao Episode 30 Indonesia, English Sub
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbr7sd6.m3u8?sec=oAVKKWz-rsTjaD0XmtFnf_Bu8_CpMVIPArvgiPq0MlZ8_ZKpv__QpP-9Zfhxt4r_2XtVfomG-EKSqVF7zf41dQ&dmTs=710879&dmV1st=C55BB4A2AC8A508F019D2EE42C7B4F5B
+#EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/08/Under-The-Gate-HD-768x1248.png" group-title="UNDER THE GATE",UNDER THE GATE — UNDER THE GATE Episode 21 Indonesia, English Sub
+https://api.deltax.bond/v1/stream/proxy?url=https://cdndirector.dailymotion.com/cdn/manifest/video/xbr7jpu.m3u8?sec=PIrd2Cm1Wk1l4wWa2XueSc2BUogBV0L3tjLBLsfpxEzlkfgUvigL7JxmnhCO9uaxmhb1fA_LfIPLHqFKkBXC4g&dmTs=477127&dmV1st=F523FAD2793502E0669AB1F2EDFC697F
