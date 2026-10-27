@@ -4,30 +4,146 @@ import re
 import sys
 import time
 import os
+import random
+import json
 from pathlib import Path
 from urllib.parse import quote
 
-# ─── Config (via env vars, default fallback) ─────────────────────────
+# ─── Config (env vars) ───────────────────────────────────────────────
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
 GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO INTERNAL")
-DEFAULT_LOGO = os.environ.get("DEFAULT_LOGO", "")
 TIMEOUT = int(os.environ.get("TIMEOUT", "10"))
-LOGO_DELAY = float(os.environ.get("LOGO_DELAY", "1.0"))
+LOGO_DELAY = float(os.environ.get("LOGO_DELAY", "0.5"))
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
-# ─── Logo Search: Wikipedia API ──────────────────────────────────────
-def find_logo_wikipedia(station_name: str) -> str:
-    """Cari logo dari Wikipedia (pageimage)."""
+# ─── Batch Fetch: Anime Girl GIFs from Wikimedia Commons ─────────────
+def fetch_anime_gif_pool(limit: int = 100) -> list:
+    """
+    Fetch pool of anime/manga girl GIFs from Wikimedia Commons.
+    Returns list of direct GIF URLs.
+    """
+    queries = [
+        "anime girl filemime:image/gif",
+        "anime girl character filemime:image/gif",
+        "manga girl filemime:image/gif",
+        "anime girl chibi filemime:image/gif",
+        "sakura anime filemime:image/gif",
+        "kawaii anime filemime:image/gif",
+        "anime girl waving filemime:image/gif",
+        "anime girl happy filemime:image/gif",
+        "anime girl dance filemime:image/gif",
+        "otaku anime girl filemime:image/gif",
+    ]
+
+    all_files = []
+    seen_titles = set()
+
+    for q in queries:
+        try:
+            resp = requests.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params={
+                    "action": "query",
+                    "generator": "search",
+                    "gsrnamespace": "6",
+                    "gsrsearch": q,
+                    "gsrlimit": str(limit // len(queries)),
+                    "prop": "imageinfo",
+                    "iiprop": "url|mime|size",
+                    "format": "json",
+                },
+                headers={"User-Agent": USER_AGENT},
+                timeout=TIMEOUT,
+            )
+            if resp.status_code != 200:
+                continue
+
+            data = resp.json()
+            pages = data.get("query", {}).get("pages", {})
+            for page in pages.values():
+                title = page.get("title", "")
+                if title in seen_titles:
+                    continue
+                if not title.lower().endswith(".gif"):
+                    continue
+
+                imageinfo = page.get("imageinfo", [{}])[0]
+                url = imageinfo.get("url", "")
+                mime = imageinfo.get("mime", "")
+                size = imageinfo.get("size", 0)
+
+                if mime == "image/gif" and url and size < 5_000_000:  # < 5MB
+                    all_files.append(url)
+                    seen_titles.add(title)
+
+        except Exception as e:
+            print(f"    [Commons] Query '{q}' error: {e}")
+
+    random.shuffle(all_files)
+    print(f"  [Pool] {len(all_files)} anime GIFs loaded from Commons")
+    return all_files
+
+
+# ─── Per-Station Search: DuckDuckGo (type=gif) ───────────────────────
+def find_gif_duckduckgo(station_name: str) -> str:
+    """Cari GIF spesifik untuk station via DuckDuckGo image search."""
     try:
-        # Step 1: Cari artikel
+        # Get vqd token
+        resp = requests.post(
+            "https://duckduckgo.com/",
+            data={"q": f"{station_name} anime girl gif"},
+            headers={"User-Agent": USER_AGENT},
+            timeout=TIMEOUT,
+        )
+        m = re.search(r'vqd=([\d-]+)&', resp.text)
+        if not m:
+            return ""
+
+        # Image search with type=gif
+        img_resp = requests.get(
+            "https://duckduckgo.com/i.js",
+            params={
+                "l": "us-en",
+                "o": "json",
+                "q": f"{station_name} anime girl gif",
+                "vqd": m.group(1),
+                "f": ",,,",
+                "p": "1",
+            },
+            headers={
+                "User-Agent": USER_AGENT,
+                "Referer": "https://duckduckgo.com/",
+                "Accept": "application/json",
+            },
+            timeout=TIMEOUT,
+        )
+        if img_resp.status_code != 200:
+            return ""
+
+        data = img_resp.json()
+        results = data.get("results", [])
+        for r in results:
+            img_url = r.get("image", "")
+            if img_url.lower().endswith(".gif"):
+                return img_url
+
+    except Exception as e:
+        print(f"    [DDG] Error: {e}")
+    return ""
+
+
+# ─── Per-Station Search: Wikipedia (specific) ────────────────────────
+def find_gif_wikipedia(station_name: str) -> str:
+    """Cari GIF spesifik via Wikipedia pageimage (jika ada)."""
+    try:
         search_resp = requests.get(
             "https://en.wikipedia.org/w/api.php",
             params={
                 "action": "query",
                 "list": "search",
                 "srsearch": f"{station_name} radio",
-                "srlimit": "3",
+                "srlimit": "1",
                 "format": "json",
             },
             headers={"User-Agent": USER_AGENT},
@@ -40,7 +156,6 @@ def find_logo_wikipedia(station_name: str) -> str:
         if not results:
             return ""
 
-        # Step 2: Ambil pageimage dari artikel pertama
         title = results[0]["title"]
         img_resp = requests.get(
             "https://en.wikipedia.org/w/api.php",
@@ -60,73 +175,62 @@ def find_logo_wikipedia(station_name: str) -> str:
         pages = img_resp.json().get("query", {}).get("pages", {})
         for page in pages.values():
             original = page.get("original", {}).get("source", "")
-            if original:
+            if original and original.lower().endswith(".gif"):
                 return original
 
-    except Exception as e:
-        print(f"    [WIKI] Error: {e}")
+    except Exception:
+        pass
     return ""
 
 
-# ─── Logo Search: DuckDuckGo Image ───────────────────────────────────
-def find_logo_duckduckgo(station_name: str) -> str:
-    """Cari logo via DuckDuckGo image search: '{name} logo'."""
-    try:
-        # Get vqd token
-        resp = requests.post(
-            "https://duckduckgo.com/",
-            data={"q": f"{station_name} logo"},
-            headers={"User-Agent": USER_AGENT},
-            timeout=TIMEOUT,
-        )
-        m = re.search(r'vqd=([\d-]+)&', resp.text)
-        if not m:
-            return ""
+# ─── Logo Assignment (unique per channel) ────────────────────────────
+def assign_logos(stations: list, gif_pool: list, used_logos: set) -> list:
+    """
+    Assign unique GIF logo to each station.
+    Priority: specific search → pool (guaranteed unique)
+    """
+    pool_idx = 0
 
-        # Image search
-        img_resp = requests.get(
-            "https://duckduckgo.com/i.js",
-            params={
-                "l": "us-en",
-                "o": "json",
-                "q": f"{station_name} logo",
-                "vqd": m.group(1),
-                "f": ",,,",
-                "p": "1",
-            },
-            headers={
-                "User-Agent": USER_AGENT,
-                "Referer": "https://duckduckgo.com/",
-                "Accept": "application/json",
-            },
-            timeout=TIMEOUT,
-        )
-        if img_resp.status_code != 200:
-            return ""
+    for idx, s in enumerate(stations, 1):
+        s["group_title"] = GROUP_TITLE
 
-        data = img_resp.json()
-        results = data.get("results", [])
-        if results:
-            return results[0].get("image", "")
+        if s.get("tvg_logo") and s["tvg_logo"].lower().endswith(".gif"):
+            # Sudah punya GIF, skip
+            used_logos.add(s["tvg_logo"])
+            continue
 
-    except Exception as e:
-        print(f"    [DDG] Error: {e}")
-    return ""
+        # Try specific search (fast, 1 request)
+        logo = find_gif_duckduckgo(s["name"])
+        if not logo:
+            logo = find_gif_wikipedia(s["name"])
 
+        # If found but already used, fallback to pool
+        if logo and logo in used_logos:
+            logo = ""
 
-# ─── Combined Logo Finder ────────────────────────────────────────────
-def find_logo(station_name: str) -> str:
-    """Cari logo: Wikipedia dulu, fallback DuckDuckGo."""
-    logo = find_logo_wikipedia(station_name)
-    if logo:
-        return logo
-    logo = find_logo_duckduckgo(station_name)
-    return logo
+        # Fallback: assign from pool (guaranteed unique)
+        if not logo:
+            while pool_idx < len(gif_pool) and gif_pool[pool_idx] in used_logos:
+                pool_idx += 1
+            if pool_idx < len(gif_pool):
+                logo = gif_pool[pool_idx]
+                pool_idx += 1
+            else:
+                # Pool exhausted, use last resort
+                logo = "https://commons.wikimedia.org/wiki/Special:FilePath/YukiClip2A.gif"
+
+        s["tvg_logo"] = logo
+        used_logos.add(logo)
+
+        status = "✓ specific" if "specific" in str(logo) else "✓ pool"
+        print(f"  [{idx}/{len(stations)}] {s['name']} → {logo[:70]}")
+        time.sleep(LOGO_DELAY)
+
+    return stations
 
 
 # ─── M3U Parser ──────────────────────────────────────────────────────
 def parse_m3u(content: str) -> list:
-    """Parse M3U content into list of stations."""
     stations = []
     lines = content.strip().splitlines()
     i = 0
@@ -162,29 +266,8 @@ def parse_m3u(content: str) -> list:
     return stations
 
 
-# ─── Enrich Stations ─────────────────────────────────────────────────
-def enrich_stations(stations: list) -> list:
-    """Tambahkan tvg-logo dan group-title."""
-    for idx, s in enumerate(stations, 1):
-        s["group_title"] = GROUP_TITLE
-
-        if not s.get("tvg_logo"):
-            print(f"  [{idx}/{len(stations)}] {s['name']} → mencari logo...")
-            logo = find_logo(s["name"])
-            if logo:
-                s["tvg_logo"] = logo
-                print(f"           ✓ {logo[:80]}")
-            else:
-                s["tvg_logo"] = DEFAULT_LOGO
-                print(f"           ✗ Tidak ditemukan")
-            time.sleep(LOGO_DELAY)
-
-    return stations
-
-
 # ─── Output Writer ───────────────────────────────────────────────────
 def write_m3u(stations: list, output_path: str):
-    """Tulis output M3U."""
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
         f.write("#EXTM3U\n")
@@ -198,19 +281,13 @@ def write_m3u(stations: list, output_path: str):
 
 # ─── Main ────────────────────────────────────────────────────────────
 def main():
-    input_file = INPUT_FILE
-    output_file = OUTPUT_FILE
+    input_file = sys.argv[1] if len(sys.argv) > 1 else INPUT_FILE
+    output_file = sys.argv[2] if len(sys.argv) > 2 else OUTPUT_FILE
 
-    if len(sys.argv) > 1:
-        input_file = sys.argv[1]
-    if len(sys.argv) > 2:
-        output_file = sys.argv[2]
-
-    print(f"[*] Input: {input_file}")
+    print(f"[*] Input:  {input_file}")
     print(f"[*] Output: {output_file}")
-    print(f"[*] Group: {GROUP_TITLE}")
+    print(f"[*] Group:  {GROUP_TITLE}")
 
-    # Baca file
     if not Path(input_file).exists():
         print(f"[ERROR] File tidak ditemukan: {input_file}")
         sys.exit(1)
@@ -218,7 +295,6 @@ def main():
     with open(input_file, "r", encoding="utf-8") as f:
         content = f.read()
 
-    # Parse
     stations = parse_m3u(content)
     print(f"[*] {len(stations)} stasiun ditemukan")
 
@@ -232,13 +308,18 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # Enrich (cari logo + group-title)
-    print(f"[*] Mencari logo...")
-    unique = enrich_stations(unique)
+    # Step 1: Fetch pool of anime GIFs (batch, cepat)
+    print(f"\n[*] Fetching anime GIF pool...")
+    gif_pool = fetch_anime_gif_pool(limit=100)
 
-    # Tulis output
+    # Step 2: Assign unique logos
+    print(f"\n[*] Assigning unique GIF logos...")
+    used_logos = set()
+    unique = assign_logos(unique, gif_pool, used_logos)
+
+    # Step 3: Write output
     write_m3u(unique, output_file)
 
 
 if __name__ == "__main__":
-    main()   
+    main()   / /
