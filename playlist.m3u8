@@ -1,11 +1,33 @@
 #EXTM3U
+#EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2023/05/Shrouding-the-Heavens-Arc-768x1077.jpg" group-title="Shrouding the Heavens",Shrouding the Heavens — Shrouding the Heavens Episode 187 Indonesia, English Sub
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbrj8ha.m3u8?sec=R2-wpeRcl552d7jJSD0KBhrntMH2Zv6wMheNoaXYgw6HfcBrdlOBE1x0O4ffUHFvfrU5LHo-WNrW6LQKHYuPkw&dmTs=941759&dmV1st=19B3A64DF2CC03AF95C4ECBB7484F1BB
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/07/TODG-S10-New.jpg" group-title="Tales of Demons and Gods Season 10",Tales of Demons and Gods Season 10 — Tales of Demons and Gods Season 10 Episode 46 [478] Indonesia, English Sub
-https://api.deltax.bond/v1/stream/proxy?url=https%3A%2F%2Fcdndirector.dailymotion.com%2Fcdn%2Fmanifest%2Fvideo%2Fxbrh3ei.m3u8%3Fsec%3D89sFwotwIjklEPHbuo_nCrykTdYaWaD5Ljcjpl_d_4h-729hP1Wy0GX0n7pJzveO5OXBGOfgwumPNt5_ThWuiw%26dmTs%3D792653%26dmV1st%3DFDADB97FC258D192CBF36520556459E3
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbrh3ei.m3u8?sec=eKomVopT-a3cb5jmcGxFHD7Ea1HL2QbOzsWc1_exkIQcNkH_CZ8LYZzEq_38V2pdf5ae5GJ1cW2-Zrq5ROMzyg&dmTs=517178&dmV1st=F4126CB502FD5CC0282C6F96A6E0363A
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2023/02/100.000-qi-04-26.jpg" group-title="100.000 Years of Refining Qi",100.000 Years of Refining Qi — 100.000 Years of Refining Qi Episode 389 Indonesia, English Sub
-https://api.deltax.bond/v1/stream/proxy?url=https%3A%2F%2Fcdndirector.dailymotion.com%2Fcdn%2Fmanifest%2Fvideo%2Fxbrg0e6.m3u8%3Fsec%3Ds8vINMOYN7vYMkv1AKeAVho6o-HId9lhg1XVixDckrLbjNQCopT5Lpe52TxX7_sleZezRmN3K-c0CgcXjbnkmw%26dmTs%3D804525%26dmV1st%3DDB352CBA06755D6B1F32C1C1A7466B21
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbrg0e6.m3u8?sec=rZXiH5BWmgZqegy9kNMwRYwBalSUghv-wJA1sThmVX93CJfVngqia881U8I3ji5wR5clPX9qcb-P_2lnACd57w&dmTs=155561&dmV1st=D23503F74E1499D0B9B58D33F61CC0B8
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2020/03/Martial-Master-2026-768x1077.jpg" group-title="Martial Master",Martial Master — Martial Master Episode 704 Indonesia, English Sub
-https://api.deltax.bond/v1/stream/proxy?url=https%3A%2F%2Fcdndirector.dailymotion.com%2Fcdn%2Fmanifest%2Fvideo%2Fxbrfsz2.m3u8%3Fsec%3DcSNiqxJ1KwiVHC6F69akbhEs6O7iuNhSgKbcrnqh6RKpBSjjFJw_DOhScRoobO80GJ5zkGRG6IRcd3sA4DsUGQ%26dmTs%3D486332%26dmV1st%3D22825363C4E073EB5A465F7BA295D633
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbrfsz2.m3u8?sec=HqSgNHEALNkq92lyWYvdBG3qzwt5kforq70CBAqg1o--SxUHuiwUVHd8NvWWi6WaoaI651nPh1eDKqmKEUXOvQ&dmTs=659380&dmV1st=02F4201743C359371B7C90689E86984C
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2021/07/against-the-sky-supreme-768x1077.webp" group-title="Against the Sky Supreme",Against the Sky Supreme — Against the Sky Supreme Episode 561 Indonesia, English Sub
-https://api.deltax.bond/v1/stream/proxy?url=https%3A%2F%2Fcdndirector.dailymotion.com%2Fcdn%2Fmanifest%2Fvideo%2Fxbrb4my.m3u8%3Fsec%3Dfkzq8vdhr1030m9pn1HT_Hn0h4m_dp80CqiJkQKydUNL1NjwgXeN8K3nzxud66BkhJoMJANKH6YemWObJR-gkg%26dmTs%3D853548%26dmV1st%3D8E66E0E5565C9B471B90FA88BEB1137D
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbrb4my.m3u8?sec=mnRKgFsbTPTq7LO5PPM_8Nd3Gmpt9dmhSdwkIRy7ci3yuQCvtnolcTMEE1M6AWhSGn6LrcBBT3oLZEPQspXiPA&dmTs=46761&dmV1st=8627B48B5AE1F93F93D2D2087565017C
 #EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/02/Swallowed-Star-S5-768x1077.jpg" group-title="Swallowed Star Season 5",Swallowed Star Season 5 — Swallowed Star Season 5 Episode 39 [247] Indonesia, English Sub
-https://api.deltax.bond/v1/stream/proxy?url=https%3A%2F%2Fcdndirector.dailymotion.com%2Fcdn%2Fmanifest%2Fvideo%2Fxbrawhq.m3u8%3Fsec%3De-V_L7QF27fvJrdtUnYfCBfqc25Io2y_TGWe4zm_GVhTCJNquMIwRcq7TCNYqlmi57nXjlyVSV_vIRSXX6XibQ%26dmTs%3D145424%26dmV1st%3DA756A5DF329B6A03D35A57F20BADE28F
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbrawhq.m3u8?sec=9z5n6IyOAVZ0iMVLhDZFEQ79XF2SCPoTy70uF-e-YaJwYp84gRB-tjY8joKfiGRJ_F5im8joyHpmk3SGzi3QhQ&dmTs=919812&dmV1st=5E8E7E6687549A510F270FF46EFFC8F6
+#EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2026/07/Gu-An.jpg" group-title="Gu An",Gu An — Gu An Episode 15 Indonesia, English Sub
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbr87i6.m3u8?sec=b6GXIhl1l6jUNiEV5taaugYM8mRXuHezop7GR-pNWYSETJKZxsDkZbnQtSEqxgTwqvNrxfAx1fDMYDWtvwtdyA&dmTs=117586&dmV1st=908B0B461DB31D419638AA5284EF2C9A
+#EXTINF:-1 tvg-logo="https://animexin.dev/wp-content/uploads/2020/05/Supreme-God-Emperor-Subtitle.webp" group-title="Supreme God Emperor",Supreme God Emperor — Supreme God Emperor Episode 652 Indonesia, English Sub
+#EXTVLCOPT:http-referrer=https://www.dailymotion.com/
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0
+https://cdndirector.dailymotion.com/cdn/manifest/video/xbr7uk2.m3u8?sec=f03e5gbAsa87sL6KkV6J84gBZeL4isO05YOzIdXAWeadrhjvP_UtMoCPG3fEIWebRhlmOABxpLwRr_FH5MWWPQ&dmTs=819340&dmV1st=0BEEB27AF82027353F051939D79259F8
