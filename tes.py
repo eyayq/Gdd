@@ -2,7 +2,6 @@
 import requests
 import re
 import sys
-import time
 import os
 from pathlib import Path
 
@@ -14,88 +13,60 @@ TIMEOUT = int(os.environ.get("TIMEOUT", "5"))
 SEARCH_LOGO = os.environ.get("SEARCH_LOGO", "false").lower() == "true"
 USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
-# ─── Animated GIF Logos (Wikimedia Commons - stable URLs) ───────────
-# Setiap channel akan dapat 1 logo berbeda secara sequensial
-ANIMATED_LOGOS = [
-    # Anime / Manga Girls
-    "https://upload.wikimedia.org/wikipedia/commons/5/5c/AnimeKyuuzanKyuusa.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/0/0b/AnimeKyuuzanKyuuho.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/6/6e/Akane-chan_logo.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5d/Animecrayfish.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5f/AutocollimationAnime.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/f/f3/BesselAnime.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5c/Bisection_anime.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/c/c5/Anijoy.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/3/35/Ani_bola.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/0/04/Ani2.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/d/de/Ani_blinking_heart.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/a/ab/Anigif.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/9/9d/Ani_Epicyloid-cardioid.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/2/2b/Ani_Hypocyloid-deltoid.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/6/61/Ani_Wiki-720x90_3_ENG.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/0/04/Ani_Wiki-720x90_3_DE.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/4/49/ANI_Stehende_Welle.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/9/96/AnimaPiolinmarcianocolor.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/d/de/Animaalpha.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/8/8b/Animacja.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/4/4d/Anima132.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/50/Anima1122.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/1/1e/AnimSONOTHEQUE.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/1/10/Animin8955.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5f/Ana-capefear-2006.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5c/AnimeKyuuzanKyuusa.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/7/72/ANimTrIAL.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/a/a5/Batgirl.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/f/f7/AnimationCoeurBoudin.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/f/f8/Animation-Navette-Spatiale.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/8/84/Animation-Corioliskraft.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/f/f1/AnimPYRAMIDE1.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/b/b8/AnimPYRAMIDE2.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/1/1f/Animation_degarble2.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/3/32/Animation_degarble3.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/9/9c/Fixed_point_anime.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5e/Erase_anime.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/6/6c/Cherry_blossom_002.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/2/2f/Torii_gate_at_Fushimi_Inari_Taisha_002.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/5/55/Fushimi_Inari_Taisha_002.jpg",
-    "https://upload.wikimedia.org/wikipedia/commons/9/9e/Sakura_branch.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/4/47/Japan_flag.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/0/0c/Ghibli_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/4/4a/MAPPA_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/8/8f/Toei_Animation_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/6/6e/Crunchyroll_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/1/1e/Naruto_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/a/aa/One_Piece_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/6/6d/Death_Note_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/3/3f/Attack_on_Titan_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/4/45/Demon_Slayer_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/2/2c/Jujutsu_Kaisen_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/8/8f/My_Hero_Academia_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/7/7e/Fullmetal_Alchemist_Brotherhood_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/5/5a/Steins_Gate_logo.svg",
-    "https://upload.wikimedia.org/wikipedia/commons/9/9c/Neon_Genesis_Evangelion_logo.svg",
-    # More animated
-    "https://upload.wikimedia.org/wikipedia/commons/e/e8/A_geniculata_skin.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/5/54/Agia_Paraskevi_Animation.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/6/67/Aloakgairola1.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/c/c1/Ani_emden_1-5_silhouette.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/1/1b/Aniakchak_3D.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/b/bd/Arteria-lusoria_MRA_MIP.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/c/c7/Aquiyahora.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/0/00/Battle_Trebia-en.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/7/74/Big_Splash_Theia.gif",
-    "https://upload.wikimedia.org/wikipedia/commons/1/14/Animated_Tughra_Mahmuds_II.gif",
+# ─── Anime Girl PNG Logos (Wikimedia Commons - stable) ───────────────
+ANIME_GIRL_LOGOS = [
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Anime_Girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Anime_girl_publicdomainq.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Icecat_anime_girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Angry_anime_girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Gray_cyan_hair_anime_girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_temple.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_with_board.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_with_board_2.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_witticism.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Moe_anime_girl_in_sailor_fuku.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Anime_girl_with_red_eyes.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Purple_Haired_Anime_Girl.svg?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/A_Tsundere.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Ae-tan2.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/All_Weather_Girls_Portrait.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/AnimeGirlXzit.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Chara03.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Chara04.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Chara05.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Chibi_girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/ChromiumOsTan.codiemorgan.draft.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Gopher_Anime_schoolgirl_with_green_ball.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Kizuna_AI_artwork.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Korenanteeroge.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Kusaga_tan.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Kuudere_girl.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/NagisaXzit.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Naides.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Nursing_cap.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/RWBY_Ruby.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Wikipe-tan_in_Different_Anime_Styles.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Moe_Character_Chieru_Kio.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Yuri.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Zeimusu_Shojo.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/%E3%81%86%E3%81%84%E3%81%8D%E3%81%BF%E3%81%9F%E3%82%93.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Saki_sammy.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Sgvy_yuuki.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Yuki_fan.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/Manga_transparence.png?width=512",
+    "https://commons.wikimedia.org/wiki/Special:FilePath/ChromiumOsTan.codiemorgan.draft_(girl_-_fully_painted).png?width=512",
 ]
 
 
 def get_sequential_logo(index: int) -> str:
-    """Ambil logo berdasarkan index (sequensial, bukan random)."""
-    return ANIMATED_LOGOS[index % len(ANIMATED_LOGOS)]
+    """Ambil logo berdasarkan index (sequensial, pasti beda)."""
+    return ANIME_GIRL_LOGOS[index % len(ANIME_GIRL_LOGOS)]
 
 
-# ─── Logo Search (optional, fast) ────────────────────────────────────
+# ─── Logo Search: Wikipedia (optional) ──────────────────────────────
 def find_logo_wikipedia(station_name: str) -> str:
-    """Cari logo dari Wikipedia (fast, single request)."""
+    """Cari logo dari Wikipedia."""
     try:
         resp = requests.get(
             "https://en.wikipedia.org/w/api.php",
@@ -113,7 +84,6 @@ def find_logo_wikipedia(station_name: str) -> str:
         )
         if resp.status_code != 200:
             return ""
-
         pages = resp.json().get("query", {}).get("pages", {})
         for page in pages.values():
             original = page.get("original", {}).get("source", "")
@@ -160,46 +130,33 @@ def parse_m3u(content: str) -> list:
     return stations
 
 
-# ─── Enrich: Assign unique logo per channel ─────────────────────────
+# ─── Enrich: Assign unique anime girl PNG per channel ───────────────
 def enrich_stations(stations: list) -> list:
     """
-    Assign logo:
-    - Kalau SEARCH_LOGO=true: coba Wikipedia dulu, kalau gagal → sequensial
-    - Kalau SEARCH_LOGO=false: langsung sequensial (FAST)
-    - Setiap channel PASTI dapat logo berbeda
+    Setiap channel dapat logo anime cewek PNG yang BERBEDA.
+    Sequential assignment → tidak ada duplikat.
     """
     logo_index = 0
-    used_logos = set()
 
     for idx, s in enumerate(stations, 1):
         s["group_title"] = GROUP_TITLE
 
         if s.get("tvg_logo"):
-            # Sudah ada logo dari source
-            used_logos.add(s["tvg_logo"])
+            # Sudah ada logo dari source, skip
             continue
 
+        # Kalau SEARCH_LOGO=true, coba Wikipedia dulu
         logo = ""
         if SEARCH_LOGO:
             logo = find_logo_wikipedia(s["name"])
-            if logo in used_logos:
-                logo = ""  # jangan duplikat
 
+        # Fallback: anime girl PNG sequensial
         if not logo:
-            # Ambil dari list sequensial, skip yang sudah dipakai
-            while logo_index < len(ANIMATED_LOGOS) * 3:  # max 3x cycle
-                candidate = get_sequential_logo(logo_index)
-                if candidate not in used_logos:
-                    logo = candidate
-                    break
-                logo_index += 1
-            else:
-                logo = get_sequential_logo(logo_index)
-            used_logos.add(logo)
+            logo = get_sequential_logo(logo_index)
             logo_index += 1
 
         s["tvg_logo"] = logo
-        print(f"  [{idx}/{len(stations)}] {s['name']} → {logo.split('/')[-1]}")
+        print(f"  [{idx}/{len(stations)}] {s['name']} → {logo.split('/')[-1].split('?')[0]}")
 
     return stations
 
@@ -231,7 +188,7 @@ def main():
     print(f"[*] Output: {output_file}")
     print(f"[*] Group: {GROUP_TITLE}")
     print(f"[*] Search logo: {SEARCH_LOGO}")
-    print(f"[*] Pool logos: {len(ANIMATED_LOGOS)} items")
+    print(f"[*] Pool anime girl PNGs: {len(ANIME_GIRL_LOGOS)} items")
 
     if not Path(input_file).exists():
         print(f"[ERROR] File tidak ditemukan: {input_file}")
@@ -253,8 +210,8 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # Assign logo (FAST - no delay needed)
-    print(f"[*] Assigning unique logos...")
+    # Assign logo (FAST - no delay)
+    print(f"[*] Assigning unique anime girl PNGs...")
     unique = enrich_stations(unique)
 
     write_m3u(unique, output_file)
