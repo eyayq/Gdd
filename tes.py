@@ -3,14 +3,18 @@ import requests
 import re
 import sys
 import os
+import time
 from pathlib import Path
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 # ─── Config ──────────────────────────────────────────────────────────
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
 GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO INTERNAL")
-TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
-USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
+TIMEOUT = int(os.environ.get("TIMEOUT", "8"))
+STREAM_TIMEOUT = int(os.environ.get("STREAM_TIMEOUT", "6"))
+MAX_WORKERS = int(os.environ.get("MAX_WORKERS", "20"))
+USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
 
 # Kategori Wikimedia Commons untuk anime girl PNG
 COMMONS_CATEGORIES = [
@@ -32,20 +36,15 @@ COMMONS_CATEGORIES = [
 ]
 
 
+# ─── Fetch Anime Girl PNGs from Commons ──────────────────────────────
 def fetch_anime_girl_pngs(count: int = 160) -> list:
-    """
-    Fetch anime girl PNG URLs dari Wikimedia Commons API.
-    Gabungkan dari beberapa kategori, filter hanya PNG, ambil direct URL.
-    """
     all_files = []
     seen = set()
 
     for category in COMMONS_CATEGORIES:
         if len(all_files) >= count:
             break
-
         try:
-            # Step 1: Get file list from category
             resp = requests.get(
                 "https://commons.wikimedia.org/w/api.php",
                 params={
@@ -63,18 +62,10 @@ def fetch_anime_girl_pngs(count: int = 160) -> list:
                 continue
 
             members = resp.json().get("query", {}).get("categorymembers", [])
-
-            # Filter PNG files only
-            png_files = [
-                m["title"] for m in members
-                if m["title"].lower().endswith(".png")
-            ]
-
+            png_files = [m["title"] for m in members if m["title"].lower().endswith(".png")]
             if not png_files:
                 continue
 
-            # Step 2: Get direct URLs for these files (batch)
-            # API allows max 50 titles per request
             for i in range(0, len(png_files), 50):
                 batch = png_files[i:i+50]
                 url_resp = requests.get(
@@ -84,7 +75,7 @@ def fetch_anime_girl_pngs(count: int = 160) -> list:
                         "titles": "|".join(batch),
                         "prop": "imageinfo",
                         "iiprop": "url|mime|size",
-                        "iiurlwidth": "256",  # thumbnail 256px (kecil & cepat)
+                        "iiurlwidth": "256",
                         "format": "json",
                     },
                     headers={"User-Agent": USER_AGENT},
@@ -98,26 +89,66 @@ def fetch_anime_girl_pngs(count: int = 160) -> list:
                     if "imageinfo" not in page:
                         continue
                     info = page["imageinfo"][0]
-                    # Hanya yang MIME = image/png dan ukuran reasonable
                     if info.get("mime") != "image/png":
                         continue
-                    if info.get("width", 0) > 5000:  # skip yang terlalu besar
+                    if info.get("width", 0) > 5000:
                         continue
-
-                    # Pakai thumbnail URL (256px) — lebih ringan
                     thumb_url = info.get("thumburl", info.get("url", ""))
                     if thumb_url and thumb_url not in seen:
                         seen.add(thumb_url)
                         all_files.append(thumb_url)
-
                     if len(all_files) >= count:
                         break
-
-        except Exception as e:
-            print(f"  [WARN] Category {category}: {e}")
+        except Exception:
             continue
 
     return all_files[:count]
+
+
+# ─── Check Stream Active (PARALLEL) ─────────────────────────────────
+def check_stream(url: str) -> bool:
+    """
+    Cek apakah stream masih aktif.
+    Pakai GET + stream=True (tidak download seluruh content).
+    Status 2xx/3xx = aktif, selain itu = tidak aktif.
+    """
+    try:
+        r = requests.get(
+            url,
+            stream=True,
+            timeout=STREAM_TIMEOUT,
+            headers={"User-Agent": USER_AGENT},
+            allow_redirects=True,
+        )
+        r.close()
+        return r.status_code < 400
+    except Exception:
+        return False
+
+
+def check_all_streams(stations: list, max_workers: int = 20) -> list:
+    """Cek semua stream secara parallel, return list dengan field 'active'."""
+    print(f"[*] Checking {len(stations)} streams (parallel, {max_workers} workers)...")
+
+    # Submit semua ke thread pool
+    with ThreadPoolExecutor(max_workers=max_workers) as pool:
+        future_to_idx = {
+            pool.submit(check_stream, s["url"]): idx
+            for idx, s in enumerate(stations)
+        }
+
+        for future in as_completed(future_to_idx):
+            idx = future_to_idx[future]
+            try:
+                stations[idx]["active"] = future.result()
+            except Exception:
+                stations[idx]["active"] = False
+
+    # Hitung
+    active_count = sum(1 for s in stations if s["active"])
+    inactive_count = len(stations) - active_count
+    print(f"    ✓ {active_count} aktif | ✗ {inactive_count} tidak aktif")
+    return stations
 
 
 # ─── M3U Parser ──────────────────────────────────────────────────────
@@ -156,26 +187,33 @@ def parse_m3u(content: str) -> list:
     return stations
 
 
-# ─── Enrich: Assign unique logo per channel ─────────────────────────
+# ─── Enrich: Assign logo + mark inactive ─────────────────────────────
 def enrich_stations(stations: list, logos: list) -> list:
-    """Assign logo secara sequensial — setiap channel PASTI beda."""
+    """Assign logo sequensial + tandai nama dengan ##tidak aktif##."""
     logo_index = 0
 
     for idx, s in enumerate(stations, 1):
         s["group_title"] = GROUP_TITLE
 
-        if s.get("tvg_logo"):
-            continue  # sudah ada logo dari source
-
-        if logo_index < len(logos):
+        # Assign logo
+        if not s.get("tvg_logo") and logo_index < len(logos):
             s["tvg_logo"] = logos[logo_index]
             logo_index += 1
-        else:
-            s["tvg_logo"] = ""  # tidak ada logo lagi
 
-        print(f"  [{idx}/{len(stations)}] {s['name']} → logo #{logo_index}")
+        # Tandai stream tidak aktif
+        if not s.get("active", True):
+            s["name"] = f"{s['name']} ##tidak aktif##"
+            s["group_title"] = "TIDAK AKTIF"
 
     return stations
+
+
+# ─── Sort: Aktif di atas, Tidak Aktif di bawah ──────────────────────
+def sort_stations(stations: list) -> list:
+    """Stream aktif di atas, tidak aktif di bawah."""
+    active = [s for s in stations if s.get("active", True)]
+    inactive = [s for s in stations if not s.get("active", True)]
+    return active + inactive
 
 
 # ─── Output Writer ───────────────────────────────────────────────────
@@ -186,7 +224,8 @@ def write_m3u(stations: list, output_path: str):
         for s in stations:
             logo = s.get("tvg_logo", "")
             logo_attr = f' tvg-logo="{logo}"' if logo else ""
-            f.write(f'#EXTINF:-1{logo_attr} group-title="{GROUP_TITLE}",{s["name"]}\n')
+            group = s.get("group_title", GROUP_TITLE)
+            f.write(f'#EXTINF:-1{logo_attr} group-title="{group}",{s["name"]}\n')
             f.write(f'{s["url"]}\n')
     print(f"\n[OK] {len(stations)} stations → {output_path}")
 
@@ -225,19 +264,21 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # Fetch 160+ anime girl PNG dari Commons API
+    # Cek stream aktif (PARALLEL)
+    unique = check_all_streams(unique, max_workers=MAX_WORKERS)
+
+    # Fetch logo
     print(f"[*] Fetching anime girl PNGs dari Wikimedia Commons...")
     logos = fetch_anime_girl_pngs(count=160)
     print(f"[*] {len(logos)} logo berhasil diambil")
 
-    if not logos:
-        print("[ERROR] Tidak ada logo yang berhasil diambil!")
-        sys.exit(1)
-
-    # Assign logo
-    print(f"[*] Assigning unique logos...")
+    # Assign logo + tandai tidak aktif
     unique = enrich_stations(unique, logos)
 
+    # Sort: aktif di atas, tidak aktif di bawah
+    unique = sort_stations(unique)
+
+    # Tulis output
     write_m3u(unique, output_file)
 
 
