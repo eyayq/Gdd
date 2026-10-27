@@ -9,89 +9,115 @@ from pathlib import Path
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
 GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO INTERNAL")
-TIMEOUT = int(os.environ.get("TIMEOUT", "5"))
-SEARCH_LOGO = os.environ.get("SEARCH_LOGO", "false").lower() == "true"
-USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
+USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
 
-# ─── Anime Girl PNG Logos (Wikimedia Commons - stable) ───────────────
-ANIME_GIRL_LOGOS = [
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Anime_Girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Anime_girl_publicdomainq.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Icecat_anime_girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Angry_anime_girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Gray_cyan_hair_anime_girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_temple.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_with_board.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_with_board_2.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Red_suit_anime_girl_witticism.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Moe_anime_girl_in_sailor_fuku.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Anime_girl_with_red_eyes.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Purple_Haired_Anime_Girl.svg?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/A_Tsundere.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Ae-tan2.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/All_Weather_Girls_Portrait.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/AnimeGirlXzit.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Chara03.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Chara04.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Chara05.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Chibi_girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/ChromiumOsTan.codiemorgan.draft.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Gopher_Anime_schoolgirl_with_green_ball.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Kizuna_AI_artwork.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Korenanteeroge.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Kusaga_tan.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Kuudere_girl.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/NagisaXzit.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Naides.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Nursing_cap.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/RWBY_Ruby.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Wikipe-tan_in_Different_Anime_Styles.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Moe_Character_Chieru_Kio.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Yuri.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Zeimusu_Shojo.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/%E3%81%86%E3%81%84%E3%81%8D%E3%81%BF%E3%81%9F%E3%82%93.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Saki_sammy.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Sgvy_yuuki.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Yuki_fan.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/Manga_transparence.png?width=512",
-    "https://commons.wikimedia.org/wiki/Special:FilePath/ChromiumOsTan.codiemorgan.draft_(girl_-_fully_painted).png?width=512",
+# Kategori Wikimedia Commons untuk anime girl PNG
+COMMONS_CATEGORIES = [
+    "Category:Girls in anime and manga",
+    "Category:Anime illustrations",
+    "Category:Faces of women in anime and manga",
+    "Category:Anime",
+    "Category:Magical girl",
+    "Category:Anime characters",
+    "Category:Manga characters",
+    "Category:Idol (music)",
+    "Category:Vocaloid",
+    "Category:VTuber",
+    "Category:Chibi",
+    "Category:Moe",
+    "Category:Sailor uniforms",
+    "Category:Schoolgirl",
+    "Category:Japanese animation",
 ]
 
 
-def get_sequential_logo(index: int) -> str:
-    """Ambil logo berdasarkan index (sequensial, pasti beda)."""
-    return ANIME_GIRL_LOGOS[index % len(ANIME_GIRL_LOGOS)]
+def fetch_anime_girl_pngs(count: int = 160) -> list:
+    """
+    Fetch anime girl PNG URLs dari Wikimedia Commons API.
+    Gabungkan dari beberapa kategori, filter hanya PNG, ambil direct URL.
+    """
+    all_files = []
+    seen = set()
 
+    for category in COMMONS_CATEGORIES:
+        if len(all_files) >= count:
+            break
 
-# ─── Logo Search: Wikipedia (optional) ──────────────────────────────
-def find_logo_wikipedia(station_name: str) -> str:
-    """Cari logo dari Wikipedia."""
-    try:
-        resp = requests.get(
-            "https://en.wikipedia.org/w/api.php",
-            params={
-                "action": "query",
-                "list": "search",
-                "srsearch": f"{station_name} radio",
-                "srlimit": "1",
-                "format": "json",
-                "prop": "pageimages",
-                "piprop": "original",
-            },
-            headers={"User-Agent": USER_AGENT},
-            timeout=TIMEOUT,
-        )
-        if resp.status_code != 200:
-            return ""
-        pages = resp.json().get("query", {}).get("pages", {})
-        for page in pages.values():
-            original = page.get("original", {}).get("source", "")
-            if original:
-                return original
-    except Exception:
-        pass
-    return ""
+        try:
+            # Step 1: Get file list from category
+            resp = requests.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params={
+                    "action": "query",
+                    "list": "categorymembers",
+                    "cmtitle": category,
+                    "cmtype": "file",
+                    "cmlimit": "100",
+                    "format": "json",
+                },
+                headers={"User-Agent": USER_AGENT},
+                timeout=TIMEOUT,
+            )
+            if resp.status_code != 200:
+                continue
+
+            members = resp.json().get("query", {}).get("categorymembers", [])
+
+            # Filter PNG files only
+            png_files = [
+                m["title"] for m in members
+                if m["title"].lower().endswith(".png")
+            ]
+
+            if not png_files:
+                continue
+
+            # Step 2: Get direct URLs for these files (batch)
+            # API allows max 50 titles per request
+            for i in range(0, len(png_files), 50):
+                batch = png_files[i:i+50]
+                url_resp = requests.get(
+                    "https://commons.wikimedia.org/w/api.php",
+                    params={
+                        "action": "query",
+                        "titles": "|".join(batch),
+                        "prop": "imageinfo",
+                        "iiprop": "url|mime|size",
+                        "iiurlwidth": "256",  # thumbnail 256px (kecil & cepat)
+                        "format": "json",
+                    },
+                    headers={"User-Agent": USER_AGENT},
+                    timeout=TIMEOUT,
+                )
+                if url_resp.status_code != 200:
+                    continue
+
+                pages = url_resp.json().get("query", {}).get("pages", {})
+                for page in pages.values():
+                    if "imageinfo" not in page:
+                        continue
+                    info = page["imageinfo"][0]
+                    # Hanya yang MIME = image/png dan ukuran reasonable
+                    if info.get("mime") != "image/png":
+                        continue
+                    if info.get("width", 0) > 5000:  # skip yang terlalu besar
+                        continue
+
+                    # Pakai thumbnail URL (256px) — lebih ringan
+                    thumb_url = info.get("thumburl", info.get("url", ""))
+                    if thumb_url and thumb_url not in seen:
+                        seen.add(thumb_url)
+                        all_files.append(thumb_url)
+
+                    if len(all_files) >= count:
+                        break
+
+        except Exception as e:
+            print(f"  [WARN] Category {category}: {e}")
+            continue
+
+    return all_files[:count]
 
 
 # ─── M3U Parser ──────────────────────────────────────────────────────
@@ -130,33 +156,24 @@ def parse_m3u(content: str) -> list:
     return stations
 
 
-# ─── Enrich: Assign unique anime girl PNG per channel ───────────────
-def enrich_stations(stations: list) -> list:
-    """
-    Setiap channel dapat logo anime cewek PNG yang BERBEDA.
-    Sequential assignment → tidak ada duplikat.
-    """
+# ─── Enrich: Assign unique logo per channel ─────────────────────────
+def enrich_stations(stations: list, logos: list) -> list:
+    """Assign logo secara sequensial — setiap channel PASTI beda."""
     logo_index = 0
 
     for idx, s in enumerate(stations, 1):
         s["group_title"] = GROUP_TITLE
 
         if s.get("tvg_logo"):
-            # Sudah ada logo dari source, skip
-            continue
+            continue  # sudah ada logo dari source
 
-        # Kalau SEARCH_LOGO=true, coba Wikipedia dulu
-        logo = ""
-        if SEARCH_LOGO:
-            logo = find_logo_wikipedia(s["name"])
-
-        # Fallback: anime girl PNG sequensial
-        if not logo:
-            logo = get_sequential_logo(logo_index)
+        if logo_index < len(logos):
+            s["tvg_logo"] = logos[logo_index]
             logo_index += 1
+        else:
+            s["tvg_logo"] = ""  # tidak ada logo lagi
 
-        s["tvg_logo"] = logo
-        print(f"  [{idx}/{len(stations)}] {s['name']} → {logo.split('/')[-1].split('?')[0]}")
+        print(f"  [{idx}/{len(stations)}] {s['name']} → logo #{logo_index}")
 
     return stations
 
@@ -187,8 +204,6 @@ def main():
     print(f"[*] Input: {input_file}")
     print(f"[*] Output: {output_file}")
     print(f"[*] Group: {GROUP_TITLE}")
-    print(f"[*] Search logo: {SEARCH_LOGO}")
-    print(f"[*] Pool anime girl PNGs: {len(ANIME_GIRL_LOGOS)} items")
 
     if not Path(input_file).exists():
         print(f"[ERROR] File tidak ditemukan: {input_file}")
@@ -210,9 +225,18 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # Assign logo (FAST - no delay)
-    print(f"[*] Assigning unique anime girl PNGs...")
-    unique = enrich_stations(unique)
+    # Fetch 160+ anime girl PNG dari Commons API
+    print(f"[*] Fetching anime girl PNGs dari Wikimedia Commons...")
+    logos = fetch_anime_girl_pngs(count=160)
+    print(f"[*] {len(logos)} logo berhasil diambil")
+
+    if not logos:
+        print("[ERROR] Tidak ada logo yang berhasil diambil!")
+        sys.exit(1)
+
+    # Assign logo
+    print(f"[*] Assigning unique logos...")
+    unique = enrich_stations(unique, logos)
 
     write_m3u(unique, output_file)
 
