@@ -1,105 +1,548 @@
 #EXTM3U
-#EXTINF:-1,VocaloPlus! Vocaloid & More
-https://stream.zeno.fm/h77s0pfrcseuv
-#EXTINF:-1,www.AiMoChi.cf
-https://stream.zeno.fm/4k6b13s8et5tv
-#EXTM3U
-#EXTINF:-1,Vocaloplus
-http://play.isla.ovh/vocaloplus
-#EXTM3U
-#EXTINF:-1,Chifuru ! ななひら/Nanahira
-https://chiafuru.fun/stream/nanahira-releases@256
-#EXTM3U
-#EXTINF:-1,Miku Hatsune
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/e2/Chara03.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",DANA OVO GOPAY 085795119808 
+https://bhns.bhns.workers.dev/?url=http://0.now1.tv:80/CC///CC.php
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ahegao_by_Kira_I.png/330px-Ahegao_by_Kira_I.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Miku Hatsune
 https://stream.zeno.fm/0qmy834zm7zuv
-#EXTM3U
-#EXTINF:-1,Miku Space Radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/2Chibi.png/330px-2Chibi.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",VocaloPlus! Vocaloid & More
+https://stream.zeno.fm/h77s0pfrcseuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/2_Chibi_hair_and_color.png/330px-2_Chibi_hair_and_color.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",www.AiMoChi.cf
+https://stream.zeno.fm/4k6b13s8et5tv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/A_Tsundere.png/330px-A_Tsundere.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Vocaloplus
+http://play.isla.ovh/vocaloplus
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ae-tan2.png/330px-Ae-tan2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Chifuru ! ななひら/Nanahira
+https://chiafuru.fun/stream/nanahira-releases@256
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/All_Weather_Girls_Portrait.png/330px-All_Weather_Girls_Portrait.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Miku Space Radio
 https://stream.zeno.fm/9vey2o1ky9mvv
-#EXTM3U
-#EXTINF:-1,Modern Vocaloid Radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Angry_anime_girl.png/330px-Angry_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Modern Vocaloid Radio
 https://stream.zeno.fm/ghsmgkaevkstv
-#EXTM3U
-#EXTINF:-1,Vocaloid Radio
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1f/AnimeGirlXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",Vocaloid Radio
 https://vocaloid.radioca.st/stream
-#EXTM3U
-#EXTINF:-1,Radio Wanda FM Vocaloid
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Anime_Verdolaga.png/330px-Anime_Verdolaga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Radio Wanda FM Vocaloid
 https://stream.zeno.fm/mrd9572cd4ktv
-#EXTM3U
-#EXTINF:-1,For prep and review of Holy
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Anime_girl_publicdomainq.png/330px-Anime_girl_publicdomainq.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",For prep and review of Holy
 https://stream.zeno.fm/jpnfkqtehiiuv
-#EXTM3U
-#EXTINF:-1,Kobo FM
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Anime_video_frame.png/330px-Anime_video_frame.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Kobo FM
 https://stream.zeno.fm/3tgiqle0bdpvv
-#EXTM3U
-#EXTINF:-1,RadioDoki
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Austro-Hungarian_officer_anime.png/330px-Austro-Hungarian_officer_anime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",RadioDoki
 https://kuronegai.radioca.st/stream
-#EXTM3U
-#EXTINF:-1,Vocaloid
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Banner_speciale_Lucca_C%26G08.png/330px-Banner_speciale_Lucca_C%26G08.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Vocaloid
 https://stream.zeno.fm/typtfbad508uv
-#EXTM3U
-#EXTINF:-1,Vocaloid by New
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Banner_speciale_Lucca_C%26G08_%28girl%29.png/330px-Banner_speciale_Lucca_C%26G08_%28girl%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Vocaloid by New
 https://stream.zeno.fm/lagvkkuks1lvv
-#EXTM3U
-#EXTINF:-1,Vocaloid Nostalgia
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Bupuro-chan.png/330px-Bupuro-chan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Vocaloid Nostalgia
 https://stream.zeno.fm/lz76plut0fwuv
-#EXTM3U
-#EXTINF:-1,Volcaloid2
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Bupuro-chan_development_stage_4.png/330px-Bupuro-chan_development_stage_4.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Volcaloid2
 https://stream.zeno.fm/f8bqguf6bvtuv
-#EXTM3U
-#EXTINF:-1,Vocaloid ru
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/CRYSTAL.png/330px-CRYSTAL.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Vocaloid ru
 https://stream.zeno.fm/3hbymgzq1qvvv
-#EXTM3U
-#EXTINF:-1,Sprite HoloRadio
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/8/88/Chara01.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",Sprite HoloRadio
 https://stream.zeno.fm/2yu68unk7s8uv
-#EXTM3U
-#EXTINF:-1,Vocaloid AR
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/3b/Chara02.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",Vocaloid AR
 https://stream.zeno.fm/qff0x4wyd5zuv
-#EXTM3U
-#EXTINF:-1,Vocaloid Radio on mikupa
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/e2/Chara03.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",Vocaloid Radio on mikupa
 https://aska.ru-hoster.com:8093/mikuparu
-#EXTM3U
-#EXTINF:-1,IA Radio
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",IA Radio
 https://stream02.pcradio.biz/IA-med
-#EXTM3U
-#EXTINF:-1,DDBY Radio
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/7/70/Chara05.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",DDBY Radio
 https://stream02.pcradio.biz/DDBY-med
-#EXTM3U
-#EXTINF:-1,幻想乡电台Gensokyo Radio
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/d/d3/Chibi_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",幻想乡电台Gensokyo Radio
 https://stream.gensokyoradio.net/2/
-#EXTM3U
-#EXTINF:-1,DoujinStyle Radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/ChromiumOsTan.codiemorgan.draft.png/330px-ChromiumOsTan.codiemorgan.draft.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",DoujinStyle Radio
 https://streams.radio.co/s5ff57669c/listen
-#EXTM3U
-#EXTINF:-1,Asian World Radio Latina ( anime manga kpop vocaloid )
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/f/f7/ChromiumOsTan.codiemorgan.draft_%28girl_-_fully_painted%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",Asian World Radio Latina ( anime manga kpop vocaloid )
 https://stream.zeno.fm/37hmxgfgzs8uv
-#EXTM3U
-#EXTINF:-1,Phate Radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Cusco_Drawgirl.png/330px-Cusco_Drawgirl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Phate Radio
 https://stream.phate.io/phateio.ogg
-#EXTM3U
-#EXTINF:-1,ABW-Radio
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/4c/Cute_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",ABW-Radio
 https://stream.laut.fm/abw-radio
-#EXTM3U
-#EXTINF:-1,shadowfr69
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Dibujo-20-2.png/330px-Dibujo-20-2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",shadowfr69
 https://radio.shadowfr69.eu/lossless
-#EXTM3U
-#EXTINF:-1,Vocaloid Radio VRX (dead)
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Digital_sketch_using_an_iPad.png/330px-Digital_sketch_using_an_iPad.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Vocaloid Radio VRX (dead)
 https://vrx.piro.moe/stream-192
-#EXTM3U
-#EXTINF:-1,Neuro 21 Radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Dojikko.png/330px-Dojikko.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Neuro 21 Radio
 https://radio.twinskaraoke.com/listen/neuro_21/radio.mp3
-#EXTM3U
-#EXTINF:-1,Milraji Interactive Live Channel (MILCpod)
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Dojikko2.3_Inkscape.png/330px-Dojikko2.3_Inkscape.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Milraji Interactive Live Channel (MILCpod)
 https://radio.milradio.info:9000/milcpod.m3u8
-#EXTM3U
-#EXTINF:-1,Miku Radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Dojikko2.3_batik.png/330px-Dojikko2.3_batik.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Miku Radio
 https://miku.fm/listen/miku/mp3-128
-#EXTM3U
-#EXTINF:-1,Miku FM
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Dojikko2.3_librsvg.png/330px-Dojikko2.3_librsvg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",Miku FM
 https://miku.fm/listen/miku/mp3-320
-#EXTM3U
-#EXTINF:-1,A Radio for ACG & others
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Dojikko2.3_rendersvg.png/330px-Dojikko2.3_rendersvg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="ANIME VOCALOID",A Radio for ACG & others
 https://hkradio.myaddr.io/listen/new_radio/radio.mp3
-#EXTM3U
-#EXTINF:-1,A Radio for OST
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/65/Ekisai-tanXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="ANIME VOCALOID",A Radio for OST
 https://hkradio.myaddr.io/listen/a_radio_for_ost/radio.aac
 #EXTM3U
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/2_Chibi_hair_and_color.png/330px-2_Chibi_hair_and_color.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Princess Kawaii Anime
+https://stream.zeno.fm/cfkr6vdd5zhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/2Chibi.png/330px-2Chibi.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",ANIMAXVTUBER RADIO FM
+https://stream.zeno.fm/hd004xxt3a0uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/A_Tsundere.png/330px-A_Tsundere.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Morioh-cho Radio
+https://stream.zeno.fm/wznmoqnsimetv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ae-tan2.png/330px-Ae-tan2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",AnimeRave - Hardcore Radio
+https://stream.zeno.fm/aidejjdc0qcvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ahegao_by_Kira_I.png/330px-Ahegao_by_Kira_I.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime op
+https://stream.zeno.fm/xv1ga5kxmc9uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/All_Weather_Girls_Portrait.png/330px-All_Weather_Girls_Portrait.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio AnimeX
+https://live.radioanimex.com/listen/radioanimex/radio.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Angry_anime_girl.png/330px-Angry_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animu FM
+https://stream.animu.moe/320
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1f/AnimeGirlXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",M.T radio
+http://mtradio.asuscomm.com:8000/;
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Anime_Verdolaga.png/330px-Anime_Verdolaga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Radio & Music • Anime Tracks (http)
+http://69.162.124.26:8004/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Anime_girl_publicdomainq.png/330px-Anime_girl_publicdomainq.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Anime Stream
+https://radioanime.radioca.st/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Anime_video_frame.png/330px-Anime_video_frame.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Neverland
+https://stream.zeno.fm/oaqigxpfjzqvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Austro-Hungarian_officer_anime.png/330px-Austro-Hungarian_officer_anime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",EnerGeek Radio
+https://stream.zeno.fm/knxfmm50df9uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Banner_speciale_Lucca_C%26G08.png/330px-Banner_speciale_Lucca_C%26G08.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animecol Radio (Main)
+https://listen.radioexpresolatino.com/animecol
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Banner_speciale_Lucca_C%26G08_%28girl%29.png/330px-Banner_speciale_Lucca_C%26G08_%28girl%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Shikon No Tama Radio
+https://stream.zeno.fm/whehxaqutvduv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Bupuro-chan.png/330px-Bupuro-chan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Аниме Таверна Anime Tavern - радио онлайн.
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/744084
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Bupuro-chan_development_stage_4.png/330px-Bupuro-chan_development_stage_4.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Yggdrasil Radio 2
+https://stream.rcast.net/70702
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/CRYSTAL.png/330px-CRYSTAL.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Yggdrasil Radio
+http://radio.shirayuki.org:9200/
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/8/88/Chara01.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Weeb Anime Radio
+https://stream.zeno.fm/2d764zgh2uhvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/3b/Chara02.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Yamato Music EN VIVO (not 24/7)
+https://ym.yamato.cl:8443/play
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/e2/Chara03.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Saint Seiya
+https://stream.zeno.fm/m1g3855bf0hvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Sacredinc
+https://stream.laut.fm/sacredinc
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/7/70/Chara05.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",RadioAnime
+https://stream.zeno.fm/0w3vz9hzpuhvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/d/d3/Chibi_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Radio Otaku
+http://radio.otakunopodcast.com:8000/otakunoradio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/ChromiumOsTan.codiemorgan.draft.png/330px-ChromiumOsTan.codiemorgan.draft.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Manhua
+https://stream.zeno.fm/skroepgdndfuv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/f/f7/ChromiumOsTan.codiemorgan.draft_%28girl_-_fully_painted%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Radio Mangago
+https://stream.zeno.fm/j8mnd53cmcvtv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Cusco_Drawgirl.png/330px-Cusco_Drawgirl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Rádio KANIME - A rádio que ANIMA
+https://stream.zeno.fm/samx2y3qbv8uv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/4c/Cute_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Radio Jkanime
+https://stream.zeno.fm/4n10t55g4uhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Dibujo-20-2.png/330px-Dibujo-20-2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Rádio J-Hero
+https://listen.radiojhero.com/radio.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Digital_sketch_using_an_iPad.png/330px-Digital_sketch_using_an_iPad.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Idol (Anime)
+https://stream.zeno.fm/dpjpxmiwm8yvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Dojikko.png/330px-Dojikko.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Go latino
+https://antonyokumura.radioca.st/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Dojikko2.3_Inkscape.png/330px-Dojikko2.3_Inkscape.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Free Otaku
+https://streaming.radio.co/s8267e5edc/listen
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Dojikko2.3_batik.png/330px-Dojikko2.3_batik.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio DozaAnime
+https://stream.zeno.fm/x0rgqwv75zhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Dojikko2.3_librsvg.png/330px-Dojikko2.3_librsvg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Rádio Desenho Animado
+https://stream.zeno.fm/khxzvvg0wc9uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Dojikko2.3_rendersvg.png/330px-Dojikko2.3_rendersvg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Baka
+https://stream.zeno.fm/em1ua1fsqvcvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/65/Ekisai-tanXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Radio Animes z
+https://stream.zeno.fm/5gx6tc5tn8quv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Emelia_in_blenderswap.png/330px-Emelia_in_blenderswap.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",rádio animes
+https://stream.zeno.fm/nj7tzahgq7ruv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Fansub003.png/330px-Fansub003.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Anime Night
+https://stm16.voxhd.com.br:10374/stream
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/9b/Female_student.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",RADIO ANIME MX
+https://stream.zeno.fm/hunkb8atfm8uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Girl_in_sailor_fuku_publicdomainq.png/330px-Girl_in_sailor_fuku_publicdomainq.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio animé fm
+https://stream.zeno.fm/2a0phqp6yeutv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Gopher_Anime_schoolgirl_with_green_ball.png/330px-Gopher_Anime_schoolgirl_with_green_ball.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Anime AX 2
+https://stream.zeno.fm/wy56kb7eec9uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Gray_cyan_hair_anime_girl.png/330px-Gray_cyan_hair_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Anime AX
+https://stream.zeno.fm/c963db7eec9uv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/a/a9/Hoshinoruri_dotpainter.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Radio Anime 24
+https://ssl-1.radiohost.pl:7028/stream
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/34/Ifme-chan_drawn_by_ray-en_%28small_to_20_percent%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Rádio Anime
+https://stream.zeno.fm/gujiga4q9ngtv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Japanese_students_publicdomainq-0004934crltvo.png/330px-Japanese_students_publicdomainq-0004934crltvo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Radio Anime
+https://radioanime.radioca.st/;/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Kaoru271108.png/330px-Kaoru271108.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",RADIO ALFA ANIME
+https://nrf1.newradio.it:10328/alfaanime
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/d/d7/Kemonomimi_dog.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Proyecto Yamato
+https://on.yamato.cl/radio/8010/play
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Ken_Hirukogami.png/330px-Ken_Hirukogami.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Otaku's Dream Radio
+https://streaming0103.sonicpanelradio.com/8144/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Kizuna_AI_artwork.png/330px-Kizuna_AI_artwork.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Otaku World
+https://stream.laut.fm/otaku-world
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Korenanteeroge.png/330px-Korenanteeroge.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Otaku Music Radio
+https://stream.zeno.fm/b3b242btezzuv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/0/09/Kusaga_tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Otaku 89.8 FM
+https://stream.zeno.fm/rr0t8247368uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Kuudere_girl.png/330px-Kuudere_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Opening Radio
+https://stream.zeno.fm/s6mwnsyp9mruv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Adult_Commons-tan.png/330px-Adult_Commons-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",NyaRadio Anime
+https://stream.zeno.fm/w1vz87pgx4zuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Adult_Commons-tan_with_a_camera.png/330px-Adult_Commons-tan_with_a_camera.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Nightmare ナイトメア Web Radio
+https://stream.zeno.fm/fx4wy0596zhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Adult_Quote-tan.png/330px-Adult_Quote-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Newmusicfmanime
+https://stream.laut.fm/newmusicfmanime
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Adult_Quote-tan_%28cropped%29.png/330px-Adult_Quote-tan_%28cropped%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Neko-Network Anime & Japanese Music
+http://stream.nekonetwork.moe:8400/anime.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Adult_Tionary-tan.png/330px-Adult_Tionary-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Nei-Diの ACG Music
+http://neidi.homeip.net:8080/;
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Adult_Wikidata-tan.png/330px-Adult_Wikidata-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Naruto Music Radio
+https://stream.zeno.fm/wp5znzgw768uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Adult_Wikispecies-tan.png/330px-Adult_Wikispecies-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",MC Anime Radio
+https://cast.mcanimeradio.com/listen/mcradio/radio.aac
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Frontviewofananimeface.png/330px-Frontviewofananimeface.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",MANGA OTAKU
+https://stream.zeno.fm/ljvla7jvinkvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Hitaku_and_Mayumi.png/330px-Hitaku_and_Mayumi.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",LoveLive Project Radio
+https://kathy.torontocast.com:2600/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Lips_drawing.png/330px-Lips_drawing.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Love Live Music 2
+https://stream.zeno.fm/z7s4pbe9o47uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Lolicon_Sample.png/330px-Lolicon_Sample.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Linked Horizon Radio
+https://stream.zeno.fm/bljr3tjfpiuvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Mecha-girl.png/330px-Mecha-girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Lazus anime radio
+https://stream.zeno.fm/wwl1pz3upisuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Meido.png/330px-Meido.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Kibo.FM
+https://kibo.fm/live
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Mikaela_color.png/330px-Mikaela_color.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Kawaii Anime Radio
+https://canada1.reliastream.com/proxy/danser?mp=/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Mitsuo_Iso%2C_manga-style_sketch.png/330px-Mitsuo_Iso%2C_manga-style_sketch.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",kaori.odriscoll
+https://stream.zeno.fm/1h0dt522fchvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Moe-3251269_1920.png/330px-Moe-3251269_1920.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Kamehouse Station
+https://stream.zeno.fm/dayuza9yt4zuv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/c/cb/Moe_Character_Chieru_Kio.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Jpop Jrock
+https://stream.zeno.fm/24y9zac7kfhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Moe_Manga_Lady.png/330px-Moe_Manga_Lady.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Japan Anime Songs
+https://stream.zeno.fm/e10726wdz4zuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Moe_anime_girl_in_sailor_fuku.png/330px-Moe_anime_girl_in_sailor_fuku.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Initial D
+https://stream.zeno.fm/u8r9xbvr5f0uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Moemiku_yuni.png/330px-Moemiku_yuni.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Iloveanimemanga
+https://stream.laut.fm/iloveanimemanga
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/20/NagisaXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Haru Radio Music
+https://stream.zeno.fm/mdqlmcnm4oyvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/PanchiraIlustration.png/330px-PanchiraIlustration.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",FMTX Radio
+https://stream.zeno.fm/0gkf48yv7hhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Red_suit_anime_girl.png/330px-Red_suit_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Evil Anime FM
+https://stream.laut.fm/evil-animefm
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Red_suit_anime_girl_temple.png/330px-Red_suit_anime_girl_temple.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Ev_s Anime and J-Pop mix
+https://stream.zeno.fm/g52qhzccy7uuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Red_suit_anime_girl_with_board.png/330px-Red_suit_anime_girl_with_board.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Doraemon Radio JP
+https://stream.zeno.fm/a37vuhu2roytv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Red_suit_anime_girl_with_board_2.png/330px-Red_suit_anime_girl_with_board_2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Doraemon Radio Italia
+https://stream.zeno.fm/uos3rfem2fduv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Red_suit_anime_girl_witticism.png/330px-Red_suit_anime_girl_witticism.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Darkarmy Radio
+https://stream.laut.fm/darkarmyradio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Sana_jala_Anime.png/330px-Sana_jala_Anime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Crystal Tokyo Radio
+https://s5.radio.co/se9b1b7728/listen
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Say_no_to_AI_Art.png/330px-Say_no_to_AI_Art.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Crewfire FM
+https://stream.laut.fm/crewfirefm
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/School_swimsuits.png/330px-School_swimsuits.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",BOX:Weeb Anime Network
+https://boxradio-edge-01.streamafrica.net/anime
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Taisougi2.png/330px-Taisougi2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Ba Ka Anime Radio
+http://janus.shoutca.st:8398/;
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Vaksin_Bu_Ratna.png/330px-Vaksin_Bu_Ratna.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anytime Anime Radio
+https://stream.zeno.fm/6yd3qscm9rhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Virtual_singer.png/330px-Virtual_singer.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anison.FM (320Kbs)
+https://pool.anison.fm/AniSonFM(320)
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Wikipe-tan_explains_masking_in_manga.png/330px-Wikipe-tan_explains_masking_in_manga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anison.FM (256Kbs)
+https://pool.anison.fm/AniSonFM(256)
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Wikipe-tan_in_Different_Anime_Styles.png/330px-Wikipe-tan_in_Different_Anime_Styles.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anison.FM (128Kbs)
+https://pool.anison.fm/AniSonFM(128)
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1e/Xzit-ante120x600.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",AniRadio
+https://stream.zeno.fm/uqtqaymd3k0uv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/7/73/Xzit-ante120x90.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",AniMy Brasil
+https://stream.zeno.fm/h6k99379ka0uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Zahra_meet_with_Mikaela.png/330px-Zahra_meet_with_Mikaela.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animextream Radio
+https://stream.zeno.fm/9veewz5r8neuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AF%E8%89%AF%E3%81%84%E8%82%89%E3%81%A9%E3%81%93%E3%81%AE%E8%82%89.png/330px-%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AF%E8%89%AF%E3%81%84%E8%82%89%E3%81%A9%E3%81%93%E3%81%AE%E8%82%89.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animextre radio
+https://stream.zeno.fm/tqnyyz5r8neuv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/a/a9/Anime-wikiicon-yellow.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",ANIMES
+https://stream.zeno.fm/kht5ct74ry8uv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/13/Animewikiicon-gray.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Animerockradio
+https://stream.zeno.fm/5hpzhz9sz7zuv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/9d/Animewikiicon.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",AnimeRadio.de
+https://stream.animeradio.de/animeradio96.ogg
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Boosette_for_Wikipedia.png/330px-Boosette_for_Wikipedia.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animeradio
+https://stream.zeno.fm/vs06u1e87zhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Bowsette_for_Wikipedia.png/330px-Bowsette_for_Wikipedia.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",AnimeNfo Radio
+https://stream.zeno.fm/xwa8ckz7mzzuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Chibiw.png/330px-Chibiw.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animklatu
+https://stream.laut.fm/animklatu
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/b/b7/FaceSignature.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Animecol Radio
+https://stream.zeno.fm/eg9unacxc6quv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Figure_in_Manga_style.png/330px-Figure_in_Manga_style.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Animealive
+https://stream.laut.fm/animealive
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/50/Figure_in_Manga_style_golden.png/330px-Figure_in_Manga_style_golden.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Zone 80s
+https://stream.zeno.fm/ngqqebacltktv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d5/Figure_in_Manga_style_pattern.png/330px-Figure_in_Manga_style_pattern.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Tracks
+https://centova.listenon.in/proxy/animetracks/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/51/Figure_in_Manga_style_variation_1.png/330px-Figure_in_Manga_style_variation_1.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Stars Stream
+https://stream.zeno.fm/99d8y4haw81uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fd/Manga.png/330px-Manga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Radio Switzerland
+https://stream.laut.fm/anime-radio-switzerland
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Manga_alpha.png/330px-Manga_alpha.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Radio De
+https://stream.laut.fm/anime-radio-de
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b4/Manga_transparence.png/330px-Manga_transparence.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime radio
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/810523
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/8/87/NekoFaceXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Anime Power Station
+https://stream.zeno.fm/u7xywvwgmzzuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/d4/Nursing_cap.png/330px-Nursing_cap.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Para Ti
+https://stream.zeno.fm/qpn8mkt8c4duv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f6/Tefanime.png/330px-Tefanime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Plus Radio
+https://stream.zeno.fm/rfun7q8bt8quv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Watia_girl.png/330px-Watia_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime OST
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/325449
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/c/c9/Wiki-tan_stubsize.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Anime No Clan
+https://stream.zeno.fm/tvyhgc7ekzzuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/dd/Ai-chan.png/330px-Ai-chan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Nexus
+https://cast.animenexus.net/radio/8000/animenexus
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/12/Bluehaired_anime_template.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Anime Music
+https://stream.zeno.fm/ku1dzpwbxgpvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/Brendo_magical_girl.png/330px-Brendo_magical_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Lux
+https://stream.zeno.fm/ms7r8z744hhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fb/Cameliagirls1_0.55a.png/330px-Cameliagirls1_0.55a.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime KN
+https://stream.laut.fm/animefm
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Crazy_adventure_logo.png/330px-Crazy_adventure_logo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Flash
+https://stream.zeno.fm/lxnpskbosrlvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Danbooru_generic_screenshot.png/330px-Danbooru_generic_screenshot.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Bits (256kbps)
+https://radio.animebits.moe/stream/stream256.ogg
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/6e/Danbooru_post_counter_6.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO ANIME J-POP",Anime Bits (192kbps)
+https://radio.animebits.moe/stream/stream192.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Doraemon_Anime_Outline.png/330px-Doraemon_Anime_Outline.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime and Japan Music
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/764293
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Doraemon_Anime_Outline.png/330px-Doraemon_Anime_Outline.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime Academy
+https://stream.laut.fm/animeacademy
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Doraemon_Anime_Outline.png/330px-Doraemon_Anime_Outline.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Anime & asian music
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/968535
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Doraemon_Anime_Outline.png/330px-Doraemon_Anime_Outline.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Аниме Музыка
+https://srv01.gpmradio.ru/stream/pro/aac/64/421
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5a/Doraemon_Anime_Outline.png/330px-Doraemon_Anime_Outline.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO ANIME J-POP",Saint Seiya Radio
+https://ecmanager3.pro-fhi.net/saintseiyaradio
+#EXTM3U
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/2Chibi.png/330px-2Chibi.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radwimps Radio
+https://stream.zeno.fm/vctanf5yeeivv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/2_Chibi_hair_and_color.png/330px-2_Chibi_hair_and_color.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Animax Radio
+https://stream.zeno.fm/ep9mpnntsnhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/A_Tsundere.png/330px-A_Tsundere.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Anime and Japanese Songs
+https://stream.zeno.fm/ddetxwuhkpeuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ae-tan2.png/330px-Ae-tan2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Babymetal Radio
+https://stream.zeno.fm/xnp4taa0k2zuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ahegao_by_Kira_I.png/330px-Ahegao_by_Kira_I.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Babymetal
+https://stream.zeno.fm/gocyrdbyj2nuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/All_Weather_Girls_Portrait.png/330px-All_Weather_Girls_Portrait.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Asian Tsunami
+https://listen3.myradio24.com/tsunami
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Angry_anime_girl.png/330px-Angry_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",JMusicAnime Radio
+https://stream.zeno.fm/g0wsfbbaft5tv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1f/AnimeGirlXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",SAKURAJIMA FM
+https://stream.zeno.fm/of7hlt41hl0uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Anime_Verdolaga.png/330px-Anime_Verdolaga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-POP CHANNEL
+https://stream.zeno.fm/dvseorx3juhuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Anime_girl_publicdomainq.png/330px-Anime_girl_publicdomainq.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-Pop Powerplay
+https://kathy.torontocast.com/powerplay
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Anime_video_frame.png/330px-Anime_video_frame.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-Pop Powerplay Kawaii
+https://kathy.torontocast.com/kawaii
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Austro-Hungarian_officer_anime.png/330px-Austro-Hungarian_officer_anime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-Pop Project Radio
+https://26343.live.streamtheworld.com/SAM10AAC139.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Banner_speciale_Lucca_C%26G08.png/330px-Banner_speciale_Lucca_C%26G08.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-POP Radio ラジオ
+https://stream.zeno.fm/kvve4ffh2uhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Banner_speciale_Lucca_C%26G08_%28girl%29.png/330px-Banner_speciale_Lucca_C%26G08_%28girl%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",JPopsuki Radio!
+https://free.rcast.net/239570
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Bupuro-chan.png/330px-Bupuro-chan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",JRock ON
+https://stream.zeno.fm/1pnwmxnvhehtv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Bupuro-chan_development_stage_4.png/330px-Bupuro-chan_development_stage_4.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-Rock Powerplay
+https://kathy.torontocast.com/jrock
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/CRYSTAL.png/330px-CRYSTAL.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",JSakura 懐かしい
+https://quincy.torontocast.com:2070/;?
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/8/88/Chara01.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",JUSTPLAY
+https://stream.laut.fm/justplay
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/3b/Chara02.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Kantoral Japones
+https://stream.zeno.fm/muth7kcknrdtv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/e2/Chara03.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",KAWAII MUSIC
+https://stream.laut.fm/kawaii-music
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/43/Chara04.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Kitsune
+https://stream.zeno.fm/iujwoaxo43auv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/7/70/Chara05.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Kizuna Radio Colombia
+https://stream.zeno.fm/c4r2ds0sasquv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/d/d3/Chibi_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Kodama Station
+https://cast.kodamastation.com:8000/radio.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/21/ChromiumOsTan.codiemorgan.draft.png/330px-ChromiumOsTan.codiemorgan.draft.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",LATAM OTAKUS FM
+https://stream.zeno.fm/vm5mq7p62k8uv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/f/f7/ChromiumOsTan.codiemorgan.draft_%28girl_-_fully_painted%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",LISTEN.MOE JPOP (Vorbis)
+https://listen.moe/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/77/Cusco_Drawgirl.png/330px-Cusco_Drawgirl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Little Osaka FM
+https://stream.zeno.fm/pjrprpgelblvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/4/4c/Cute_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",M40 J-Pop
+https://live.m40radio.fr/listen/m40-j-pop/m40-j-pop-128.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/Dibujo-20-2.png/330px-Dibujo-20-2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Maid Café
+https://stream.zeno.fm/ddpzcuq1ra0uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a7/Digital_sketch_using_an_iPad.png/330px-Digital_sketch_using_an_iPad.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Merodi Matsuri
+https://stream.zeno.fm/c45cb5sbf2zuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/27/Dojikko.png/330px-Dojikko.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Minoreba FM
+https://stream.zeno.fm/q34bq5qm9eeuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/cb/Dojikko2.3_Inkscape.png/330px-Dojikko2.3_Inkscape.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Muse
+https://hear.moe/listen/muse/radio.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/7b/Dojikko2.3_batik.png/330px-Dojikko2.3_batik.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",MusenRadio
+https://stream.zeno.fm/0flt31rgqwcvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Dojikko2.3_librsvg.png/330px-Dojikko2.3_librsvg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",NAKANO FM
+https://stream.zeno.fm/cdn4mtbrfayvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Dojikko2.3_rendersvg.png/330px-Dojikko2.3_rendersvg.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",NAMI Anime Radio
+https://relay.radionami.com/any-anime.ru
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/6/65/Ekisai-tanXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Nimerise FM (BETA)
+https://stream.zeno.fm/th802tkxa0hvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e2/Emelia_in_blenderswap.png/330px-Emelia_in_blenderswap.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Nira Radio
+https://stream.zeno.fm/aq6mkfyaxa0uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0b/Fansub003.png/330px-Fansub003.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Okufm
+https://stream.zeno.fm/nrpe1a0n3p8uv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/9b/Female_student.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Onda Vital
+https://stream.zeno.fm/rik53zbzc1luv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Girl_in_sailor_fuku_publicdomainq.png/330px-Girl_in_sailor_fuku_publicdomainq.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Only Hit Japan
+https://ais-sa3.cdnstream1.com/2629_128.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5f/Gopher_Anime_schoolgirl_with_green_ball.png/330px-Gopher_Anime_schoolgirl_with_green_ball.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Otaku Visual Radio
+https://stream.zeno.fm/t73pmympvxhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/d/df/Gray_cyan_hair_anime_girl.png/330px-Gray_cyan_hair_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Otakus y Santos - Radio
+https://stream.zeno.fm/7ya34wyowbruv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/a/a9/Hoshinoruri_dotpainter.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Persona Station
+https://stream.zeno.fm/hykkzk1c94zuv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/34/Ifme-chan_drawn_by_ray-en_%28small_to_20_percent%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Phantasm War
+https://stream.zeno.fm/ttdwqybl1rlvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/16/Japanese_students_publicdomainq-0004934crltvo.png/330px-Japanese_students_publicdomainq-0004934crltvo.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",PUREPURE
+https://stream.laut.fm/purepure
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b8/Kaoru271108.png/330px-Kaoru271108.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Qたまラジオ
+https://stream.zeno.fm/g5n98x306bhvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/d/d7/Kemonomimi_dog.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Radio Akiba Brasil
+https://stm3.painelcast.com:7770/;
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/01/Ken_Hirukogami.png/330px-Ken_Hirukogami.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",RÁDIO ANIMEINFOBR
+https://stream.zeno.fm/k01037h7h0hvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/61/Kizuna_AI_artwork.png/330px-Kizuna_AI_artwork.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio AOI
+https://radioaoi.stream/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Korenanteeroge.png/330px-Korenanteeroge.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Arven
+https://stream.zeno.fm/dzqt6ts9egrtv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/0/09/Kusaga_tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Rádio Blast
+https://centova4.transmissaodigital.com:20143/principal;
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c2/Kuudere_girl.png/330px-Kuudere_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Eigekai Indies (ラジオエーゲ海)
+https://stream.radiojar.com/66zgtscuc1duv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/75/Adult_Commons-tan.png/330px-Adult_Commons-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Future Funk
+https://stream.zeno.fm/48533y95cnruv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0f/Adult_Commons-tan_with_a_camera.png/330px-Adult_Commons-tan_with_a_camera.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Helscans
+https://stream.zeno.fm/xdsjmwzznkqvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/33/Adult_Quote-tan.png/330px-Adult_Quote-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Japamix
+https://stream.zeno.fm/vcls0bo2uvvvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b5/Adult_Quote-tan_%28cropped%29.png/330px-Adult_Quote-tan_%28cropped%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio J-Hero
+https://listen.radiojhero.com/radio.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e5/Adult_Tionary-tan.png/330px-Adult_Tionary-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Kawaii
+https://stream.zeno.fm/990u4rrxqnhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/29/Adult_Wikidata-tan.png/330px-Adult_Wikidata-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",RADIO MOSHI
+https://stream.zeno.fm/nq7fdn7wqfhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/b9/Adult_Wikispecies-tan.png/330px-Adult_Wikispecies-tan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Nihon
+https://stream.zeno.fm/wfzj6hdmkrztv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f4/Frontviewofananimeface.png/330px-Frontviewofananimeface.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Rádio Nippon
+https://stream.zeno.fm/9woagoca0pcvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/0e/Hitaku_and_Mayumi.png/330px-Hitaku_and_Mayumi.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Otaku-Station
+https://stream.zeno.fm/vzfg2p64wp8uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/98/Lips_drawing.png/330px-Lips_drawing.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Portal Animediv
+https://stream.zeno.fm/gzbardet05wtv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Lolicon_Sample.png/330px-Lolicon_Sample.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio UP! Archer Network
+https://saber.intra.antbr.com:8443/radio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ab/Mecha-girl.png/330px-Mecha-girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Zekkei
+https://stream.zeno.fm/ak8q8i9gbb5tv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/10/Meido.png/330px-Meido.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio Zen
+https://stream.zeno.fm/765cszwekzzuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/94/Mikaela_color.png/330px-Mikaela_color.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",RadioKanimes
+https://stream.zeno.fm/dpfqxmzcswzuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/74/Mitsuo_Iso%2C_manga-style_sketch.png/330px-Mitsuo_Iso%2C_manga-style_sketch.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Ride on time Live
+https://stream.zeno.fm/uns1eth93v8uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/aa/Moe-3251269_1920.png/330px-Moe-3251269_1920.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Ronin Radio
+https://s3.radio.co/sff133d65b/listen
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/c/cb/Moe_Character_Chieru_Kio.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Sasaki Sayaka Radio
+https://stream02.pcradio.biz/Sasaki_Sayaka-med
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/Moe_Manga_Lady.png/330px-Moe_Manga_Lady.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",ShokoFM
+https://stream.zeno.fm/hrvq6xgqpc9uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a5/Moe_anime_girl_in_sailor_fuku.png/330px-Moe_anime_girl_in_sailor_fuku.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Takeuti Town Radio 1ch
+https://stream.zeno.fm/7y5ay9u44bhvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/08/Moemiku_yuni.png/330px-Moemiku_yuni.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Tokyo radio
+https://stream.zeno.fm/a3obszgguyvvv
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/2/20/NagisaXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Tsumugi radio
+https://azuracast.mahoro-net.org/listen/tsumugi/radio.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e8/PanchiraIlustration.png/330px-PanchiraIlustration.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Twilight JukeBox
+https://stream.zeno.fm/em1ua1fsqvcvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/58/Red_suit_anime_girl.png/330px-Red_suit_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Unknown
+https://stream.zeno.fm/mkpenp2uqncvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/3/3a/Red_suit_anime_girl_temple.png/330px-Red_suit_anime_girl_temple.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",UnknownST
+https://stream.zeno.fm/re17vtuft0hvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/5/5c/Red_suit_anime_girl_with_board.png/330px-Red_suit_anime_girl_with_board.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Vagalume.FM - J-Pop
+https://stream.vagalume.fm/hls/1475776167864381/aac.m3u8
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/b/bb/Red_suit_anime_girl_with_board_2.png/330px-Red_suit_anime_girl_with_board_2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Usagi FM 102.9
+https://stream.zeno.fm/ooznpnqqqtouv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/ce/Red_suit_anime_girl_witticism.png/330px-Red_suit_anime_girl_witticism.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Weebio
+https://stream.zeno.fm/9csa2ksv81zuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f2/Sana_jala_Anime.png/330px-Sana_jala_Anime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",World Music Radio - J-Pop
+https://streaming.exclusive.radio/er-app/jpop/icecast.audio
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/22/Say_no_to_AI_Art.png/330px-Say_no_to_AI_Art.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",WREP
+https://c13.radioboss.fm:8200/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/School_swimsuits.png/330px-School_swimsuits.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",XenFM- JPOP
+https://stream.zeno.fm/pveuxumb7f8uv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/42/Taisougi2.png/330px-Taisougi2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Yumi Co. Radio
+https://yumicoradio.net/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/40/Vaksin_Bu_Ratna.png/330px-Vaksin_Bu_Ratna.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Первомайский анимешник
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/755007
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/4b/Virtual_singer.png/330px-Virtual_singer.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Японская Музыка
+https://srv01.gpmradio.ru/stream/pro/aac/64/62
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/18/Wikipe-tan_explains_masking_in_manga.png/330px-Wikipe-tan_explains_masking_in_manga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Sugoi Stereo FM
+https://mazapandev-listen.webredirect.org/listen/sugoi-radio/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/0/02/Wikipe-tan_in_Different_Anime_Styles.png/330px-Wikipe-tan_in_Different_Anime_Styles.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Only Hit Japan (Main)
+https://cdn.onlyhitsradio.net/japan
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1e/Xzit-ante120x600.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Anime & J-Rock FM
+https://srv02.gpmradio.ru:8443/stream/personal/aacp/64/802406
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/7/73/Xzit-ante120x90.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Japan pop-Music Concert
+https://stream.zeno.fm/qv9qmnsqxkztv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/fa/Zahra_meet_with_Mikaela.png/330px-Zahra_meet_with_Mikaela.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",smack baby smack2
+https://stream.zeno.fm/fikt91bftwauv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/1/17/%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AF%E8%89%AF%E3%81%84%E8%82%89%E3%81%A9%E3%81%93%E3%81%AE%E8%82%89.png/330px-%E8%AA%95%E7%94%9F%E6%97%A5%E3%81%AF%E8%89%AF%E3%81%84%E8%82%89%E3%81%A9%E3%81%93%E3%81%AE%E8%82%89.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Wave Anime Radio
+https://channel_2.waveani.fun/stream
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/a/a9/Anime-wikiicon-yellow.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Radio-AniNeko
+https://rs1.shirokaze.de/listen/radio-anineko/RadioAniNeko128.mp3
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/13/Animewikiicon-gray.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Radio AMC
+https://player.radioamc.com.br/proxy/7116
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/9/9d/Animewikiicon.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO J-POP-ROCK",Shizuka Radio
+https://stream.zeno.fm/hixoqpg5o9uuv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/89/Boosette_for_Wikipedia.png/330px-Boosette_for_Wikipedia.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Radio-Sakurai
+https://rs1.shirokaze.de/listen/radio-sakurai/RadioSakurai128.mp3
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/4/43/Bowsette_for_Wikipedia.png/330px-Bowsette_for_Wikipedia.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",J-Pop Christmas
+https://cast3.torontocast.com:1170/;
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c1/Chibiw.png/330px-Chibiw.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO J-POP-ROCK",Otaku.CL Radio
+https://streaming.live365.com/a10994
+#EXTM3U
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/8/8e/2Chibi.png/330px-2Chibi.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Hitz FM
+https://stream.rcs.revma.com/488kt4sbv4uvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/9/99/2_Chibi_hair_and_color.png/330px-2_Chibi_hair_and_color.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",AI FM
+https://playerservices.streamtheworld.com/api/livestream-redirect/AI_FMAAC.aac
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/26/A_Tsundere.png/330px-A_Tsundere.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Melody FM
+https://n07a-eu.rcs.revma.com/2u1n6dtbv4uvv/7_w0cr3cmmz25o02/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ae-tan2.png/330px-Ae-tan2.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",MY FM
+https://stream.rcs.revma.com/hc3unrtbv4uvv
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/28/Ahegao_by_Kira_I.png/330px-Ahegao_by_Kira_I.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",TraXX FM
+https://playerservices.streamtheworld.com/api/livestream-redirect/TRAXX_FMAAC_SC
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/6a/All_Weather_Girls_Portrait.png/330px-All_Weather_Girls_Portrait.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Hot FM
+https://stream.rcs.revma.com/drakdf8mtd3vv/3_g1qwl86tllg502/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Angry_anime_girl.png/330px-Angry_anime_girl.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Era FM
+https://stream.rcs.revma.com/gs7xxfmbv4uvv/5_1afc0sltzyu6s02/playlist.m3u8
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/1/1f/AnimeGirlXzit.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO MUSIC MY ID",Radio Klasik
+https://playerservices.streamtheworld.com/api/livestream-redirect/RADIO_KLASIKAAC_SC
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a1/Anime_Verdolaga.png/330px-Anime_Verdolaga.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Suria FM
+https://playerservices.streamtheworld.com/api/livestream-redirect/SURIA_FMAAC.aac
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/e7/Anime_girl_publicdomainq.png/330px-Anime_girl_publicdomainq.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",AsyikFm
+https://playerservices.streamtheworld.com/api/livestream-redirect/ASYIK_FMAAC_SC
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/7/76/Anime_video_frame.png/330px-Anime_video_frame.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Nasional FM
+https://playerservices.streamtheworld.com/api/livestream-redirect/NASIONAL_FMAAC.aac
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/6/60/Austro-Hungarian_officer_anime.png/330px-Austro-Hungarian_officer_anime.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Johor Fm
+https://playerservices.streamtheworld.com/api/livestream-redirect/JOHOR_FMAAC_SC
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/c/c5/Banner_speciale_Lucca_C%26G08.png/330px-Banner_speciale_Lucca_C%26G08.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",ALTERNATIF RADIO JAKARTA
+https://void.idserverhost.com/8016/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a0/Banner_speciale_Lucca_C%26G08_%28girl%29.png/330px-Banner_speciale_Lucca_C%26G08_%28girl%29.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Radio Airmen 107.9 FM
+https://void.idserverhost.com/8024/stream
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/e/eb/Bupuro-chan.png/330px-Bupuro-chan.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Global FM Surabaya
+https://svara-stream.radioddns.net/surabaya_globalfm_
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/2/2e/Bupuro-chan_development_stage_4.png/330px-Bupuro-chan_development_stage_4.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",Campursari FM radio
+https://streaming.campursarifm.com/listen/campursari/campursari892
+#EXTINF:-1 tvg-logo="https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/CRYSTAL.png/330px-CRYSTAL.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail" group-title="RADIO MUSIC MY ID",KPop by Match
+https://playerservices.streamtheworld.com/api/livestream-redirect/ACIR51_S01AAC.m3u8
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/8/88/Chara01.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO MUSIC MY ID",Dengerin Musik
+http://stream.denger.in:8888/dmi
+#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/3/3b/Chara02.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="RADIO MUSIC MY ID",Loker Musik Indonesia
+https://stream.lokermusik.com/listen/lokermusik/lokermusik
