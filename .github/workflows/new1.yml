@@ -33,7 +33,21 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install aiohttp curl_cffi requests beautifulsoup4 playwright     
+          pip install aiohttp curl_cffi requests beautifulsoup4 playwright
+
+      - name: Start FlareSolverr
+        run: |
+          docker pull ghcr.io/FlareSolverr/FlareSolverr:latest
+          docker run -d --name flaresolverr -p 8191:8191 ghcr.io/FlareSolverr/FlareSolverr:latest
+          # Tunggu sampai ready
+          for i in $(seq 1 30); do
+            if curl -s http://localhost:8191/ | grep -q "FlareSolverr"; then
+              echo "[OK] FlareSolverr ready"
+              break
+            fi
+            echo "Waiting for FlareSolverr... ($i/30)"
+            sleep 2
+          done
 
       - name: Restore Python script from secret
         run: |
@@ -43,6 +57,12 @@ jobs:
       - name: Run scraper
         run: |
           python new.py
+
+      - name: Stop FlareSolverr
+        if: always()
+        run: |
+          docker stop flaresolverr || true
+          docker rm flaresolverr || true
 
       - name: Commit playlist
         env:
@@ -57,7 +77,6 @@ jobs:
             git add "$FILE"
             git commit -m "Update NEW playlist $(date)" || echo "No changes"
 
-            # retry push untuk multi runner (10 runner)
             for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15 16
             do
               git pull --rebase --autostash origin main
@@ -68,4 +87,4 @@ jobs:
 
           else
             echo "playlist.m3u8 not found"
-          fi
+          fi   
