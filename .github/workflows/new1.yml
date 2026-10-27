@@ -37,8 +37,8 @@ jobs:
 
       - name: Start FlareSolverr
         run: |
-          docker pull ghcr.io/FlareSolverr/FlareSolverr:latest
-          docker run -d --name flaresolverr -p 8191:8191 ghcr.io/FlareSolverr/FlareSolverr:latest
+          docker pull ghcr.io/flaresolverr/flaresolverr:latest   
+          docker run -d --name flaresolverr -p 8191:8191 ghcr.io/flaresolverr/flaresolverr:latest
           # Tunggu sampai ready
           for i in $(seq 1 30); do
             if curl -s http://localhost:8191/ | grep -q "FlareSolverr"; then
