@@ -1,0 +1,36 @@
+name: TES SCRAPE M3U LOGO 
+
+on:
+  schedule:
+    - cron: "0 6 * * *"  # Setiap hari jam 06:00 UTC
+  workflow_dispatch:
+
+jobs:
+  scrape:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: pip install requests curl_cffi
+
+      - name: Run scraper
+        env:
+          INPUT_FILE: "playlist.m3u"
+          OUTPUT_FILE: "playlist.m3u8"
+          GROUP_TITLE: "RADIO INTERNAL"
+          DEFAULT_LOGO: ""
+          LOGO_DELAY: "1.5"
+        run: python tes.py
+
+      - name: Commit output
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add playlist.m3u8
+          git diff --staged --quiet || git commit -m "Update M3U [skip ci]"
+          git push   
