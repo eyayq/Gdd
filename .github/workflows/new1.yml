@@ -50,7 +50,13 @@ jobs:
             echo "Waiting for FlareSolverr... ($i/30)"
             sleep 2
           done
-
+          
+      - name: Install Camoufox
+        run: |
+          python -m pip install --upgrade pip
+          pip install "camoufox[geoip]"
+          python -m camoufox fetch
+          
       - name: Restore Python script from secret
         run: |
           echo "${{ secrets.NEW_PY }}" | base64 -d > new.py
