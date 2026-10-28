@@ -18,26 +18,26 @@ jobs:
       contents: write
 
     steps:
-      - name: Checkout Repository
+      - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Setup Python
+      - name: Setup
         uses: actions/setup-python@v5
         with:
           python-version: "3.12"
 
-      - name: Install Dependencies
+      - name: Install 
         run: |
           pip install requests aiohttp async curl_cffi
 
-      - name: Run Scraper
+      - name: Run
         run: |
-          python scat.py
+          python testing.py
 
-      - name: Commit Playlist
+      - name: Commit
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
