@@ -1,5 +1,3 @@
-
-
 import requests
 import time
 import os
@@ -240,7 +238,7 @@ def generate_m3u(models, output_file):
 
             f.write(
                 f'#EXTINF:-1 tvg-id="{username}" tvg-name="{username}" '
-                f'tvg-logo="{avatar}" group-title="LIVE VIP COSPLAYER {len(live)}")",'
+                f'tvg-logo="{avatar}" group-title="LIVE VIP COSPLAYER {len(live)}",'
                 f'{username} {group} [{viewers} PEMBOKEP]\n'
             )
             f.write(f"{stream_url}\n")
@@ -283,3 +281,5 @@ def main():
 
 if __name__ == "__main__":
     main()   
+
+
