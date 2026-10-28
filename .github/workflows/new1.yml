@@ -45,12 +45,6 @@ jobs:
         run: |
           python new.py
 
-      - name: Stop FlareSolverr
-        if: always()
-        run: |
-          docker stop flaresolverr || true
-          docker rm flaresolverr || true
-
       - name: Commit playlist
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
