@@ -8,12 +8,12 @@ API_BASE = "https://zeno.fm/api/stations/"
 
 COUNTRIES = [
     "china", "indonesia", "japan",
-    "malaysia", "singapore", "korea south", "Korea north",
+    "malaysia", "singapore", "korea south",
 ]
 
 GROUP_TITLES = {
     "china": "China", "indonesia": "Indonesia", "japan": "Japan",
-    "malaysia": "Malaysia", "singapore": "Singapore", "korea south": "Korea north",
+    "malaysia": "Malaysia", "singapore": "Singapore", "korea south":
 }
 
 GENRES = [
