@@ -7,17 +7,17 @@ from pathlib import Path
 # ─── Config ──────────────────────────────────────────────────────────
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
-GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO MUSIC KPOP")
+GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO INTERNAL")
 GROUP_INACTIVE = "TIDAK AKTIF"
-TIMEOUT = int(os.environ.get("TIMEOUT", "10"))
+TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
 USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
-CHECK_TIMEOUT = int(os.environ.get("CHECK_TIMEOUT", "8"))  # timeout khusus check URL
+CHECK_TIMEOUT = int(os.environ.get("CHECK_TIMEOUT", "8"))
 
 # Status code yang dianggap TIDAK AKTIF
-BAD_STATUS_CODES = {403, 404, 410, 500, 502, 503, 504}
+BAD_STATUS_CODES = {403, 401, 404, 410, 500, 501, 502, 503, 504, 505}
 
-# Content-Type yang BUKAN stream audio/video
-INVALID_CONTENT_TYPES = ("application/json", "text/html", "text/xml", "application/xml")
+# Content-Type yang BUKAN stream audio
+INVALID_CONTENT_TYPES = ("application/json", "text/html", "text/xml", "application/xml", "text/plain")
 
 COMMONS_CATEGORIES = [
     "Category:Girls in anime and manga",
@@ -46,73 +46,89 @@ COMMONS_CATEGORIES = [
 def check_stream_url(url: str) -> tuple:
     """
     Cek apakah URL streaming aktif.
-    Return: (is_active: bool, reason: str)
+    Strategi: GET stream=True, baca 512 byte, deteksi audio vs HTML/JSON.
+    Default: jika tidak bisa dipastikan → anggap AKTIF (lebih aman).
     """
     try:
-        # Pakai HEAD dulu (lebih ringan), fallback ke GET stream jika HEAD gagal
-        resp = requests.head(
+        resp = requests.get(
             url,
-            headers={"User-Agent": USER_AGENT},
+            headers={
+                "User-Agent": USER_AGENT,
+                "Icy-MetaData": "1",  # untuk Icecast/Shoutcast
+            },
             timeout=CHECK_TIMEOUT,
-            allow_redirects=True,
+            stream=True,
         )
 
-        # Status code buruk → tidak aktif
+        # Status code buruk → TIDAK AKTIF
         if resp.status_code in BAD_STATUS_CODES:
+            resp.close()
             return False, f"HTTP {resp.status_code}"
 
-        # Status 4xx/5xx lainnya
         if resp.status_code >= 400:
+            resp.close()
             return False, f"HTTP {resp.status_code}"
 
-        # Cek Content-Type
+        # Status 200/201/206 → cek content
         content_type = resp.headers.get("Content-Type", "").lower()
 
-        # Jika mengembalikan JSON atau HTML → bukan stream
+        # Jika Content-Type jelas HTML/JSON/XML → TIDAK AKTIF
         for invalid_type in INVALID_CONTENT_TYPES:
             if invalid_type in content_type:
+                resp.close()
                 return False, f"Content-Type: {content_type}"
 
-        # Jika Content-Type kosong, coba GET stream untuk verifikasi
-        if not content_type:
-            resp2 = requests.get(
-                url,
-                headers={"User-Agent": USER_AGENT},
-                timeout=CHECK_TIMEOUT,
-                stream=True,
-            )
-            if resp2.status_code in BAD_STATUS_CODES or resp2.status_code >= 400:
-                resp2.close()
-                return False, f"HTTP {resp2.status_code}"
+        # Jika Content-Type jelas audio → AKTIF
+        if "audio" in content_type or "video" in content_type or "octet-stream" in content_type:
+            resp.close()
+            return True, "OK (audio)"
 
-            ct2 = resp2.headers.get("Content-Type", "").lower()
-            for invalid_type in INVALID_CONTENT_TYPES:
-                if invalid_type in ct2:
-                    resp2.close()
-                    return False, f"Content-Type: {ct2}"
+        # Content-Type kosong atau tidak dikenal → baca body untuk deteksi
+        try:
+            peek = resp.raw.read(512, decode_content=True)
+        except Exception:
+            peek = b""
+        finally:
+            resp.close()
 
-            # Cek body kecil untuk deteksi HTML/JSON
-            peek = resp2.raw.read(512, decode_content=True)
-            resp2.close()
+        if not peek:
+            # Tidak ada data tapi status 200 → mungkin stream yang butuh waktu
+            # Default: AKTIF (lebih aman)
+            return True, "OK (no data, 200)"
 
-            if peek:
-                peek_str = peek.decode("utf-8", errors="ignore").strip()
-                # Deteksi JSON
-                if peek_str.startswith("{") or peek_str.startswith("["):
-                    return False, "Body: JSON"
-                # Deteksi HTML
-                if peek_str.startswith("<!DOCTYPE") or peek_str.startswith("<html") or peek_str.startswith("<!doctype"):
-                    return False, "Body: HTML"
-                # Deteksi error message umum
-                if "error" in peek_str.lower()[:100] and len(peek_str) < 500:
-                    return False, "Body: error message"
+        peek_str = peek.decode("utf-8", errors="ignore").strip()
 
+        # Deteksi JSON
+        if peek_str.startswith("{") or peek_str.startswith("["):
+            return False, "Body: JSON"
+
+        # Deteksi HTML
+        if peek_str.startswith("<!DOCTYPE") or peek_str.startswith("<!doctype") or peek_str.startswith("<html") or peek_str.startswith("<HTML"):
+            return False, "Body: HTML"
+
+        # Deteksi XML
+        if peek_str.startswith("<?xml"):
+            return False, "Body: XML"
+
+        # Deteksi error message teks pendek
+        if len(peek_str) < 200 and ("error" in peek_str.lower() or "not found" in peek_str.lower() or "forbidden" in peek_str.lower()):
+            return False, f"Body: {peek_str[:50]}"
+
+        # Data binary (audio) → AKTIF
+        # Cek apakah ada banyak null bytes (indikasi binary/audio)
+        null_count = peek.count(b'\x00')
+        if null_count > 10:
+            return True, "OK (binary audio)"
+
+        # Jika sampai sini dan status 200 → default AKTIF
         return True, "OK"
 
     except requests.exceptions.Timeout:
         return False, "Timeout"
     except requests.exceptions.ConnectionError:
         return False, "Connection Error"
+    except requests.exceptions.SSLError:
+        return False, "SSL Error"
     except requests.exceptions.RequestException as e:
         return False, f"Error: {type(e).__name__}"
     except Exception as e:
@@ -122,7 +138,6 @@ def check_stream_url(url: str) -> tuple:
 def check_all_stations(stations: list) -> tuple:
     """
     Check semua stasiun, pisahkan aktif vs tidak aktif.
-    Return: (active_stations, inactive_stations)
     """
     active = []
     inactive = []
@@ -274,7 +289,10 @@ def parse_m3u(content: str) -> list:
 
 
 # ─── Enrich: Assign unique logo per channel ─────────────────────────
-def enrich_stations(stations: list, logos: list, group: str) -> list:
+def enrich_stations(stations: list, logos: list, group: str) -> int:
+    """
+    Assign logo. Return: jumlah logo yang terpakai.
+    """
     logo_index = 0
     already_has = 0
     assigned = 0
@@ -290,13 +308,11 @@ def enrich_stations(stations: list, logos: list, group: str) -> list:
             s["tvg_logo"] = logos[logo_index]
             logo_index += 1
             assigned += 1
-        else:
-            s["tvg_logo"] = ""
 
     if stations:
-        print(f"  [{group}] Sudah punya logo: {already_has} | Baru: {assigned} | Kosong: {len(stations) - already_has - assigned}")
+        print(f"  [{group}] Punya logo: {already_has} | Baru: {assigned} | Kosong: {len(stations) - already_has - assigned}")
 
-    return stations
+    return logo_index  # return berapa logo yang terpakai
 
 
 # ─── Output Writer ───────────────────────────────────────────────────
@@ -352,32 +368,33 @@ def main():
     print(f"\n[*] ─── CHECKING STREAM URLS ───")
     active_stations, inactive_stations = check_all_stations(unique)
 
-    # Hitung kebutuhan logo
-    active_needs_logo = sum(1 for s in active_stations if not s.get("tvg_logo", "").strip())
-    inactive_needs_logo = sum(1 for s in inactive_stations if not s.get("tvg_logo", "").strip())
-    total_needed = active_needs_logo + inactive_needs_logo
+    # ★ HITUNG KEBUTUHAN LOGO (semua stasiun yang belum punya logo)
+    total_needs_logo = sum(1 for s in unique if not s.get("tvg_logo", "").strip())
+    print(f"\n[*] Total stasiun butuh logo baru: {total_needs_logo}")
 
-    # Fetch logo
-    if total_needed > 0:
-        print(f"\n[*] Fetching {total_needed} PNGs dari Wikimedia Commons...")
-        logos = fetch_anime_girl_pngs(count=total_needed)
+    # Fetch logo — ambil SEMUA yang dibutuhkan sekaligus
+    if total_needs_logo > 0:
+        print(f"[*] Fetching {total_needs_logo} PNGs dari Wikimedia Commons...")
+        logos = fetch_anime_girl_pngs(count=total_needs_logo)
         print(f"[*] {len(logos)} logo berhasil diambil")
     else:
-        print(f"\n[*] Tidak perlu fetch logo.")
+        print(f"[*] Tidak perlu fetch logo.")
         logos = []
 
-    # Assign logo untuk stasiun AKTIF
-    if active_stations:
-        print(f"\n[*] Assigning logos → {GROUP_TITLE} ({len(active_stations)} stations)")
-        enrich_stations(active_stations, logos, GROUP_TITLE)
+    if not logos and total_needs_logo > 0:
+        print("[WARN] Tidak ada logo yang diambil! Semua stasiun tanpa logo.")
 
-    # Assign logo untuk stasiun TIDAK AKTIF (pakai sisa logo)
-    if inactive_stations:
-        # Sisa logo setelah yang aktif
-        active_used = sum(1 for s in active_stations if not s.get("_logo_from_source", True))
-        remaining_logos = logos[active_needs_logo:] if active_needs_logo < len(logos) else []
-        print(f"[*] Assigning logos → {GROUP_INACTIVE} ({len(inactive_stations)} stations)")
-        enrich_stations(inactive_stations, remaining_logos, GROUP_INACTIVE)
+    # ★ ASSIGN LOGO — aktif dulu, lalu tidak aktif
+    # Track berapa logo terpakai untuk aktif
+    active_used = enrich_stations(active_stations, logos, GROUP_TITLE)
+
+    # Sisa logo untuk tidak aktif
+    remaining_logos = logos[active_used:]
+    inactive_used = enrich_stations(inactive_stations, remaining_logos, GROUP_INACTIVE)
+
+    total_used = active_used + inactive_used
+    if total_used < total_needs_logo:
+        print(f"[WARN] Logo kurang! Dibutuhkan {total_needs_logo}, tersedia {len(logos)}")
 
     # Gabungkan: aktif dulu, lalu tidak aktif
     all_stations = active_stations + inactive_stations
@@ -390,6 +407,7 @@ def main():
     print(f"  AKTIF:       {len(active_stations)}")
     print(f"  TIDAK AKTIF: {len(inactive_stations)}")
     print(f"  TOTAL:       {len(all_stations)}")
+    print(f"  LOGO TERPAKAI: {total_used}/{total_needs_logo}")
     print(f"{'='*50}")
 
 
