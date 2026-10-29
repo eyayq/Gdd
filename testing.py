@@ -4,6 +4,7 @@ import re
 import os
 import time
 import json
+import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
 BASE = "https://zeno.fm"
@@ -14,14 +15,14 @@ ASIA_COUNTRIES = {
     "bhutan", "brunei", "cambodia", "china", "cyprus", "georgia",
     "india", "indonesia", "iran", "iraq", "israel", "japan", "jordan",
     "kazakhstan", "kuwait", "kyrgyzstan", "laos", "lebanon", "malaysia",
-    "maldives", "mongolia", "myanmar", "nepal", "north-korea", "oman",
-    "pakistan", "palestine", "philippines", "qatar", "saudi-arabia",
-    "singapore", "south-korea", "sri-lanka", "syria", "tajikistan",
-    "thailand", "timor-leste", "turkey", "turkmenistan",
-    "united-arab-emirates", "uzbekistan", "vietnam", "yemen"
+    "maldives", "mongolia", "myanmar", "nepal", "north korea", "oman",
+    "pakistan", "palestine", "philippines", "qatar", "saudi arabia",
+    "singapore", "south korea", "sri lanka", "syria", "tajikistan",
+    "thailand", "east timor", "turkey", "turkmenistan",
+    "united arab emirates", "uzbekistan", "vietnam", "yemen"
 }
 
-GENRES_WANTED = ["general", "music", "religious", "anime"]
+GENRES_WANTED = {"general", "music", "religious"}  # "anime" tidak ada di zeno.fm
 LANGUAGES_WANTED = "arab"
 
 MAX_WORKERS = 10
@@ -34,30 +35,59 @@ def get_categories(path, keyword):
     soup = BeautifulSoup(r, "html.parser")
     links = [a["href"] for a in soup.find_all("a", href=True)]
     result = []
+    seen = set()
     for l in links:
         if keyword in l:
             slug = l.rstrip("/").split("/")[-1]
-            if slug:
-                result.append(slug)
+            # Exclude self-reference & empty
+            if slug and slug != keyword and slug.lower() != keyword:
+                if slug not in seen:
+                    seen.add(slug)
+                    result.append(slug)
     return result
 
 
-def scrape_stations(params, page):
+def scrape_stations(params, page, debug=False):
     url = f"{BASE}/api/stations/"
     params["page"] = page
     params["limit"] = 100
     try:
-        r = requests.get(url, params=params, timeout=15).json()
-    except Exception:
+        resp = requests.get(url, params=params, timeout=15)
+        r = resp.json()
+    except Exception as e:
+        if debug:
+            print(f"    [ERROR] {e}")
         return []
 
+    # DEBUG: print response pertama
+    if debug:
+        print(f"    [DEBUG] status={resp.status_code}")
+        print(f"    [DEBUG] type={type(r).__name__}")
+        if isinstance(r, dict):
+            print(f"    [DEBUG] keys={list(r.keys())[:10]}")
+            for k, v in r.items():
+                if isinstance(v, list) and v:
+                    print(f"    [DEBUG] {k}[0]={v[0]}")
+                    break
+        elif isinstance(r, list) and r:
+            print(f"    [DEBUG] len={len(r)}, [0]={r[0]}")
+        else:
+            print(f"    [DEBUG] value={r}")
+
+    # Handle dict wrapper
     if isinstance(r, dict):
-        for key in ("results", "stations", "data", "items"):
+        for key in ("results", "stations", "data", "items", "list"):
             if key in r and isinstance(r[key], list):
                 r = r[key]
                 break
         else:
-            return []
+            # Mungkin key lain
+            for key, val in r.items():
+                if isinstance(val, list) and val:
+                    r = val
+                    break
+            else:
+                return []
 
     if not isinstance(r, list):
         return []
@@ -65,18 +95,24 @@ def scrape_stations(params, page):
     result = []
     for item in r:
         if isinstance(item, dict):
-            u = item.get("url", "")
+            # Coba berbagai kemungkinan key untuk URL
+            u = item.get("url") or item.get("slug") or item.get("id") or ""
             if u:
-                result.append(u.split("/")[-1])
+                if "/" in u:
+                    result.append(u.rstrip("/").split("/")[-1])
+                else:
+                    result.append(u)
         elif isinstance(item, str):
-            result.append(item.split("/")[-1])
+            s = item.rstrip("/").split("/")[-1]
+            if s:
+                result.append(s)
     return result
 
 
-def scrape_all_pages(params, max_pages=50):
+def scrape_all_pages(params, max_pages=50, debug_first=False):
     all_ids = []
     for page in range(1, max_pages + 1):
-        ids = scrape_stations(params, page)
+        ids = scrape_stations(params, page, debug=(debug_first and page == 1))
         if not ids:
             break
         all_ids.extend(ids)
@@ -131,32 +167,42 @@ def main():
     all_countries = get_categories("countries", "countries")
     all_languages = get_categories("languages", "languages")
 
-    # DEBUG
-    print("ALL GENRES:", all_genres)
-    print("ALL COUNTRIES:", all_countries)
-    print("ALL LANGUAGES:", all_languages)
+    print(f"ALL GENRES ({len(all_genres)}):", all_genres)
+    print(f"ALL COUNTRIES ({len(all_countries)}):", all_countries[:20], "...")
+    print(f"ALL LANGUAGES ({len(all_languages)}):", all_languages[:10], "...")
     print()
 
     # Filter
-    genres = [g for g in all_genres if any(w in g.lower() for w in GENRES_WANTED)]
-    countries = [c for c in all_countries if c.lower() in ASIA_COUNTRIES]
+    genres = [g for g in all_genres if g.lower() in GENRES_WANTED]
+
+    # Countries: URL-decode lalu compare case-insensitive
+    countries = []
+    for c in all_countries:
+        decoded = urllib.parse.unquote(c).lower()
+        if decoded in ASIA_COUNTRIES:
+            countries.append(c)
+
     languages = [l for l in all_languages if LANGUAGES_WANTED in l.lower()]
 
     print(f"Genres:    {genres}")
     print(f"Countries: {len(countries)} (Asia only)")
-    print(f"Languages: {languages}")
+    print(f"  → {countries}")
+    print(f"Languages: {len(languages)}")
     print()
 
     if not genres and not countries and not languages:
-        print("ERROR: Tidak ada kategori yang match. Cek slug di atas.")
+        print("ERROR: Tidak ada kategori yang match.")
         return
 
     station_country = {}
 
     # --- Fase 1: Kumpulkan station IDs ---
+    first_debug = True
+
     for g in genres:
         print(f"Genre: {g}")
-        ids = scrape_all_pages({"genre": g, "country": "", "language": ""})
+        ids = scrape_all_pages({"genre": g, "country": "", "language": ""}, debug_first=first_debug)
+        first_debug = False
         for sid in ids:
             station_country.setdefault(sid, "")
         time.sleep(0.2)
@@ -165,7 +211,7 @@ def main():
         print(f"Country: {c}")
         ids = scrape_all_pages({"genre": "", "country": c, "language": ""})
         for sid in ids:
-            station_country[sid] = c
+            station_country[sid] = urllib.parse.unquote(c)
         time.sleep(0.2)
 
     for l in languages:
@@ -176,6 +222,10 @@ def main():
         time.sleep(0.2)
 
     print(f"\nTotal unique stations: {len(station_country)}")
+
+    if not station_country:
+        print("ERROR: Tidak ada station yang ditemukan. Cek [DEBUG] output di atas.")
+        return
 
     # --- Fase 2: Scrape stream PARALEL ---
     lines = ["#EXTM3U"]
