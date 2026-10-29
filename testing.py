@@ -7,17 +7,18 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 from curl_cffi import requests as cffi_requests
 from bs4 import BeautifulSoup
+from playwright.sync_api import sync_playwright
 
 BASE = "https://zeno.fm"
 IMPERSONATE = "chrome"
 
 ASIA_COUNTRIES = {
-    "bhutan", "brunei", "china", "indonesia", "japan", "malaysia", "singapore", "korea south"
+    "china", "indonesia", "japan", "malaysia", "singapore", "korea south"
 }
 
 GENRES_WANTED = {"general", "music", "religious"}
 LANGUAGES_WANTED = "arab"
-MAX_WORKERS = 50
+MAX_WORKERS = 20
 MAX_PAGES = 10
 REQUEST_DELAY = 0
 
@@ -91,126 +92,74 @@ def scrape_all_pages(params, max_pages=MAX_PAGES):
     return all_ids
 
 
-# ===== STREAM EXTRACTION =====
+# ===== SCRAPE STREAM (Playwright) =====
 
-def extract_stream_url(html):
-    """Ekstrak stream URL dari HTML dengan semua metode."""
-    # 1. "streamURL" di HTML
-    m = re.search(r'"streamURL"\s*:\s*"([^"]+)"', html)
-    if m:
-        return m.group(1).replace(";", "")
-
-    # 2. ?stream= di atribut HTML
-    m = re.search(r'stream=(https://stream[^"&\s\\\'<]+)', html)
-    if m:
-        return m.group(1)
-
-    # 3. "stream" di JSON
-    m = re.search(r'"stream"\s*:\s*"(https://stream[^"]+)"', html)
-    if m:
-        return m.group(1)
-
-    # 4. "streamUrl" / "stream_url"
-    m = re.search(r'"stream[Uu]rl"\s*:\s*"(https://stream[^"]+)"', html)
-    if m:
-        return m.group(1)
-
-    # 5. Langsung https://stream.zeno.fm/xxx
-    m = re.search(r'(https://stream[-\w]*\.zeno\.fm/[a-zA-Z0-9]+)', html)
-    if m:
-        return m.group(1)
-
-    # 6. "mount" / "mountPoint"
-    m = re.search(r'"(?:mount|mountPoint)"\s*:\s*"([a-zA-Z0-9]+)"', html)
-    if m:
-        return f"https://stream.zeno.fm/{m.group(1)}"
-
-    # 7. __NEXT_DATA__ → cari di JSON blob
-    m = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', html, re.DOTALL)
-    if m:
-        next_data = m.group(1)
-        sm = re.search(r'"streamURL"\s*:\s*"([^"]+)"', next_data)
-        if not sm:
-            sm = re.search(r'"stream"\s*:\s*"(https://stream[^"]+)"', next_data)
-        if not sm:
-            sm = re.search(r'"streamUrl"\s*:\s*"(https://stream[^"]+)"', next_data)
-        if not sm:
-            sm = re.search(r'"mount"\s*:\s*"([a-zA-Z0-9]+)"', next_data)
-        if sm:
-            val = sm.group(1)
-            if val.startswith("http"):
-                return val.replace(";", "")
-            return f"https://stream.zeno.fm/{val}"
-
-    return ""
-
-
-# ===== SCRAPE STREAM =====
-
-def scrape_stream(station_id, debug=False):
-    try:
-        resp = cffi_requests.get(f"{BASE}/radio/{station_id}/", impersonate=IMPERSONATE, timeout=20)
-        if resp.status_code != 200:
-            if debug:
-                print(f"    [DEBUG] {station_id}: HTTP {resp.status_code}")
-            return station_id, "", "", ""
-        html = resp.text
-    except Exception as e:
-        if debug:
-            print(f"    [DEBUG] {station_id}: {e}")
-        return station_id, "", "", ""
-
-    soup = BeautifulSoup(html, "html.parser")
-    title = soup.find("h1").text.strip() if soup.find("h1") else station_id
-
-    stream_url = extract_stream_url(html)
-
-    # Logo
+def scrape_stream_playwright(page, station_id):
+    """Pakai Playwright page untuk render JS dan extract stream URL."""
+    url = f"{BASE}/radio/{station_id}/"
+    stream_url = ""
+    title = station_id
     logo_url = ""
-    og = soup.find("meta", property="og:image")
-    if og and og.get("content"):
-        logo_url = og["content"]
 
-    if not logo_url:
-        for img in soup.find_all("img"):
-            cls = img.get("class") or []
-            cls_str = " ".join(cls) if isinstance(cls, list) else str(cls)
-            if "logo" in cls_str.lower():
-                logo_url = img.get("src", "")
+    try:
+        # Intercept response untuk stream URL
+        responses = []
+
+        def handle_response(response):
+            resp_url = response.url
+            if "stream" in resp_url.lower() and "zeno" in resp_url.lower():
+                responses.append(resp_url)
+            # Cek body response untuk streamURL
+            try:
+                if response.status == 200 and "api" in resp_url:
+                    body = response.text()
+                    if "streamURL" in body or "stream" in body:
+                        m = re.search(r'"streamURL"\s*:\s*"([^"]+)"', body)
+                        if m:
+                            responses.append(m.group(1))
+            except Exception:
+                pass
+
+        page.on("response", handle_response)
+        page.goto(url, wait_until="networkidle", timeout=30000)
+        page.wait_for_timeout(2000)  # tunggu JS load
+
+        # Extract title
+        h1 = page.query_selector("h1")
+        if h1:
+            title = h1.inner_text().strip()
+
+        # Extract logo
+        og = page.query_selector('meta[property="og:image"]')
+        if og:
+            logo_url = og.get_attribute("content") or ""
+
+        # Cek stream URL dari intercepted responses
+        for r in responses:
+            if "stream.zeno.fm" in r or "stream-" in r:
+                stream_url = r.split("?")[0]  # buang query params
                 break
 
-    if debug:
-        # Debug: print semua baris yang mengandung 'stream'
-        lines = html.split("\n")
-        stream_lines = [(i, l.strip()[:300]) for i, l in enumerate(lines) if "stream" in l.lower()]
-        print(f"\n  === {station_id} (len={len(html)}) ===")
-        print(f"  Stream lines: {len(stream_lines)}")
-        for ln, text in stream_lines[:20]:
-            print(f"    L{ln}: {text}")
-        if len(stream_lines) > 20:
-            print(f"    ... +{len(stream_lines)-20} more")
+        # Kalau belum ketemu, coba dari audio element
+        if not stream_url:
+            audio = page.query_selector("audio")
+            if audio:
+                src = audio.get_attribute("src") or ""
+                if src:
+                    stream_url = src
 
-        # Debug: __NEXT_DATA__
-        m = re.search(r'<script id="__NEXT_DATA__" type="application/json">(.*?)</script>', html, re.DOTALL)
-        if m:
-            nd = m.group(1)
-            print(f"  __NEXT_DATA__ found (len={len(nd)})")
-            for match in re.finditer(r'stream', nd, re.IGNORECASE):
-                s = max(0, match.start() - 30)
-                e = min(len(nd), match.end() + 80)
-                print(f"    ...{nd[s:e]}...")
-                if match.start() > 3000:
+        # Kalau masih belum, coba dari network responses
+        if not stream_url and responses:
+            for r in responses:
+                m = re.search(r'(https://stream[-\w]*\.zeno\.fm/[a-zA-Z0-9]+)', r)
+                if m:
+                    stream_url = m.group(1)
                     break
-        else:
-            print("  No __NEXT_DATA__")
 
-        # Debug: semua URL zeno
-        zeno_urls = list(set(re.findall(r'https?://[^\s"\'<>]*zeno[^\s"\'<>]*', html)))
-        print(f"  Zeno URLs ({len(zeno_urls)}):")
-        for u in zeno_urls[:10]:
-            print(f"    {u}")
+        page.remove_listener("response", handle_response)
 
-        print(f"  RESULT: stream='{stream_url}'")
+    except Exception as e:
+        print(f"    [ERROR] {station_id}: {e}")
 
     return station_id, title, stream_url, logo_url
 
@@ -237,10 +186,6 @@ def main():
     print(f"  → {countries}")
     print(f"Languages: {len(languages)}")
     print()
-
-    if not genres and not countries and not languages:
-        print("ERROR: Tidak ada kategori yang match.")
-        return
 
     station_country = {}
 
@@ -272,50 +217,51 @@ def main():
         print("ERROR: Tidak ada station.")
         return
 
-    # --- DEBUG: test 3 station (full analysis) ---
-    print("\n" + "=" * 60)
-    print("DEBUG: Full HTML analysis for 3 stations")
-    print("=" * 60)
-    for sid in list(station_country.keys())[:3]:
-        _, title, stream_url, logo_url = scrape_stream(sid, debug=True)
-        print()
-
-    # --- Fase 2: Scrape stream PARALEL ---
-    print(f"\n--- Scraping {total} stations (workers={MAX_WORKERS}) ---")
+    # --- Fase 2: Scrape stream dengan Playwright ---
+    print(f"\n--- Scraping {total} stations with Playwright ---")
     lines = ["#EXTM3U"]
     done = 0
     failed = 0
 
-    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {
-            pool.submit(scrape_stream, sid): (sid, country)
-            for sid, country in station_country.items()
-        }
-        for future in as_completed(futures):
-            sid, country = futures[future]
-            try:
-                _, title, stream_url, logo_url = future.result()
-            except Exception:
-                failed += 1
-                continue
+    with sync_playwright() as p:
+        browser = p.chromium.launch(headless=True)
+        context = browser.new_context(
+            user_agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+        )
 
-            if not stream_url:
-                failed += 1
-                continue
+        # Batch processing: 1 page per batch
+        sids = list(station_country.keys())
+        batch_size = 20
 
-            group = country if country else "Other"
-            extinf = (
-                f'#EXTINF:-1 '
-                f'tvg-id="zeno.{sid}" '
-                f'tvg-name="{title}" '
-                f'tvg-logo="{logo_url}" '
-                f'group-title="{group}",{title}'
-            )
-            lines.append(extinf)
-            lines.append(stream_url)
-            done += 1
-            if done % 100 == 0:
-                print(f"  {done}/{total} OK, {failed} failed")
+        for i in range(0, total, batch_size):
+            batch = sids[i:i + batch_size]
+            page = context.new_page()
+
+            for sid in batch:
+                country = station_country[sid]
+                _, title, stream_url, logo_url = scrape_stream_playwright(page, sid)
+
+                if stream_url:
+                    group = country if country else "Other"
+                    extinf = (
+                        f'#EXTINF:-1 '
+                        f'tvg-id="zeno.{sid}" '
+                        f'tvg-name="{title}" '
+                        f'tvg-logo="{logo_url}" '
+                        f'group-title="{group}",{title}'
+                    )
+                    lines.append(extinf)
+                    lines.append(stream_url)
+                    done += 1
+                else:
+                    failed += 1
+
+            page.close()
+
+            if (i // batch_size + 1) % 5 == 0:
+                print(f"  {done + failed}/{total} done ({done} OK, {failed} failed)")
+
+        browser.close()
 
     print(f"\n  Success: {done}, Failed: {failed}")
 
@@ -324,9 +270,7 @@ def main():
             f.write("\n".join(lines) + "\n")
         print(f"Done. {done} stations → playlist.m3u8")
     else:
-        print("ERROR: Tidak ada stream. Lihat DEBUG output di atas.")
-        print("Kemungkinan: stream URL dimuat via JavaScript (bukan di HTML).")
-        print("Solusi: pakai endpoint API zeno.fm langsung atau headless browser.")
+        print("ERROR: Tidak ada stream yang berhasil di-scrape.")
 
 
 if __name__ == "__main__":
