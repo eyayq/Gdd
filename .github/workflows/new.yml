@@ -36,7 +36,7 @@ jobs:
       - name: Install dependencies
         run: |
           pip install --upgrade pip
-          pip install aiohttp curl_cffi playwright
+          pip install aiohttp curl_cffi playwright beautifulsoup4
           
       # =========================
       # CACHE PLAYWRIGHT BROWSERS
