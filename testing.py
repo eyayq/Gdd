@@ -1,5 +1,3 @@
-import requests
-from bs4 import BeautifulSoup
 import re
 import os
 import time
@@ -7,34 +5,26 @@ import json
 import urllib.parse
 from concurrent.futures import ThreadPoolExecutor, as_completed
 
-BASE = "https://zeno.fm"
+from curl_cffi import requests as cffi_requests
+from bs4 import BeautifulSoup
 
-# ===== FILTER =====
+BASE = "https://zeno.fm"
+IMPERSONATE = "chrome"  # fingerprint browser
+
 ASIA_COUNTRIES = {
-    "afghanistan", "armenia", "azerbaijan", "bahrain", "bangladesh",
-    "bhutan", "brunei", "cambodia", "china", "cyprus", "georgia",
-    "india", "indonesia", "iran", "iraq", "israel", "japan", "jordan",
-    "kazakhstan", "kuwait", "kyrgyzstan", "laos", "lebanon", "malaysia",
-    "maldives", "mongolia", "myanmar", "nepal", "north korea", "oman",
-    "pakistan", "palestine", "philippines", "qatar", "saudi arabia",
-    "singapore", "korea south", "sri lanka", "syria", "tajikistan",
-    "thailand", "east timor", "turkey", "turkmenistan",
-    "united arab emirates", "uzbekistan", "vietnam", "yemen"
+    "bhutan", "brunei", "china", "indonesia", "japan", "malaysia", "singapore", "korea south"
 }
 
 GENRES_WANTED = {"general", "music", "religious"}
 LANGUAGES_WANTED = "arab"
+MAX_WORKERS = 50
+MAX_PAGES = 10
+REQUEST_DELAY = 0
 
-MAX_WORKERS = 50       # kurangi agar tidak kena rate-limit
-MAX_PAGES = 10        # kurangi dari 50 → cukup untuk Asia
-REQUEST_DELAY = 0   # delay antar batch (detik)
-
-
-# ===== FUNCTIONS =====
 
 def get_categories(path, keyword):
-    r = requests.get(f"{BASE}/radio/{path}/", timeout=15).text
-    soup = BeautifulSoup(r, "html.parser")
+    r = cffi_requests.get(f"{BASE}/radio/{path}/", impersonate=IMPERSONATE, timeout=15)
+    soup = BeautifulSoup(r.text, "html.parser")
     links = [a["href"] for a in soup.find_all("a", href=True)]
     result = []
     seen = set()
@@ -47,33 +37,34 @@ def get_categories(path, keyword):
     return result
 
 
-def scrape_stations(params, page, debug=False):
+def scrape_stations(params, page):
     url = f"{BASE}/api/stations/"
     params["page"] = page
     params["limit"] = 100
     try:
-        r = requests.get(url, params=params, timeout=15).json()
+        r = cffi_requests.get(url, params=params, impersonate=IMPERSONATE, timeout=15)
+        data = r.json()
     except Exception:
         return []
 
-    if isinstance(r, dict):
+    if isinstance(data, dict):
         for key in ("results", "stations", "data", "items", "list"):
-            if key in r and isinstance(r[key], list):
-                r = r[key]
+            if key in data and isinstance(data[key], list):
+                data = data[key]
                 break
         else:
-            for key, val in r.items():
+            for key, val in data.items():
                 if isinstance(val, list) and val:
-                    r = val
+                    data = val
                     break
             else:
                 return []
 
-    if not isinstance(r, list):
+    if not isinstance(data, list):
         return []
 
     result = []
-    for item in r:
+    for item in data:
         if isinstance(item, dict):
             u = item.get("url") or item.get("slug") or item.get("id") or ""
             if u:
@@ -97,28 +88,30 @@ def scrape_all_pages(params, max_pages=MAX_PAGES):
 
 
 def extract_stream_url(html):
-    """Ekstrak stream URL dari HTML dengan 3 metode."""
-    # Method 1: "streamURL": "https://stream.zeno.fm/xxx"
     m = re.search(r'"streamURL"\s*:\s*"([^"]+)"', html)
     if m:
         return m.group(1).replace(";", "")
-
-    # Method 2: ?stream=https://stream.zeno.fm/xxx
-    m = re.search(r'stream=(https://stream[^"&\s\\]+)', html)
+    m = re.search(r'stream=(https://stream[^"&\s\\\'<]+)', html)
     if m:
         return m.group(1)
-
-    # Method 3: langsung https://stream.zeno.fm/xxx atau https://stream-XX.zeno.fm/xxx
-    m = re.search(r'(https://stream[-\w]*\.zeno\.fm/[a-z0-9]+)', html)
+    m = re.search(r'"stream"\s*:\s*"(https://stream[^"]+)"', html)
     if m:
         return m.group(1)
-
+    m = re.search(r'"stream[Uu]rl"\s*:\s*"(https://stream[^"]+)"', html)
+    if m:
+        return m.group(1)
+    m = re.search(r'(https://stream[-\w]*\.zeno\.fm/[a-zA-Z0-9]+)', html)
+    if m:
+        return m.group(1)
+    m = re.search(r'"(?:mount|mountPoint)"\s*:\s*"([a-zA-Z0-9]+)"', html)
+    if m:
+        return f"https://stream.zeno.fm/{m.group(1)}"
     return ""
 
 
 def scrape_stream(station_id, debug=False):
     try:
-        resp = requests.get(f"{BASE}/radio/{station_id}/", timeout=20)
+        resp = cffi_requests.get(f"{BASE}/radio/{station_id}/", impersonate=IMPERSONATE, timeout=20)
         if resp.status_code != 200:
             if debug:
                 print(f"    [DEBUG] {station_id}: HTTP {resp.status_code}")
@@ -134,7 +127,6 @@ def scrape_stream(station_id, debug=False):
 
     stream_url = extract_stream_url(html)
 
-    # Logo
     logo_url = ""
     og = soup.find("meta", property="og:image")
     if og and og.get("content"):
@@ -149,12 +141,10 @@ def scrape_stream(station_id, debug=False):
                 break
 
     if debug:
-        print(f"    [DEBUG] {station_id}: title='{title}', stream='{stream_url[:60]}...', logo='{logo_url[:40] if logo_url else ''}'")
+        print(f"    [DEBUG] {station_id}: title='{title}', stream='{stream_url}', html_len={len(html)}")
 
     return station_id, title, stream_url, logo_url
 
-
-# ===== MAIN =====
 
 def main():
     os.makedirs("output", exist_ok=True)
@@ -163,12 +153,6 @@ def main():
     all_countries = get_categories("countries", "countries")
     all_languages = get_categories("languages", "languages")
 
-    print(f"ALL GENRES ({len(all_genres)}):", all_genres)
-    print(f"ALL COUNTRIES ({len(all_countries)}):", all_countries)
-    print(f"ALL LANGUAGES ({len(all_languages)}):", all_languages[:10], "...")
-    print()
-
-    # Filter
     genres = [g for g in all_genres if g.lower() in GENRES_WANTED]
     countries = []
     for c in all_countries:
@@ -178,18 +162,12 @@ def main():
     languages = [l for l in all_languages if LANGUAGES_WANTED in l.lower()]
 
     print(f"Genres:    {genres}")
-    print(f"Countries: {len(countries)} (Asia only)")
-    print(f"  → {countries}")
+    print(f"Countries: {len(countries)}")
     print(f"Languages: {len(languages)}")
     print()
 
-    if not genres and not countries and not languages:
-        print("ERROR: Tidak ada kategori yang match.")
-        return
-
     station_country = {}
 
-    # --- Fase 1: Kumpulkan station IDs ---
     for g in genres:
         print(f"Genre: {g}")
         ids = scrape_all_pages({"genre": g, "country": "", "language": ""})
@@ -218,12 +196,13 @@ def main():
         print("ERROR: Tidak ada station.")
         return
 
-    # --- Debug: test 3 station pertama ---
-    print("\n--- DEBUG: testing 3 stations ---")
-    test_sids = list(station_country.keys())[:3]
-    for sid in test_sids:
-        _, t, s, l = scrape_stream(sid, debug=True)
-        print()
+    # --- DEBUG: test 5 station ---
+    print("\n" + "=" * 60)
+    print("DEBUG: Testing 5 stations")
+    print("=" * 60)
+    for sid in list(station_country.keys())[:5]:
+        _, title, stream_url, logo_url = scrape_stream(sid, debug=True)
+        print(f"  → title='{title}', stream='{stream_url}'")
 
     # --- Fase 2: Scrape stream PARALEL ---
     print(f"\n--- Scraping {total} stations (workers={MAX_WORKERS}) ---")
@@ -264,16 +243,12 @@ def main():
 
     print(f"\n  Success: {done}, Failed: {failed}")
 
-    if done == 0:
-        print("ERROR: Tidak ada stream yang berhasil di-scrape.")
-        print("Kemungkinan: rate-limited oleh zeno.fm.")
-        print("Coba: kurangi MAX_WORKERS ke 3, naikkan REQUEST_DELAY ke 1.0")
-        return
-
-    with open("playlist.m3u8", "w") as f:
-        f.write("\n".join(lines) + "\n")
-
-    print(f"Done. {done} stations → playlist.m3u8")
+    if done > 0:
+        with open("playlist.m3u8", "w") as f:
+            f.write("\n".join(lines) + "\n")
+        print(f"Done. {done} stations → playlist.m3u8")
+    else:
+        print("ERROR: Tidak ada stream. Zeno.fm mungkin masih block.")
 
 
 if __name__ == "__main__":
