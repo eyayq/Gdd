@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 BASE = "https://zeno.fm"
 
-# ===== FILTER =====
+# ===== FILTER (case-insensitive substring) =====
 ASIA_COUNTRIES = {
     "afghanistan", "armenia", "azerbaijan", "bahrain", "bangladesh",
     "bhutan", "brunei", "cambodia", "china", "cyprus", "georgia",
@@ -21,16 +21,16 @@ ASIA_COUNTRIES = {
     "united-arab-emirates", "uzbekistan", "vietnam", "yemen"
 }
 
-GENRES_WANTED = {"general", "music", "religious", "anime"}
-LANGUAGES_WANTED = "arabic"
+GENRES_WANTED = ["general", "music", "religious", "anime"]
+LANGUAGES_WANTED = "arab"
 
-MAX_WORKERS = 10  # jumlah thread paralel
+MAX_WORKERS = 10
 
 
 # ===== FUNCTIONS =====
 
 def get_categories(path, keyword):
-    r = requests.get(f"{BASE}/radio/{path}/").text
+    r = requests.get(f"{BASE}/radio/{path}/", timeout=15).text
     soup = BeautifulSoup(r, "html.parser")
     links = [a["href"] for a in soup.find_all("a", href=True)]
     return [l.split("/")[-1] for l in links if keyword in l]
@@ -125,7 +125,14 @@ def main():
     all_countries = get_categories("countries", "countries")
     all_languages = get_categories("languages", "languages")
 
-    genres = [g for g in all_genres if g.lower() in GENRES_WANTED]
+    # DEBUG: print semua slug asli
+    print("ALL GENRES:", all_genres)
+    print("ALL COUNTRIES:", all_countries)
+    print("ALL LANGUAGES:", all_languages)
+    print()
+
+    # Filter case-insensitive + substring
+    genres = [g for g in all_genres if any(w in g.lower() for w in GENRES_WANTED)]
     countries = [c for c in all_countries if c.lower() in ASIA_COUNTRIES]
     languages = [l for l in all_languages if LANGUAGES_WANTED in l.lower()]
 
@@ -134,9 +141,13 @@ def main():
     print(f"Languages: {languages}")
     print()
 
+    if not genres and not countries and not languages:
+        print("ERROR: Tidak ada kategori yang match. Cek slug di atas.")
+        return
+
     station_country = {}
 
-    # --- Fase 1: Kumpulkan station IDs (sekuensial, sudah cukup cepat) ---
+    # --- Fase 1: Kumpulkan station IDs ---
     for g in genres:
         print(f"Genre: {g}")
         ids = scrape_all_pages({"genre": g, "country": "", "language": ""})
@@ -153,7 +164,15 @@ def main():
 
     for l in languages:
         print(f"Language: {l}")
-        ids = scrape_all_pages({"genre": "", "country": "", "language": l})
+        ids = scrape_all_pages({"genre": "", "country": "", "language": ""}, )
+        # Fix: language param
+        ids = []
+        for page in range(1, 51):
+            batch = scrape_stations({"genre": "", "country": "", "language": l}, page)
+            if not batch:
+                break
+            ids.extend(batch)
+            print(f"    page {page}: {len(batch)}")
         for sid in ids:
             station_country.setdefault(sid, "")
         time.sleep(0.2)
@@ -162,11 +181,13 @@ def main():
 
     # --- Fase 2: Scrape stream PARALEL ---
     lines = ["#EXTM3U"]
-    results = []
+    done = 0
 
     with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
-        futures = {pool.submit(scrape_stream, sid): (sid, country) for sid, country in station_country.items()}
-        done = 0
+        futures = {
+            pool.submit(scrape_stream, sid): (sid, country)
+            for sid, country in station_country.items()
+        }
         for future in as_completed(futures):
             sid, country = futures[future]
             try:
