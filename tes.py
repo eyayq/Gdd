@@ -1,4 +1,3 @@
-
 import requests
 import re
 import sys
@@ -12,7 +11,6 @@ GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO MUSIC KPOP")
 TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
 USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
 
-# Kategori Wikimedia Commons untuk anime girl PNG
 COMMONS_CATEGORIES = [
     "Category:Girls in anime and manga",
     "Category:Anime illustrations",
@@ -29,14 +27,14 @@ COMMONS_CATEGORIES = [
     "Category:Sailor uniforms",
     "Category:Schoolgirl",
     "Category:Japanese animation",
+    "Category:Anime girls",
+    "Category:K-pop",
+    "Category:Korean pop music",
+    "Category:Idol groups",
 ]
 
 
 def fetch_anime_girl_pngs(count: int = 1060) -> list:
-    """
-    Fetch anime girl PNG URLs dari Wikimedia Commons API.
-    Gabungkan dari beberapa kategori, filter hanya PNG, ambil direct URL.
-    """
     all_files = []
     seen = set()
 
@@ -44,83 +42,87 @@ def fetch_anime_girl_pngs(count: int = 1060) -> list:
         if len(all_files) >= count:
             break
 
-        try:
-            # Step 1: Get file list from category
-            resp = requests.get(
-                "https://commons.wikimedia.org/w/api.php",
-                params={
-                    "action": "query",
-                    "list": "categorymembers",
-                    "cmtitle": category,
-                    "cmtype": "file",
-                    "cmlimit": "100",
-                    "format": "json",
-                },
-                headers={"User-Agent": USER_AGENT},
-                timeout=TIMEOUT,
-            )
-            if resp.status_code != 200:
-                continue
+        cmcontinue = None
 
-            members = resp.json().get("query", {}).get("categorymembers", [])
+        while len(all_files) < count:
+            params = {
+                "action": "query",
+                "list": "categorymembers",
+                "cmtitle": category,
+                "cmtype": "file",
+                "cmlimit": "500",
+                "format": "json",
+            }
+            if cmcontinue:
+                params["cmcontinue"] = cmcontinue
 
-            # Filter PNG files only
-            png_files = [
-                m["title"] for m in members
-                if m["title"].lower().endswith(".png")
-            ]
-
-            if not png_files:
-                continue
-
-            # Step 2: Get direct URLs for these files (batch)
-            # API allows max 50 titles per request
-            for i in range(0, len(png_files), 50):
-                batch = png_files[i:i+50]
-                url_resp = requests.get(
+            try:
+                resp = requests.get(
                     "https://commons.wikimedia.org/w/api.php",
-                    params={
-                        "action": "query",
-                        "titles": "|".join(batch),
-                        "prop": "imageinfo",
-                        "iiprop": "url|mime|size",
-                        "iiurlwidth": "256",  # thumbnail 256px (kecil & cepat)
-                        "format": "json",
-                    },
+                    params=params,
                     headers={"User-Agent": USER_AGENT},
                     timeout=TIMEOUT,
                 )
-                if url_resp.status_code != 200:
-                    continue
+                if resp.status_code != 200:
+                    break
 
-                pages = url_resp.json().get("query", {}).get("pages", {})
-                for page in pages.values():
-                    if "imageinfo" not in page:
-                        continue
-                    info = page["imageinfo"][0]
-                    # Hanya yang MIME = image/png dan ukuran reasonable
-                    if info.get("mime") != "image/png":
-                        continue
-                    if info.get("width", 0) > 5000:  # skip yang terlalu besar
-                        continue
+                data = resp.json()
+                members = data.get("query", {}).get("categorymembers", [])
 
-                    # Pakai thumbnail URL (256px) — lebih ringan
-                    thumb_url = info.get("thumburl", info.get("url", ""))
-                    if thumb_url and thumb_url not in seen:
-                        seen.add(thumb_url)
-                        all_files.append(thumb_url)
+                if not members:
+                    break
 
-                    if len(all_files) >= count:
-                        break
+                png_files = [
+                    m["title"] for m in members
+                    if m["title"].lower().endswith(".png")
+                ]
 
-        except Exception as e:
-            print(f"  [WARN] Category {category}: {e}")
-            continue
+                if png_files:
+                    for i in range(0, len(png_files), 50):
+                        if len(all_files) >= count:
+                            break
+
+                        batch = png_files[i:i+50]
+                        url_resp = requests.get(
+                            "https://commons.wikimedia.org/w/api.php",
+                            params={
+                                "action": "query",
+                                "titles": "|".join(batch),
+                                "prop": "imageinfo",
+                                "iiprop": "url|mime|size",
+                                "iiurlwidth": "256",
+                                "format": "json",
+                            },
+                            headers={"User-Agent": USER_AGENT},
+                            timeout=TIMEOUT,
+                        )
+                        if url_resp.status_code != 200:
+                            continue
+
+                        pages = url_resp.json().get("query", {}).get("pages", {})
+                        for page in pages.values():
+                            if "imageinfo" not in page:
+                                continue
+                            info = page["imageinfo"][0]
+                            if info.get("mime") != "image/png":
+                                continue
+                            if info.get("width", 0) > 5000:
+                                continue
+
+                            thumb_url = info.get("thumburl", info.get("url", ""))
+                            if thumb_url and thumb_url not in seen:
+                                seen.add(thumb_url)
+                                all_files.append(thumb_url)
+
+                cmcontinue = data.get("continue", {}).get("cmcontinue")
+
+            except Exception as e:
+                print(f"  [WARN] Category {category}: {e}")
+                break
 
     return all_files[:count]
 
 
-# ─── M3U Parser ──────────────────────────────────────────────────────
 def parse_m3u(content: str) -> list:
     stations = []
     lines = content.strip().splitlines()
@@ -156,29 +158,39 @@ def parse_m3u(content: str) -> list:
     return stations
 
 
-# ─── Enrich: Assign unique logo per channel ─────────────────────────
 def enrich_stations(stations: list, logos: list) -> list:
-    """Assign logo secara sequensial — setiap channel PASTI beda."""
+    """
+    Assign logo:
+    - Jika stasiun SUDAH punya tvg-logo → biarkan (jangan overwrite)
+    - Jika TIDAK punya → assign logo baru dari list
+    """
     logo_index = 0
+    already_has = 0
+    assigned = 0
 
     for idx, s in enumerate(stations, 1):
         s["group_title"] = GROUP_TITLE
 
-        if s.get("tvg_logo"):
-            continue  # sudah ada logo dari source
+        # ★ LOGIKA UTAMA: jika sudah ada logo, SKIP
+        if s.get("tvg_logo") and s["tvg_logo"].strip():
+            already_has += 1
+            print(f"  [{idx}/{len(stations)}] {s['name']} → [SKIP] sudah punya logo")
+            continue
 
+        # Tidak ada logo → assign baru
         if logo_index < len(logos):
             s["tvg_logo"] = logos[logo_index]
             logo_index += 1
+            assigned += 1
+            print(f"  [{idx}/{len(stations)}] {s['name']} → [BARU] logo #{logo_index}")
         else:
-            s["tvg_logo"] = ""  # tidak ada logo lagi
+            s["tvg_logo"] = ""
+            print(f"  [{idx}/{len(stations)}] {s['name']} → [KOSONG] logo habis")
 
-        print(f"  [{idx}/{len(stations)}] {s['name']} → logo #{logo_index}")
-
+    print(f"\n  [RINGKASAN] Sudah punya logo: {already_has} | Logo baru: {assigned} | Kosong: {len(stations) - already_has - assigned}")
     return stations
 
 
-# ─── Output Writer ───────────────────────────────────────────────────
 def write_m3u(stations: list, output_path: str):
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
@@ -191,7 +203,6 @@ def write_m3u(stations: list, output_path: str):
     print(f"\n[OK] {len(stations)} stations → {output_path}")
 
 
-# ─── Main ────────────────────────────────────────────────────────────
 def main():
     input_file = INPUT_FILE
     output_file = OUTPUT_FILE
@@ -225,17 +236,23 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # Fetch 160+ anime girl PNG dari Commons API
-    print(f"[*] Fetching anime girl PNGs dari Wikimedia Commons...")
-    logos = fetch_anime_girl_pngs(count=1060)
-    print(f"[*] {len(logos)} logo berhasil diambil")
+    # Hitung berapa yang sudah punya logo
+    has_logo = sum(1 for s in unique if s.get("tvg_logo", "").strip())
+    print(f"[*] {has_logo} stasiun sudah punya logo (akan di-SKIP)")
+    print(f"[*] {len(unique) - has_logo} stasiun butuh logo baru")
 
-    if not logos:
-        print("[ERROR] Tidak ada logo yang berhasil diambil!")
-        sys.exit(1)
+    # Fetch logo
+    needed = len(unique) - has_logo
+    if needed > 0:
+        print(f"[*] Fetching {needed} PNGs dari Wikimedia Commons...")
+        logos = fetch_anime_girl_pngs(count=needed)
+        print(f"[*] {len(logos)} logo berhasil diambil")
+    else:
+        print(f"[*] Tidak perlu fetch logo — semua sudah punya.")
+        logos = []
 
     # Assign logo
-    print(f"[*] Assigning unique logos...")
+    print(f"[*] Assigning logos...")
     unique = enrich_stations(unique, logos)
 
     write_m3u(unique, output_file)
