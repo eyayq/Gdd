@@ -1,4 +1,3 @@
-
 from curl_cffi import requests as crl
 import time
 import json
@@ -7,17 +6,17 @@ import os
 API_BASE = "https://zeno.fm/api/stations/"
 
 COUNTRIES = [
-    "china", "indonesia", "japan",
-    "malaysia", "singapore", "korea south",
+    "japan", "indonesia", "malaysia",
+    "korea south", "china", "singapore",
 ]
 
 GROUP_TITLES = {
-    "china": "China", "indonesia": "Indonesia", "japan": "Japan",
-    "malaysia": "Malaysia", "singapore": "Singapore", "korea south": "Korea South",
+    "japan": "RADIO J-POP-ROCK", "indonesia": "RADIO MUSIC MY ID", "malaysia": "RADIO MUSIC MY ID",
+    "korea south": "RADIO MUSIC MY ID", "china": "RADIO MUSIC MY ID", "singapore": "RADIO MUSIC MY ID",
 }
 
 GENRES = [
-    "music",
+    "music", "general", "religious", "news-talk",
 ]
 
 CACHE_FILE = "zeno_cache.json"
