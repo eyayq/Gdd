@@ -1,17 +1,9 @@
-#!/usr/bin/env python3
-"""
-Zeno.fm M3U8 Playlist Generator
-Auto-detect struktur API dari respons JSON.
-"""
-
 from curl_cffi import requests as crl
 import time
 import json
 import os
 
-SEARCH_API = "https://zeno.fm/api/stations/"
-ZENOPLAY_API = "https://zenoplay.zenomedia.com/api/zenofm/stations/"
-STREAM_BASE = "https://stream.zeno.fm/"
+API_BASE = "https://zeno.fm/api/stations/"
 
 COUNTRIES = [
     "china", "indonesia", "japan",
@@ -28,57 +20,30 @@ GENRES = [
     "college-university", "sports", "comedy", "children",
 ]
 
-CACHE_FILE = "zeno_cc.json"
+CACHE_FILE = "zeno_cache.json"
 
 
-# ─── AUTO-DETECT ───────────────────────────────────────────────
-
-def detect_field(data, candidates, default=""):
-    """
-    Deteksi field dari list kandidat.
-    Contoh: detect_field(resp, ["streamname", "mount_point", "default_relay"])
-    """
-    if isinstance(data, dict):
-        for key in candidates:
-            if key in data and data[key]:
-                return data[key]
-    return default
+def load_cache():
+    if os.path.exists(CACHE_FILE):
+        with open(CACHE_FILE, "r") as f:
+            return json.load(f)
+    return {}
 
 
-def detect_slug(station):
-    """Auto-detect slug dari item search API."""
-    return detect_field(station, ["slug", "pretty_url", "route.params.id", "id"])
+def save_cache(cache):
+    with open(CACHE_FILE, "w") as f:
+        json.dump(cache, f)
 
-
-def detect_streamname(detail):
-    """Auto-detect streamname/mount point dari Zenoplay API."""
-    return detect_field(detail, ["streamname", "mount_point", "default_relay", "stream_id"])
-
-
-def detect_title(station):
-    """Auto-detect nama stasiun."""
-    return detect_field(station, ["title", "station_name", "name"], "Unknown")
-
-
-def detect_logo(station):
-    """Auto-detect URL logo."""
-    logo = station.get("logo", {})
-    if isinstance(logo, dict):
-        return detect_field(logo, ["src", "url", "image"], "")
-    return logo if isinstance(logo, str) else ""
-
-
-# ─── FETCH ─────────────────────────────────────────────────────
 
 def fetch_all_stations(country, genre):
-    """Fetch semua stasiun (pagination otomatis)."""
+    """Fetch semua stasiun (pagination)."""
     stations = []
     page = 1
 
     while True:
         params = {"genre": genre, "country": country, "page": page, "limit": 1000}
         try:
-            resp = crl.get(SEARCH_API, params=params, impersonate="chrome", timeout=30)
+            resp = crl.get(API_BASE, params=params, impersonate="chrome", timeout=30)
             resp.raise_for_status()
             data = resp.json()
         except Exception as e:
@@ -96,49 +61,43 @@ def fetch_all_stations(country, genre):
             break
 
         page += 1
-        time.sleep(0.3)
+        time.sleep(0)
 
     return stations
 
 
-def get_streamname(slug, cache):
-    """Fetch detail dari Zenoplay → auto-detect streamname."""
+def get_stream_url(slug, cache):
+    """
+    GET /api/stations/{slug}/ → streamURL langsung.
+    Auto-detect: coba streamURL, streamName, streamname.
+    """
     if slug in cache:
         return cache[slug]
 
     try:
         resp = crl.get(
-            f"{ZENOPLAY_API}{slug}/",
+            f"{API_BASE}{slug}/",
             impersonate="chrome",
             timeout=15,
         )
         resp.raise_for_status()
-        detail = resp.json()
-        streamname = detect_streamname(detail)
-        cache[slug] = streamname
-        time.sleep(0.1)
-        return streamname
+        data = resp.json()
+
+        # Auto-detect stream URL
+        stream_url = data.get("streamURL", "")
+        if not stream_url:
+            stream_name = data.get("streamName") or data.get("streamname", "")
+            if stream_name:
+                stream_url = f"https://stream.zeno.fm/{stream_name}"
+
+        cache[slug] = stream_url
+        time.sleep(0)
+        return stream_url
     except Exception as e:
         print(f"    ⚠️  {slug}: {e}")
         cache[slug] = ""
         return ""
 
-
-# ─── CACHE ─────────────────────────────────────────────────────
-
-def load_cache():
-    if os.path.exists(CACHE_FILE):
-        with open(CACHE_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-
-def save_cache(cache):
-    with open(CACHE_FILE, "w") as f:
-        json.dump(cache, f, indent=2)
-
-
-# ─── BUILD M3U8 ────────────────────────────────────────────────
 
 def build_m3u8(output_file="playlist.m3u8"):
     lines = ["#EXTM3U"]
@@ -155,22 +114,20 @@ def build_m3u8(output_file="playlist.m3u8"):
             print(f"  {genre:<22} → {len(stations)} stasiun")
 
             for s in stations:
-                # Auto-detect field dari search response
-                slug = detect_slug(s)
+                slug = s.get("slug", "")
                 sid = s.get("id", slug)
 
                 if sid in seen:
                     continue
                 seen.add(sid)
 
-                # Ambil streamname dari Zenoplay (auto-detect)
-                streamname = get_streamname(slug, cache)
-                if not streamname:
+                # 1 API call → streamURL langsung
+                stream_url = get_stream_url(slug, cache)
+                if not stream_url:
                     continue
 
-                title = detect_title(s)
-                logo = detect_logo(s)
-                stream_url = f"{STREAM_BASE}{streamname}"
+                title = s.get("title", "Unknown")
+                logo = s.get("logo", {}).get("src", "")
 
                 lines.append(f'#EXTINF:-1 group-title="{group}",tvg-logo="{logo}",{title}')
                 lines.append(stream_url)
