@@ -8,7 +8,7 @@ from pathlib import Path
 # ─── Config ──────────────────────────────────────────────────────────
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
-GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO INTERNAL")
+GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO MUSIC KPOP")
 TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
 USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
 
@@ -227,7 +227,7 @@ def main():
 
     # Fetch 160+ anime girl PNG dari Commons API
     print(f"[*] Fetching anime girl PNGs dari Wikimedia Commons...")
-    logos = fetch_anime_girl_pngs(count=160)
+    logos = fetch_anime_girl_pngs(count=1060)
     print(f"[*] {len(logos)} logo berhasil diambil")
 
     if not logos:
