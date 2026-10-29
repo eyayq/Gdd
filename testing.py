@@ -8,7 +8,7 @@ from concurrent.futures import ThreadPoolExecutor, as_completed
 
 BASE = "https://zeno.fm"
 
-# ===== FILTER (case-insensitive substring) =====
+# ===== FILTER =====
 ASIA_COUNTRIES = {
     "afghanistan", "armenia", "azerbaijan", "bahrain", "bangladesh",
     "bhutan", "brunei", "cambodia", "china", "cyprus", "georgia",
@@ -33,7 +33,13 @@ def get_categories(path, keyword):
     r = requests.get(f"{BASE}/radio/{path}/", timeout=15).text
     soup = BeautifulSoup(r, "html.parser")
     links = [a["href"] for a in soup.find_all("a", href=True)]
-    return [l.split("/")[-1] for l in links if keyword in l]
+    result = []
+    for l in links:
+        if keyword in l:
+            slug = l.rstrip("/").split("/")[-1]
+            if slug:
+                result.append(slug)
+    return result
 
 
 def scrape_stations(params, page):
@@ -125,13 +131,13 @@ def main():
     all_countries = get_categories("countries", "countries")
     all_languages = get_categories("languages", "languages")
 
-    # DEBUG: print semua slug asli
+    # DEBUG
     print("ALL GENRES:", all_genres)
     print("ALL COUNTRIES:", all_countries)
     print("ALL LANGUAGES:", all_languages)
     print()
 
-    # Filter case-insensitive + substring
+    # Filter
     genres = [g for g in all_genres if any(w in g.lower() for w in GENRES_WANTED)]
     countries = [c for c in all_countries if c.lower() in ASIA_COUNTRIES]
     languages = [l for l in all_languages if LANGUAGES_WANTED in l.lower()]
@@ -164,15 +170,7 @@ def main():
 
     for l in languages:
         print(f"Language: {l}")
-        ids = scrape_all_pages({"genre": "", "country": "", "language": ""}, )
-        # Fix: language param
-        ids = []
-        for page in range(1, 51):
-            batch = scrape_stations({"genre": "", "country": "", "language": l}, page)
-            if not batch:
-                break
-            ids.extend(batch)
-            print(f"    page {page}: {len(batch)}")
+        ids = scrape_all_pages({"genre": "", "country": "", "language": l})
         for sid in ids:
             station_country.setdefault(sid, "")
         time.sleep(0.2)
