@@ -3,6 +3,7 @@ from bs4 import BeautifulSoup
 import re
 import os
 import time
+import json
 
 BASE = "https://zeno.fm"
 
@@ -19,7 +20,28 @@ def scrape_stations(params, page):
     params["page"] = page
     params["limit"] = 100
     r = requests.get(url, params=params).json()
-    return [item["url"].split("/")[-1] for item in r]
+
+    # Handle dict wrapper (e.g. {"results": [...]} or {"stations": [...]})
+    if isinstance(r, dict):
+        for key in ("results", "stations", "data", "items"):
+            if key in r and isinstance(r[key], list):
+                r = r[key]
+                break
+        else:
+            return []
+
+    if not isinstance(r, list):
+        return []
+
+    result = []
+    for item in r:
+        if isinstance(item, dict):
+            u = item.get("url", "")
+            if u:
+                result.append(u.split("/")[-1])
+        elif isinstance(item, str):
+            result.append(item.split("/")[-1])
+    return result
 
 
 def scrape_stream(station_id):
@@ -33,7 +55,7 @@ def scrape_stream(station_id):
     stream_match = re.search(r'"streamURL":\s*"([^"]*)"', r)
     stream_url = stream_match.group(1).replace(";", "") if stream_match else ""
 
-    # Logo — coba beberapa strategi
+    # Logo
     logo_url = ""
 
     # 1. og:image
@@ -45,7 +67,7 @@ def scrape_stream(station_id):
     if not logo_url:
         for script in soup.find_all("script", type="application/ld+json"):
             try:
-                data = __import__("json").loads(script.string)
+                data = json.loads(script.string)
                 if isinstance(data, dict) and data.get("image"):
                     logo_url = data["image"]
                     break
@@ -55,7 +77,7 @@ def scrape_stream(station_id):
     # 3. img dengan class/id mengandung "logo"
     if not logo_url:
         for img in soup.find_all("img"):
-            cls = (img.get("class") or [""])
+            cls = img.get("class") or []
             cls_str = " ".join(cls) if isinstance(cls, list) else cls
             if "logo" in cls_str.lower() or "logo" in (img.get("id") or "").lower():
                 logo_url = img.get("src", "")
@@ -75,13 +97,13 @@ def main():
     print(f"Found {len(genres)} genres, {len(countries)} countries, {len(languages)} languages")
 
     # 2. Collect station IDs → country mapping
-    station_country = {}  # {station_id: country_name}
+    station_country = {}
 
     for i in range(1, 101):
         for g in genres:
             ids = scrape_stations({"genre": g, "country": "", "language": ""}, i)
             for sid in ids:
-                station_country.setdefault(sid, "")  # genre-only, no country
+                station_country.setdefault(sid, "")
             print(f"genre {g} - page {i}")
         time.sleep(0.3)
 
@@ -89,7 +111,7 @@ def main():
         for c in countries:
             ids = scrape_stations({"genre": "", "country": c, "language": ""}, i)
             for sid in ids:
-                station_country[sid] = c  # override dengan country
+                station_country[sid] = c
             print(f"country {c} - page {i}")
         time.sleep(0.3)
 
@@ -97,13 +119,13 @@ def main():
         for l in languages:
             ids = scrape_stations({"genre": "", "country": "", "language": l}, i)
             for sid in ids:
-                station_country.setdefault(sid, "")  # language-only, no country
+                station_country.setdefault(sid, "")
             print(f"language {l} - page {i}")
         time.sleep(0.3)
 
     print(f"Total unique stations: {len(station_country)}")
 
-    # 3. Scrape streams & build single playlist with tvg-logo + group-title
+    # 3. Scrape streams & build single playlist
     lines = ["#EXTM3U"]
     for sid, country in station_country.items():
         title, stream_url, logo_url = scrape_stream(sid)
@@ -111,7 +133,13 @@ def main():
             continue
 
         group = country if country else "Other"
-        extinf = f'#EXTINF:-1 tvg-id="zeno.{sid}" tvg-name="{title}" tvg-logo="{logo_url}" group-title="{group}",{title}'
+        extinf = (
+            f'#EXTINF:-1 '
+            f'tvg-id="zeno.{sid}" '
+            f'tvg-name="{title}" '
+            f'tvg-logo="{logo_url}" '
+            f'group-title="{group}",{title}'
+        )
         lines.append(extinf)
         lines.append(stream_url)
         print(f"[{group}] {title}")
