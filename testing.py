@@ -1,285 +1,127 @@
 import requests
-import time
-import os
+from bs4 import BeautifulSoup
 import re
-import uuid
-from datetime import datetime, timezone, timedelta
+import os
+import time
 
-BASE_URL = "https://id.stripchat.com/api/front/models"
-SITE_URL = "https://id.stripchat.com"
-
-HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Linux; Android 10; K) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Mobile Safari/537.36",
-    "Accept": "application/json",
-    "Content-Type": "application/json",
-    "Origin": SITE_URL,
-    "Referer": f"{SITE_URL}/girls",
-    "front-version": "12.1.40",
-    "Accept-Language": "id-ID,id;q=0.9,en-US;q=0.8,en;q=0.7",
-}
-
-TAGS = [
-    {"primaryTag": "girls", "parentTag": "girls", "filterGroupTags": []},
-    {"primaryTag": "girls", "parentTag": "ethnicityAsian", "filterGroupTags": [["ethnicityAsian"]]},
-    {"primaryTag": "girls", "parentTag": "ethnicityLatina", "filterGroupTags": [["ethnicityLatina"]]},
-    {"primaryTag": "girls", "parentTag": "ethnicityEuropean", "filterGroupTags": [["ethnicityEuropean"]]},
-    {"primaryTag": "girls", "parentTag": "ethnicityMiddleEastern", "filterGroupTags": [["ethnicityMiddleEastern"]]},
-    {"primaryTag": "girls", "parentTag": "ethnicityAfrican", "filterGroupTags": [["ethnicityAfrican"]]},
-    {"primaryTag": "girls", "parentTag": "hairColorBlonde", "filterGroupTags": [["hairColorBlonde"]]},
-    {"primaryTag": "girls", "parentTag": "hairColorBrunette", "filterGroupTags": [["hairColorBrunette"]]},
-    {"primaryTag": "girls", "parentTag": "hairColorRedhead", "filterGroupTags": [["hairColorRedhead"]]},
-    {"primaryTag": "girls", "parentTag": "bodyTypePetite", "filterGroupTags": [["bodyTypePetite"]]},
-    {"primaryTag": "girls", "parentTag": "bodyTypeCurvy", "filterGroupTags": [["bodyTypeCurvy"]]},
-    {"primaryTag": "girls", "parentTag": "bodyTypeTall", "filterGroupTags": [["bodyTypeTall"]]},
-]
-
-RELATED_TAGS = ["girls", "asian", "latin", "blonde", "brunette", "redhead", "hd", "mobile"]
+BASE = "https://zeno.fm"
 
 
-def get_csrf(session):
-    """Ambil CSRF token dari halaman utama."""
-    try:
-        r = session.get(SITE_URL, timeout=20)
-        csrf_token = session.cookies.get("_csrf", "")
-        if not csrf_token:
-            match = re.search(r'"csrfToken"\s*:\s*"([^"]+)"', r.text)
-            if match:
-                csrf_token = match.group(1)
-
-        now = datetime.now(timezone.utc)
-        return {
-            "csrfToken": csrf_token,
-            "csrfTimestamp": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "csrfNotifyTimestamp": (now + timedelta(days=1, hours=12)).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        }
-    except Exception as e:
-        print(f"  ⚠️ CSRF failed: {e}")
-        now = datetime.now(timezone.utc)
-        return {
-            "csrfToken": "",
-            "csrfTimestamp": now.strftime("%Y-%m-%dT%H:%M:%SZ"),
-            "csrfNotifyTimestamp": (now + timedelta(days=1)).strftime("%Y-%m-%dT%H:%M:%SZ"),
-        }
+def get_categories(path, keyword):
+    r = requests.get(f"{BASE}/radio/{path}/").text
+    soup = BeautifulSoup(r, "html.parser")
+    links = [a["href"] for a in soup.find_all("a", href=True)]
+    return [l.split("/")[-1] for l in links if keyword in l]
 
 
-def fetch_get_list(session, csrf_data, offset=0, limit=60, tag_config=None, exclude_ids=None):
-    """POST ke /get-list dengan JSON body."""
-    if tag_config is None:
-        tag_config = {"primaryTag": "girls", "parentTag": "girls", "filterGroupTags": []}
-
-    body = {
-        "removeShows": False,
-        "favoriteIds": [],
-        "limit": limit,
-        "offset": offset,
-        "primaryTag": tag_config["primaryTag"],
-        "filterGroupTags": tag_config["filterGroupTags"],
-        "sortBy": "stripRanking",
-        "parentTag": tag_config["parentTag"],
-        "nic": True,
-        "byw": False,
-        "rcmGrp": "A",
-        "rbCnGr": True,
-        "iem": True,
-        "decMb": False,
-        "dmv": False,
-        "ctryTop": True,
-        "guestHash": session.cookies.get("stripchat_com_guestId", ""),
-        "mlfv": False,
-        "rectf": False,
-        "eab": False,
-        "iig": True,
-        "sac": True,
-        "recInFeatured": False,
-        "isRecommendationDisabled": False,
-        "excludeModelIds": exclude_ids or [],
-        "csrfToken": csrf_data["csrfToken"],
-        "csrfTimestamp": csrf_data["csrfTimestamp"],
-        "csrfNotifyTimestamp": csrf_data["csrfNotifyTimestamp"],
-        "uniq": uuid.uuid4().hex[:16],
-    }
-
-    resp = session.post(f"{BASE_URL}/get-list", json=body, headers=HEADERS, timeout=20)
-    resp.raise_for_status()
-    return resp.json()
+def scrape_stations(params, page):
+    url = f"{BASE}/api/stations/"
+    params["page"] = page
+    params["limit"] = 100
+    r = requests.get(url, params=params).json()
+    return [item["url"].split("/")[-1] for item in r]
 
 
-def fetch_related(session, model_id, offset=0, limit=60, primary_tag="girls"):
-    """GET endpoint /related (tanpa CSRF)."""
-    params = {"limit": str(limit), "offset": str(offset), "primaryTag": primary_tag}
-    resp = session.get(
-        f"{BASE_URL}/{model_id}/related",
-        params=params, headers=HEADERS, timeout=20
-    )
-    resp.raise_for_status()
-    return resp.json()
+def scrape_stream(station_id):
+    r = requests.get(f"{BASE}/radio/{station_id}/").text
+    soup = BeautifulSoup(r, "html.parser")
 
+    # Title
+    title = soup.find("h1").text if soup.find("h1") else ""
 
-def get_best_stream(m):
-    """Ambil URL stream — master playlist (auto quality)."""
-    stream_id = m.get("streamName", "")
-    if not stream_id:
-        return m.get("hlsPlaylist", "")
+    # Stream URL
+    stream_match = re.search(r'"streamURL":\s*"([^"]*)"', r)
+    stream_url = stream_match.group(1).replace(";", "") if stream_match else ""
 
-    # Master playlist — player otomatis pilih kualitas terbaik
-    return f"https://edge-hls.saawsedge.com/hls/{stream_id}/master/{stream_id}_auto.m3u8?playlistType=lowLatency"
+    # Logo — coba beberapa strategi
+    logo_url = ""
 
+    # 1. og:image
+    og = soup.find("meta", property="og:image")
+    if og and og.get("content"):
+        logo_url = og["content"]
 
-def scrape_all(session, csrf_data, max_models=5000, delay=1.0):
-    """Scrape dengan get-list (multi-tag) + related fallback."""
-    all_models = {}
-
-    # --- Phase 1: POST /get-list per tag ---
-    for tag_config in TAGS:
-        offset = 0
-        limit = 60
-        while offset < max_models:
+    # 2. JSON-LD image
+    if not logo_url:
+        for script in soup.find_all("script", type="application/ld+json"):
             try:
-                data = fetch_get_list(session, csrf_data, offset=offset, limit=limit, tag_config=tag_config)
-            except requests.HTTPError as e:
-                if e.response is not None and e.response.status_code == 403:
-                    print(f"  ⚠️ CSRF expired, refreshing...")
-                    csrf_data = get_csrf(session)
-                    time.sleep(2)
-                    continue
-                raise
-
-            models = data.get("models", [])
-            total = data.get("totalCount", "?")
-            filtered = data.get("filteredCount", "?")
-
-            if not models:
-                break
-
-            for m in models:
-                all_models[m["id"]] = m
-
-            print(f"  [{tag_config['parentTag']}] {len(all_models)}/{total} (filtered: {filtered})")
-            offset += limit
-            time.sleep(delay)
-
-            if len(all_models) >= max_models:
-                break
-
-        if len(all_models) >= max_models:
-            break
-
-    # --- Phase 2: /related untuk expand ---
-    if len(all_models) < max_models:
-        anchor_ids = list(all_models.keys())[:5]
-        for anchor_id in anchor_ids:
-            for tag in RELATED_TAGS:
-                offset = 0
-                while offset < 300:
-                    try:
-                        data = fetch_related(session, anchor_id, offset=offset, limit=60, primary_tag=tag)
-                    except requests.HTTPError:
-                        break
-                    models = data.get("models", [])
-                    if not models:
-                        break
-                    for m in models:
-                        all_models[m["id"]] = m
-                    offset += 60
-                    time.sleep(delay)
-                    if len(all_models) >= max_models:
-                        break
-                if len(all_models) >= max_models:
+                data = __import__("json").loads(script.string)
+                if isinstance(data, dict) and data.get("image"):
+                    logo_url = data["image"]
                     break
-            if len(all_models) >= max_models:
+            except Exception:
+                pass
+
+    # 3. img dengan class/id mengandung "logo"
+    if not logo_url:
+        for img in soup.find_all("img"):
+            cls = (img.get("class") or [""])
+            cls_str = " ".join(cls) if isinstance(cls, list) else cls
+            if "logo" in cls_str.lower() or "logo" in (img.get("id") or "").lower():
+                logo_url = img.get("src", "")
                 break
 
-    return list(all_models.values())
-
-
-def generate_m3u(models, output_file):
-    """Generate M3U playlist dengan kualitas terbaik."""
-    dir_path = os.path.dirname(output_file)
-    if dir_path:
-        os.makedirs(dir_path, exist_ok=True)
-
-    # Filter: live, punya stream, bukan bad stream
-    live = [
-        m for m in models
-        if m.get("hlsPlaylist")
-        and m.get("isLive")
-        and not m.get("broadcastSettings", {}).get("isBadStream", False)
-    ]
-    live.sort(key=lambda x: x.get("viewersCount", 0), reverse=True)
-
-    with open(output_file, "w", encoding="utf-8") as f:
-        f.write("#EXTM3U\n")
-        f.write(f"# Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
-        f.write(f"# Total: {len(live)}\n\n")
-        f.write(f"# Total channels: {len(models)}\n\n")
-        f.write(f'#EXTINF:-1 tvg-logo="https://upload.wikimedia.org/wikipedia/commons/e/e2/Chara03.png?utm_source=commons.wikimedia.org&utm_campaign=imageinfo&utm_content=thumbnail_unscaled" group-title="LIVE VIP COSPLAYER {len(live)}",DANA OVO GOPAY 085795119808 \n')
-        f.write(f'https://bhns.bhns.workers.dev/?url=http://0.now1.tv:80/CC///CC.php\n\n')
-
-        for m in live:
-            username = m.get("username", "unknown")
-            stream_url = get_best_stream(m)
-
-            if not stream_url:
-                continue
-
-            viewers = m.get("viewersCount", 0)
-            hd = "HD" if m.get("isHd") else "SD"
-            country = (m.get("country") or "").upper()
-            avatar = m.get("avatarUrl", "")
-            is_mobile = m.get("isMobile", False)
-            is_vr = m.get("isVr", False)
-
-            tags = []
-            if is_vr:
-                tags.append("VR")
-            if is_mobile:
-                tags.append("MOBILE")
-            group = f"{hd} {country} {' '.join(tags)}".strip()
-
-            f.write(
-                f'#EXTINF:-1 tvg-id="{username}" tvg-name="{username}" '
-                f'tvg-logo="{avatar}" group-title="LIVE VIP COSPLAYER {len(live)}",'
-                f'{username} {group} [{viewers} PEMBOKEP]\n'
-            )
-            f.write(f"{stream_url}\n")
-
-    print(f"\n✅ : {os.path.abspath(output_file)}")
-    print(f"   Total: {len(live)}")
-    return output_file
+    return title, stream_url, logo_url
 
 
 def main():
-    # ===== KONFIGURASI =====
-    MAX_MODELS = 5000
-    DELAY = 0
-    OUTPUT = "playlist.m3u8"
-    # ========================
+    os.makedirs("output", exist_ok=True)
 
-    session = requests.Session()
+    # 1. Get categories
+    genres = get_categories("genres", "genres")
+    countries = get_categories("countries", "countries")
+    languages = get_categories("languages", "languages")
 
-    print("🔍 live ...")
-    print(f"   Max: {MAX_MODELS}")
-    print()
+    print(f"Found {len(genres)} genres, {len(countries)} countries, {len(languages)} languages")
 
-    # Step 1: Setup session + CSRF
-    print("  📡 CSRF ...")
-    session.get(SITE_URL, headers=HEADERS, timeout=20)
-    csrf_data = get_csrf(session)
-    print(f" 📡 CSRF: {'OK' if csrf_data['csrfToken'] else 'EMPTY'}")
-    print()
+    # 2. Collect station IDs → country mapping
+    station_country = {}  # {station_id: country_name}
 
-    # Step 2: Scrape
-    models = scrape_all(session, csrf_data, max_models=MAX_MODELS, delay=DELAY)
+    for i in range(1, 101):
+        for g in genres:
+            ids = scrape_stations({"genre": g, "country": "", "language": ""}, i)
+            for sid in ids:
+                station_country.setdefault(sid, "")  # genre-only, no country
+            print(f"genre {g} - page {i}")
+        time.sleep(0.3)
 
-    if not models:
-        print("❌ Tidak ditemukan.")
-        return
+    for i in range(1, 101):
+        for c in countries:
+            ids = scrape_stations({"genre": "", "country": c, "language": ""}, i)
+            for sid in ids:
+                station_country[sid] = c  # override dengan country
+            print(f"country {c} - page {i}")
+        time.sleep(0.3)
 
-    print(f"\n📺 Total: {len(models)}")
-    generate_m3u(models, OUTPUT)
+    for i in range(1, 101):
+        for l in languages:
+            ids = scrape_stations({"genre": "", "country": "", "language": l}, i)
+            for sid in ids:
+                station_country.setdefault(sid, "")  # language-only, no country
+            print(f"language {l} - page {i}")
+        time.sleep(0.3)
+
+    print(f"Total unique stations: {len(station_country)}")
+
+    # 3. Scrape streams & build single playlist with tvg-logo + group-title
+    lines = ["#EXTM3U"]
+    for sid, country in station_country.items():
+        title, stream_url, logo_url = scrape_stream(sid)
+        if not stream_url:
+            continue
+
+        group = country if country else "Other"
+        extinf = f'#EXTINF:-1 tvg-id="zeno.{sid}" tvg-name="{title}" tvg-logo="{logo_url}" group-title="{group}",{title}'
+        lines.append(extinf)
+        lines.append(stream_url)
+        print(f"[{group}] {title}")
+        time.sleep(0.2)
+
+    with open("playlist.m3u8", "w") as f:
+        f.write("\n".join(lines) + "\n")
+
+    print(f"Done. {len(station_country)} stations → output/playlist.m3u8")
 
 
 if __name__ == "__main__":
     main()   
-
-
