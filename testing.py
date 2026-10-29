@@ -12,8 +12,8 @@ COUNTRIES = [
 ]
 
 GROUP_TITLES = {
-    "china": "China", "indonesia": "Indonesia", "japan": "Japan",
-    "malaysia": "Malaysia", "singapore": "Singapore", "korea south",
+    "China", "Indonesia", "Japan",
+    "Malaysia", "Singapore", "Korea south":
 }
 
 GENRES = [
