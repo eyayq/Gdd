@@ -4,9 +4,30 @@ import re
 import os
 import time
 import json
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
 BASE = "https://zeno.fm"
 
+# ===== FILTER =====
+ASIA_COUNTRIES = {
+    "afghanistan", "armenia", "azerbaijan", "bahrain", "bangladesh",
+    "bhutan", "brunei", "cambodia", "china", "cyprus", "georgia",
+    "india", "indonesia", "iran", "iraq", "israel", "japan", "jordan",
+    "kazakhstan", "kuwait", "kyrgyzstan", "laos", "lebanon", "malaysia",
+    "maldives", "mongolia", "myanmar", "nepal", "north-korea", "oman",
+    "pakistan", "palestine", "philippines", "qatar", "saudi-arabia",
+    "singapore", "south-korea", "sri-lanka", "syria", "tajikistan",
+    "thailand", "timor-leste", "turkey", "turkmenistan",
+    "united-arab-emirates", "uzbekistan", "vietnam", "yemen"
+}
+
+GENRES_WANTED = {"general", "music", "religious", "anime"}
+LANGUAGES_WANTED = "arabic"
+
+MAX_WORKERS = 10  # jumlah thread paralel
+
+
+# ===== FUNCTIONS =====
 
 def get_categories(path, keyword):
     r = requests.get(f"{BASE}/radio/{path}/").text
@@ -19,9 +40,11 @@ def scrape_stations(params, page):
     url = f"{BASE}/api/stations/"
     params["page"] = page
     params["limit"] = 100
-    r = requests.get(url, params=params).json()
+    try:
+        r = requests.get(url, params=params, timeout=15).json()
+    except Exception:
+        return []
 
-    # Handle dict wrapper (e.g. {"results": [...]} or {"stations": [...]})
     if isinstance(r, dict):
         for key in ("results", "stations", "data", "items"):
             if key in r and isinstance(r[key], list):
@@ -44,26 +67,34 @@ def scrape_stations(params, page):
     return result
 
 
-def scrape_stream(station_id):
-    r = requests.get(f"{BASE}/radio/{station_id}/").text
-    soup = BeautifulSoup(r, "html.parser")
+def scrape_all_pages(params, max_pages=50):
+    all_ids = []
+    for page in range(1, max_pages + 1):
+        ids = scrape_stations(params, page)
+        if not ids:
+            break
+        all_ids.extend(ids)
+        print(f"    page {page}: {len(ids)}")
+    return all_ids
 
-    # Title
+
+def scrape_stream(station_id):
+    try:
+        r = requests.get(f"{BASE}/radio/{station_id}/", timeout=15).text
+    except Exception:
+        return station_id, "", "", ""
+
+    soup = BeautifulSoup(r, "html.parser")
     title = soup.find("h1").text if soup.find("h1") else ""
 
-    # Stream URL
     stream_match = re.search(r'"streamURL":\s*"([^"]*)"', r)
     stream_url = stream_match.group(1).replace(";", "") if stream_match else ""
 
-    # Logo
     logo_url = ""
-
-    # 1. og:image
     og = soup.find("meta", property="og:image")
     if og and og.get("content"):
         logo_url = og["content"]
 
-    # 2. JSON-LD image
     if not logo_url:
         for script in soup.find_all("script", type="application/ld+json"):
             try:
@@ -74,81 +105,98 @@ def scrape_stream(station_id):
             except Exception:
                 pass
 
-    # 3. img dengan class/id mengandung "logo"
     if not logo_url:
         for img in soup.find_all("img"):
             cls = img.get("class") or []
             cls_str = " ".join(cls) if isinstance(cls, list) else cls
-            if "logo" in cls_str.lower() or "logo" in (img.get("id") or "").lower():
+            if "logo" in cls_str.lower():
                 logo_url = img.get("src", "")
                 break
 
-    return title, stream_url, logo_url
+    return station_id, title, stream_url, logo_url
 
+
+# ===== MAIN =====
 
 def main():
     os.makedirs("output", exist_ok=True)
 
-    # 1. Get categories
-    genres = get_categories("genres", "genres")
-    countries = get_categories("countries", "countries")
-    languages = get_categories("languages", "languages")
+    all_genres = get_categories("genres", "genres")
+    all_countries = get_categories("countries", "countries")
+    all_languages = get_categories("languages", "languages")
 
-    print(f"Found {len(genres)} genres, {len(countries)} countries, {len(languages)} languages")
+    genres = [g for g in all_genres if g.lower() in GENRES_WANTED]
+    countries = [c for c in all_countries if c.lower() in ASIA_COUNTRIES]
+    languages = [l for l in all_languages if LANGUAGES_WANTED in l.lower()]
 
-    # 2. Collect station IDs → country mapping
+    print(f"Genres:    {genres}")
+    print(f"Countries: {len(countries)} (Asia only)")
+    print(f"Languages: {languages}")
+    print()
+
     station_country = {}
 
-    for i in range(1, 101):
-        for g in genres:
-            ids = scrape_stations({"genre": g, "country": "", "language": ""}, i)
-            for sid in ids:
-                station_country.setdefault(sid, "")
-            print(f"genre {g} - page {i}")
-        time.sleep(0.3)
-
-    for i in range(1, 101):
-        for c in countries:
-            ids = scrape_stations({"genre": "", "country": c, "language": ""}, i)
-            for sid in ids:
-                station_country[sid] = c
-            print(f"country {c} - page {i}")
-        time.sleep(0.3)
-
-    for i in range(1, 101):
-        for l in languages:
-            ids = scrape_stations({"genre": "", "country": "", "language": l}, i)
-            for sid in ids:
-                station_country.setdefault(sid, "")
-            print(f"language {l} - page {i}")
-        time.sleep(0.3)
-
-    print(f"Total unique stations: {len(station_country)}")
-
-    # 3. Scrape streams & build single playlist
-    lines = ["#EXTM3U"]
-    for sid, country in station_country.items():
-        title, stream_url, logo_url = scrape_stream(sid)
-        if not stream_url:
-            continue
-
-        group = country if country else "Other"
-        extinf = (
-            f'#EXTINF:-1 '
-            f'tvg-id="zeno.{sid}" '
-            f'tvg-name="{title}" '
-            f'tvg-logo="{logo_url}" '
-            f'group-title="{group}",{title}'
-        )
-        lines.append(extinf)
-        lines.append(stream_url)
-        print(f"[{group}] {title}")
+    # --- Fase 1: Kumpulkan station IDs (sekuensial, sudah cukup cepat) ---
+    for g in genres:
+        print(f"Genre: {g}")
+        ids = scrape_all_pages({"genre": g, "country": "", "language": ""})
+        for sid in ids:
+            station_country.setdefault(sid, "")
         time.sleep(0.2)
+
+    for c in countries:
+        print(f"Country: {c}")
+        ids = scrape_all_pages({"genre": "", "country": c, "language": ""})
+        for sid in ids:
+            station_country[sid] = c
+        time.sleep(0.2)
+
+    for l in languages:
+        print(f"Language: {l}")
+        ids = scrape_all_pages({"genre": "", "country": "", "language": l})
+        for sid in ids:
+            station_country.setdefault(sid, "")
+        time.sleep(0.2)
+
+    print(f"\nTotal unique stations: {len(station_country)}")
+
+    # --- Fase 2: Scrape stream PARALEL ---
+    lines = ["#EXTM3U"]
+    results = []
+
+    with ThreadPoolExecutor(max_workers=MAX_WORKERS) as pool:
+        futures = {pool.submit(scrape_stream, sid): (sid, country) for sid, country in station_country.items()}
+        done = 0
+        for future in as_completed(futures):
+            sid, country = futures[future]
+            try:
+                _, title, stream_url, logo_url = future.result()
+            except Exception:
+                continue
+
+            if not stream_url:
+                continue
+
+            group = country if country else "Other"
+            extinf = (
+                f'#EXTINF:-1 '
+                f'tvg-id="zeno.{sid}" '
+                f'tvg-name="{title}" '
+                f'tvg-logo="{logo_url}" '
+                f'group-title="{group}",{title}'
+            )
+            lines.append(extinf)
+            lines.append(stream_url)
+            done += 1
+            if done % 50 == 0:
+                print(f"  {done}/{len(station_country)} stations scraped")
+
+    print(f"  Total: {done} stations with stream")
 
     with open("playlist.m3u8", "w") as f:
         f.write("\n".join(lines) + "\n")
 
-    print(f"Done. {len(station_country)} stations → output/playlist.m3u8")
+    print(f"\nDone. {done} stations → playlist.m3u8")
 
 
 if __name__ == "__main__":
