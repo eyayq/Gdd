@@ -25,7 +25,7 @@ ASIA_COUNTRIES = {
 GENRES_WANTED = {"general", "music", "religious"}  # "anime" tidak ada di zeno.fm
 LANGUAGES_WANTED = "arab"
 
-MAX_WORKERS = 10
+MAX_WORKERS = 50
 
 
 # ===== FUNCTIONS =====
