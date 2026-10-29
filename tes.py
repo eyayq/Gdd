@@ -32,7 +32,7 @@ COMMONS_CATEGORIES = [
 ]
 
 
-def fetch_anime_girl_pngs(count: int = 160) -> list:
+def fetch_anime_girl_pngs(count: int = 1060) -> list:
     """
     Fetch anime girl PNG URLs dari Wikimedia Commons API.
     Gabungkan dari beberapa kategori, filter hanya PNG, ambil direct URL.
