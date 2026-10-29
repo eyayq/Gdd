@@ -8,8 +8,16 @@ from pathlib import Path
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
 GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO MUSIC KPOP")
-TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
+GROUP_INACTIVE = "TIDAK AKTIF"
+TIMEOUT = int(os.environ.get("TIMEOUT", "10"))
 USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
+CHECK_TIMEOUT = int(os.environ.get("CHECK_TIMEOUT", "8"))  # timeout khusus check URL
+
+# Status code yang dianggap TIDAK AKTIF
+BAD_STATUS_CODES = {403, 404, 410, 500, 502, 503, 504}
+
+# Content-Type yang BUKAN stream audio/video
+INVALID_CONTENT_TYPES = ("application/json", "text/html", "text/xml", "application/xml")
 
 COMMONS_CATEGORIES = [
     "Category:Girls in anime and manga",
@@ -34,6 +42,112 @@ COMMONS_CATEGORIES = [
 ]
 
 
+# ─── Check URL Streaming ─────────────────────────────────────────────
+def check_stream_url(url: str) -> tuple:
+    """
+    Cek apakah URL streaming aktif.
+    Return: (is_active: bool, reason: str)
+    """
+    try:
+        # Pakai HEAD dulu (lebih ringan), fallback ke GET stream jika HEAD gagal
+        resp = requests.head(
+            url,
+            headers={"User-Agent": USER_AGENT},
+            timeout=CHECK_TIMEOUT,
+            allow_redirects=True,
+        )
+
+        # Status code buruk → tidak aktif
+        if resp.status_code in BAD_STATUS_CODES:
+            return False, f"HTTP {resp.status_code}"
+
+        # Status 4xx/5xx lainnya
+        if resp.status_code >= 400:
+            return False, f"HTTP {resp.status_code}"
+
+        # Cek Content-Type
+        content_type = resp.headers.get("Content-Type", "").lower()
+
+        # Jika mengembalikan JSON atau HTML → bukan stream
+        for invalid_type in INVALID_CONTENT_TYPES:
+            if invalid_type in content_type:
+                return False, f"Content-Type: {content_type}"
+
+        # Jika Content-Type kosong, coba GET stream untuk verifikasi
+        if not content_type:
+            resp2 = requests.get(
+                url,
+                headers={"User-Agent": USER_AGENT},
+                timeout=CHECK_TIMEOUT,
+                stream=True,
+            )
+            if resp2.status_code in BAD_STATUS_CODES or resp2.status_code >= 400:
+                resp2.close()
+                return False, f"HTTP {resp2.status_code}"
+
+            ct2 = resp2.headers.get("Content-Type", "").lower()
+            for invalid_type in INVALID_CONTENT_TYPES:
+                if invalid_type in ct2:
+                    resp2.close()
+                    return False, f"Content-Type: {ct2}"
+
+            # Cek body kecil untuk deteksi HTML/JSON
+            peek = resp2.raw.read(512, decode_content=True)
+            resp2.close()
+
+            if peek:
+                peek_str = peek.decode("utf-8", errors="ignore").strip()
+                # Deteksi JSON
+                if peek_str.startswith("{") or peek_str.startswith("["):
+                    return False, "Body: JSON"
+                # Deteksi HTML
+                if peek_str.startswith("<!DOCTYPE") or peek_str.startswith("<html") or peek_str.startswith("<!doctype"):
+                    return False, "Body: HTML"
+                # Deteksi error message umum
+                if "error" in peek_str.lower()[:100] and len(peek_str) < 500:
+                    return False, "Body: error message"
+
+        return True, "OK"
+
+    except requests.exceptions.Timeout:
+        return False, "Timeout"
+    except requests.exceptions.ConnectionError:
+        return False, "Connection Error"
+    except requests.exceptions.RequestException as e:
+        return False, f"Error: {type(e).__name__}"
+    except Exception as e:
+        return False, f"Unknown: {e}"
+
+
+def check_all_stations(stations: list) -> tuple:
+    """
+    Check semua stasiun, pisahkan aktif vs tidak aktif.
+    Return: (active_stations, inactive_stations)
+    """
+    active = []
+    inactive = []
+
+    print(f"[*] Checking {len(stations)} URLs...")
+
+    for idx, s in enumerate(stations, 1):
+        is_active, reason = check_stream_url(s["url"])
+        s["check_status"] = "AKTIF" if is_active else "TIDAK AKTIF"
+        s["check_reason"] = reason
+
+        if is_active:
+            active.append(s)
+            status_icon = "✓"
+        else:
+            inactive.append(s)
+            status_icon = "✗"
+
+        print(f"  [{idx}/{len(stations)}] {status_icon} {s['name']} → {reason}")
+
+    print(f"\n  [RINGKASAN] Aktif: {len(active)} | Tidak Aktif: {len(inactive)}")
+    return active, inactive
+
+
+# ─── Fetch Logos ─────────────────────────────────────────────────────
 def fetch_anime_girl_pngs(count: int = 1060) -> list:
     all_files = []
     seen = set()
@@ -123,6 +237,7 @@ def fetch_anime_girl_pngs(count: int = 1060) -> list:
     return all_files[:count]
 
 
+# ─── M3U Parser ──────────────────────────────────────────────────────
 def parse_m3u(content: str) -> list:
     stations = []
     lines = content.strip().splitlines()
@@ -158,39 +273,33 @@ def parse_m3u(content: str) -> list:
     return stations
 
 
-def enrich_stations(stations: list, logos: list) -> list:
-    """
-    Assign logo:
-    - Jika stasiun SUDAH punya tvg-logo → biarkan (jangan overwrite)
-    - Jika TIDAK punya → assign logo baru dari list
-    """
+# ─── Enrich: Assign unique logo per channel ─────────────────────────
+def enrich_stations(stations: list, logos: list, group: str) -> list:
     logo_index = 0
     already_has = 0
     assigned = 0
 
     for idx, s in enumerate(stations, 1):
-        s["group_title"] = GROUP_TITLE
+        s["group_title"] = group
 
-        # ★ LOGIKA UTAMA: jika sudah ada logo, SKIP
         if s.get("tvg_logo") and s["tvg_logo"].strip():
             already_has += 1
-            print(f"  [{idx}/{len(stations)}] {s['name']} → [SKIP] sudah punya logo")
             continue
 
-        # Tidak ada logo → assign baru
         if logo_index < len(logos):
             s["tvg_logo"] = logos[logo_index]
             logo_index += 1
             assigned += 1
-            print(f"  [{idx}/{len(stations)}] {s['name']} → [BARU] logo #{logo_index}")
         else:
             s["tvg_logo"] = ""
-            print(f"  [{idx}/{len(stations)}] {s['name']} → [KOSONG] logo habis")
 
-    print(f"\n  [RINGKASAN] Sudah punya logo: {already_has} | Logo baru: {assigned} | Kosong: {len(stations) - already_has - assigned}")
+    if stations:
+        print(f"  [{group}] Sudah punya logo: {already_has} | Baru: {assigned} | Kosong: {len(stations) - already_has - assigned}")
+
     return stations
 
 
+# ─── Output Writer ───────────────────────────────────────────────────
 def write_m3u(stations: list, output_path: str):
     Path(output_path).parent.mkdir(parents=True, exist_ok=True)
     with open(output_path, "w", encoding="utf-8") as f:
@@ -198,11 +307,13 @@ def write_m3u(stations: list, output_path: str):
         for s in stations:
             logo = s.get("tvg_logo", "")
             logo_attr = f' tvg-logo="{logo}"' if logo else ""
-            f.write(f'#EXTINF:-1{logo_attr} group-title="{GROUP_TITLE}",{s["name"]}\n')
+            group = s.get("group_title", GROUP_TITLE)
+            f.write(f'#EXTINF:-1{logo_attr} group-title="{group}",{s["name"]}\n')
             f.write(f'{s["url"]}\n')
     print(f"\n[OK] {len(stations)} stations → {output_path}")
 
 
+# ─── Main ────────────────────────────────────────────────────────────
 def main():
     input_file = INPUT_FILE
     output_file = OUTPUT_FILE
@@ -214,7 +325,8 @@ def main():
 
     print(f"[*] Input: {input_file}")
     print(f"[*] Output: {output_file}")
-    print(f"[*] Group: {GROUP_TITLE}")
+    print(f"[*] Group Aktif: {GROUP_TITLE}")
+    print(f"[*] Group Tidak Aktif: {GROUP_INACTIVE}")
 
     if not Path(input_file).exists():
         print(f"[ERROR] File tidak ditemukan: {input_file}")
@@ -236,26 +348,49 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # Hitung berapa yang sudah punya logo
-    has_logo = sum(1 for s in unique if s.get("tvg_logo", "").strip())
-    print(f"[*] {has_logo} stasiun sudah punya logo (akan di-SKIP)")
-    print(f"[*] {len(unique) - has_logo} stasiun butuh logo baru")
+    # ★ CHECK URL STREAMING
+    print(f"\n[*] ─── CHECKING STREAM URLS ───")
+    active_stations, inactive_stations = check_all_stations(unique)
+
+    # Hitung kebutuhan logo
+    active_needs_logo = sum(1 for s in active_stations if not s.get("tvg_logo", "").strip())
+    inactive_needs_logo = sum(1 for s in inactive_stations if not s.get("tvg_logo", "").strip())
+    total_needed = active_needs_logo + inactive_needs_logo
 
     # Fetch logo
-    needed = len(unique) - has_logo
-    if needed > 0:
-        print(f"[*] Fetching {needed} PNGs dari Wikimedia Commons...")
-        logos = fetch_anime_girl_pngs(count=needed)
+    if total_needed > 0:
+        print(f"\n[*] Fetching {total_needed} PNGs dari Wikimedia Commons...")
+        logos = fetch_anime_girl_pngs(count=total_needed)
         print(f"[*] {len(logos)} logo berhasil diambil")
     else:
-        print(f"[*] Tidak perlu fetch logo — semua sudah punya.")
+        print(f"\n[*] Tidak perlu fetch logo.")
         logos = []
 
-    # Assign logo
-    print(f"[*] Assigning logos...")
-    unique = enrich_stations(unique, logos)
+    # Assign logo untuk stasiun AKTIF
+    if active_stations:
+        print(f"\n[*] Assigning logos → {GROUP_TITLE} ({len(active_stations)} stations)")
+        enrich_stations(active_stations, logos, GROUP_TITLE)
 
-    write_m3u(unique, output_file)
+    # Assign logo untuk stasiun TIDAK AKTIF (pakai sisa logo)
+    if inactive_stations:
+        # Sisa logo setelah yang aktif
+        active_used = sum(1 for s in active_stations if not s.get("_logo_from_source", True))
+        remaining_logos = logos[active_needs_logo:] if active_needs_logo < len(logos) else []
+        print(f"[*] Assigning logos → {GROUP_INACTIVE} ({len(inactive_stations)} stations)")
+        enrich_stations(inactive_stations, remaining_logos, GROUP_INACTIVE)
+
+    # Gabungkan: aktif dulu, lalu tidak aktif
+    all_stations = active_stations + inactive_stations
+
+    # Write output
+    write_m3u(all_stations, output_file)
+
+    # Summary
+    print(f"\n{'='*50}")
+    print(f"  AKTIF:       {len(active_stations)}")
+    print(f"  TIDAK AKTIF: {len(inactive_stations)}")
+    print(f"  TOTAL:       {len(all_stations)}")
+    print(f"{'='*50}")
 
 
 if __name__ == "__main__":
