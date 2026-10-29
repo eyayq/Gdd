@@ -39,7 +39,7 @@ def fetch_all_stations(country, genre):
     stations = []
     page = 1
     while True:
-        params = {"genre": genre, "country": country, "page": page, "limit": 1000}
+        params = {"genre": genre, "country": country, "page": page, "limit": 5000}
         try:
             resp = crl.get(API_BASE, params=params, impersonate="chrome", timeout=30)
             resp.raise_for_status()
