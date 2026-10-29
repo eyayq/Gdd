@@ -1,3 +1,4 @@
+
 import requests
 import re
 import sys
@@ -7,18 +8,11 @@ from pathlib import Path
 # ─── Config ──────────────────────────────────────────────────────────
 INPUT_FILE = os.environ.get("INPUT_FILE", "playlist.m3u")
 OUTPUT_FILE = os.environ.get("OUTPUT_FILE", "playlist.m3u8")
-GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO INTERNAL")
-GROUP_INACTIVE = "TIDAK AKTIF"
+GROUP_TITLE = os.environ.get("GROUP_TITLE", "RADIO MUSIC KPOP")
 TIMEOUT = int(os.environ.get("TIMEOUT", "15"))
 USER_AGENT = "M3UScraper/1.0 (GitHub Actions)"
-CHECK_TIMEOUT = int(os.environ.get("CHECK_TIMEOUT", "8"))
 
-# Status code yang dianggap TIDAK AKTIF
-BAD_STATUS_CODES = {403, 401, 404, 410, 500, 501, 502, 503, 504, 505}
-
-# Content-Type yang BUKAN stream audio
-INVALID_CONTENT_TYPES = ("application/json", "text/html", "text/xml", "application/xml", "text/plain")
-
+# Kategori Wikimedia Commons untuk anime girl PNG
 COMMONS_CATEGORIES = [
     "Category:Girls in anime and manga",
     "Category:Anime illustrations",
@@ -35,135 +29,14 @@ COMMONS_CATEGORIES = [
     "Category:Sailor uniforms",
     "Category:Schoolgirl",
     "Category:Japanese animation",
-    "Category:Anime girls",
-    "Category:K-pop",
-    "Category:Korean pop music",
-    "Category:Idol groups",
 ]
 
 
-# ─── Check URL Streaming ─────────────────────────────────────────────
-def check_stream_url(url: str) -> tuple:
-    """
-    Cek apakah URL streaming aktif.
-    Strategi: GET stream=True, baca 512 byte, deteksi audio vs HTML/JSON.
-    Default: jika tidak bisa dipastikan → anggap AKTIF (lebih aman).
-    """
-    try:
-        resp = requests.get(
-            url,
-            headers={
-                "User-Agent": USER_AGENT,
-                "Icy-MetaData": "1",  # untuk Icecast/Shoutcast
-            },
-            timeout=CHECK_TIMEOUT,
-            stream=True,
-        )
-
-        # Status code buruk → TIDAK AKTIF
-        if resp.status_code in BAD_STATUS_CODES:
-            resp.close()
-            return False, f"HTTP {resp.status_code}"
-
-        if resp.status_code >= 400:
-            resp.close()
-            return False, f"HTTP {resp.status_code}"
-
-        # Status 200/201/206 → cek content
-        content_type = resp.headers.get("Content-Type", "").lower()
-
-        # Jika Content-Type jelas HTML/JSON/XML → TIDAK AKTIF
-        for invalid_type in INVALID_CONTENT_TYPES:
-            if invalid_type in content_type:
-                resp.close()
-                return False, f"Content-Type: {content_type}"
-
-        # Jika Content-Type jelas audio → AKTIF
-        if "audio" in content_type or "video" in content_type or "octet-stream" in content_type:
-            resp.close()
-            return True, "OK (audio)"
-
-        # Content-Type kosong atau tidak dikenal → baca body untuk deteksi
-        try:
-            peek = resp.raw.read(512, decode_content=True)
-        except Exception:
-            peek = b""
-        finally:
-            resp.close()
-
-        if not peek:
-            # Tidak ada data tapi status 200 → mungkin stream yang butuh waktu
-            # Default: AKTIF (lebih aman)
-            return True, "OK (no data, 200)"
-
-        peek_str = peek.decode("utf-8", errors="ignore").strip()
-
-        # Deteksi JSON
-        if peek_str.startswith("{") or peek_str.startswith("["):
-            return False, "Body: JSON"
-
-        # Deteksi HTML
-        if peek_str.startswith("<!DOCTYPE") or peek_str.startswith("<!doctype") or peek_str.startswith("<html") or peek_str.startswith("<HTML"):
-            return False, "Body: HTML"
-
-        # Deteksi XML
-        if peek_str.startswith("<?xml"):
-            return False, "Body: XML"
-
-        # Deteksi error message teks pendek
-        if len(peek_str) < 200 and ("error" in peek_str.lower() or "not found" in peek_str.lower() or "forbidden" in peek_str.lower()):
-            return False, f"Body: {peek_str[:50]}"
-
-        # Data binary (audio) → AKTIF
-        # Cek apakah ada banyak null bytes (indikasi binary/audio)
-        null_count = peek.count(b'\x00')
-        if null_count > 10:
-            return True, "OK (binary audio)"
-
-        # Jika sampai sini dan status 200 → default AKTIF
-        return True, "OK"
-
-    except requests.exceptions.Timeout:
-        return False, "Timeout"
-    except requests.exceptions.ConnectionError:
-        return False, "Connection Error"
-    except requests.exceptions.SSLError:
-        return False, "SSL Error"
-    except requests.exceptions.RequestException as e:
-        return False, f"Error: {type(e).__name__}"
-    except Exception as e:
-        return False, f"Unknown: {e}"
-
-
-def check_all_stations(stations: list) -> tuple:
-    """
-    Check semua stasiun, pisahkan aktif vs tidak aktif.
-    """
-    active = []
-    inactive = []
-
-    print(f"[*] Checking {len(stations)} URLs...")
-
-    for idx, s in enumerate(stations, 1):
-        is_active, reason = check_stream_url(s["url"])
-        s["check_status"] = "AKTIF" if is_active else "TIDAK AKTIF"
-        s["check_reason"] = reason
-
-        if is_active:
-            active.append(s)
-            status_icon = "✓"
-        else:
-            inactive.append(s)
-            status_icon = "✗"
-
-        print(f"  [{idx}/{len(stations)}] {status_icon} {s['name']} → {reason}")
-
-    print(f"\n  [RINGKASAN] Aktif: {len(active)} | Tidak Aktif: {len(inactive)}")
-    return active, inactive
-
-
-# ─── Fetch Logos ─────────────────────────────────────────────────────
 def fetch_anime_girl_pngs(count: int = 1060) -> list:
+    """
+    Fetch anime girl PNG URLs dari Wikimedia Commons API.
+    Gabungkan dari beberapa kategori, filter hanya PNG, ambil direct URL.
+    """
     all_files = []
     seen = set()
 
@@ -171,83 +44,78 @@ def fetch_anime_girl_pngs(count: int = 1060) -> list:
         if len(all_files) >= count:
             break
 
-        cmcontinue = None
+        try:
+            # Step 1: Get file list from category
+            resp = requests.get(
+                "https://commons.wikimedia.org/w/api.php",
+                params={
+                    "action": "query",
+                    "list": "categorymembers",
+                    "cmtitle": category,
+                    "cmtype": "file",
+                    "cmlimit": "1000",
+                    "format": "json",
+                },
+                headers={"User-Agent": USER_AGENT},
+                timeout=TIMEOUT,
+            )
+            if resp.status_code != 200:
+                continue
 
-        while len(all_files) < count:
-            params = {
-                "action": "query",
-                "list": "categorymembers",
-                "cmtitle": category,
-                "cmtype": "file",
-                "cmlimit": "500",
-                "format": "json",
-            }
-            if cmcontinue:
-                params["cmcontinue"] = cmcontinue
+            members = resp.json().get("query", {}).get("categorymembers", [])
 
-            try:
-                resp = requests.get(
+            # Filter PNG files only
+            png_files = [
+                m["title"] for m in members
+                if m["title"].lower().endswith(".png")
+            ]
+
+            if not png_files:
+                continue
+
+            # Step 2: Get direct URLs for these files (batch)
+            # API allows max 50 titles per request
+            for i in range(0, len(png_files), 50):
+                batch = png_files[i:i+50]
+                url_resp = requests.get(
                     "https://commons.wikimedia.org/w/api.php",
-                    params=params,
+                    params={
+                        "action": "query",
+                        "titles": "|".join(batch),
+                        "prop": "imageinfo",
+                        "iiprop": "url|mime|size",
+                        "iiurlwidth": "256",  # thumbnail 256px (kecil & cepat)
+                        "format": "json",
+                    },
                     headers={"User-Agent": USER_AGENT},
                     timeout=TIMEOUT,
                 )
-                if resp.status_code != 200:
-                    break
+                if url_resp.status_code != 200:
+                    continue
 
-                data = resp.json()
-                members = data.get("query", {}).get("categorymembers", [])
+                pages = url_resp.json().get("query", {}).get("pages", {})
+                for page in pages.values():
+                    if "imageinfo" not in page:
+                        continue
+                    info = page["imageinfo"][0]
+                    # Hanya yang MIME = image/png dan ukuran reasonable
+                    if info.get("mime") != "image/png":
+                        continue
+                    if info.get("width", 0) > 5000:  # skip yang terlalu besar
+                        continue
 
-                if not members:
-                    break
+                    # Pakai thumbnail URL (256px) — lebih ringan
+                    thumb_url = info.get("thumburl", info.get("url", ""))
+                    if thumb_url and thumb_url not in seen:
+                        seen.add(thumb_url)
+                        all_files.append(thumb_url)
 
-                png_files = [
-                    m["title"] for m in members
-                    if m["title"].lower().endswith(".png")
-                ]
+                    if len(all_files) >= count:
+                        break
 
-                if png_files:
-                    for i in range(0, len(png_files), 50):
-                        if len(all_files) >= count:
-                            break
-
-                        batch = png_files[i:i+50]
-                        url_resp = requests.get(
-                            "https://commons.wikimedia.org/w/api.php",
-                            params={
-                                "action": "query",
-                                "titles": "|".join(batch),
-                                "prop": "imageinfo",
-                                "iiprop": "url|mime|size",
-                                "iiurlwidth": "256",
-                                "format": "json",
-                            },
-                            headers={"User-Agent": USER_AGENT},
-                            timeout=TIMEOUT,
-                        )
-                        if url_resp.status_code != 200:
-                            continue
-
-                        pages = url_resp.json().get("query", {}).get("pages", {})
-                        for page in pages.values():
-                            if "imageinfo" not in page:
-                                continue
-                            info = page["imageinfo"][0]
-                            if info.get("mime") != "image/png":
-                                continue
-                            if info.get("width", 0) > 5000:
-                                continue
-
-                            thumb_url = info.get("thumburl", info.get("url", ""))
-                            if thumb_url and thumb_url not in seen:
-                                seen.add(thumb_url)
-                                all_files.append(thumb_url)
-
-                cmcontinue = data.get("continue", {}).get("cmcontinue")
-
-            except Exception as e:
-                print(f"  [WARN] Category {category}: {e}")
-                break
+        except Exception as e:
+            print(f"  [WARN] Category {category}: {e}")
+            continue
 
     return all_files[:count]
 
@@ -289,30 +157,25 @@ def parse_m3u(content: str) -> list:
 
 
 # ─── Enrich: Assign unique logo per channel ─────────────────────────
-def enrich_stations(stations: list, logos: list, group: str) -> int:
-    """
-    Assign logo. Return: jumlah logo yang terpakai.
-    """
+def enrich_stations(stations: list, logos: list) -> list:
+    """Assign logo secara sequensial — setiap channel PASTI beda."""
     logo_index = 0
-    already_has = 0
-    assigned = 0
 
     for idx, s in enumerate(stations, 1):
-        s["group_title"] = group
+        s["group_title"] = GROUP_TITLE
 
-        if s.get("tvg_logo") and s["tvg_logo"].strip():
-            already_has += 1
-            continue
+        if s.get("tvg_logo"):
+            continue  # sudah ada logo dari source
 
         if logo_index < len(logos):
             s["tvg_logo"] = logos[logo_index]
             logo_index += 1
-            assigned += 1
+        else:
+            s["tvg_logo"] = ""  # tidak ada logo lagi
 
-    if stations:
-        print(f"  [{group}] Punya logo: {already_has} | Baru: {assigned} | Kosong: {len(stations) - already_has - assigned}")
+        print(f"  [{idx}/{len(stations)}] {s['name']} → logo #{logo_index}")
 
-    return logo_index  # return berapa logo yang terpakai
+    return stations
 
 
 # ─── Output Writer ───────────────────────────────────────────────────
@@ -323,8 +186,7 @@ def write_m3u(stations: list, output_path: str):
         for s in stations:
             logo = s.get("tvg_logo", "")
             logo_attr = f' tvg-logo="{logo}"' if logo else ""
-            group = s.get("group_title", GROUP_TITLE)
-            f.write(f'#EXTINF:-1{logo_attr} group-title="{group}",{s["name"]}\n')
+            f.write(f'#EXTINF:-1{logo_attr} group-title="{GROUP_TITLE}",{s["name"]}\n')
             f.write(f'{s["url"]}\n')
     print(f"\n[OK] {len(stations)} stations → {output_path}")
 
@@ -341,8 +203,7 @@ def main():
 
     print(f"[*] Input: {input_file}")
     print(f"[*] Output: {output_file}")
-    print(f"[*] Group Aktif: {GROUP_TITLE}")
-    print(f"[*] Group Tidak Aktif: {GROUP_INACTIVE}")
+    print(f"[*] Group: {GROUP_TITLE}")
 
     if not Path(input_file).exists():
         print(f"[ERROR] File tidak ditemukan: {input_file}")
@@ -364,51 +225,20 @@ def main():
     if len(unique) < len(stations):
         print(f"[*] {len(stations) - len(unique)} duplikat dihapus")
 
-    # ★ CHECK URL STREAMING
-    print(f"\n[*] ─── CHECKING STREAM URLS ───")
-    active_stations, inactive_stations = check_all_stations(unique)
+    # Fetch 160+ anime girl PNG dari Commons API
+    print(f"[*] Fetching anime girl PNGs dari Wikimedia Commons...")
+    logos = fetch_anime_girl_pngs(count=1060)
+    print(f"[*] {len(logos)} logo berhasil diambil")
 
-    # ★ HITUNG KEBUTUHAN LOGO (semua stasiun yang belum punya logo)
-    total_needs_logo = sum(1 for s in unique if not s.get("tvg_logo", "").strip())
-    print(f"\n[*] Total stasiun butuh logo baru: {total_needs_logo}")
+    if not logos:
+        print("[ERROR] Tidak ada logo yang berhasil diambil!")
+        sys.exit(1)
 
-    # Fetch logo — ambil SEMUA yang dibutuhkan sekaligus
-    if total_needs_logo > 0:
-        print(f"[*] Fetching {total_needs_logo} PNGs dari Wikimedia Commons...")
-        logos = fetch_anime_girl_pngs(count=total_needs_logo)
-        print(f"[*] {len(logos)} logo berhasil diambil")
-    else:
-        print(f"[*] Tidak perlu fetch logo.")
-        logos = []
+    # Assign logo
+    print(f"[*] Assigning unique logos...")
+    unique = enrich_stations(unique, logos)
 
-    if not logos and total_needs_logo > 0:
-        print("[WARN] Tidak ada logo yang diambil! Semua stasiun tanpa logo.")
-
-    # ★ ASSIGN LOGO — aktif dulu, lalu tidak aktif
-    # Track berapa logo terpakai untuk aktif
-    active_used = enrich_stations(active_stations, logos, GROUP_TITLE)
-
-    # Sisa logo untuk tidak aktif
-    remaining_logos = logos[active_used:]
-    inactive_used = enrich_stations(inactive_stations, remaining_logos, GROUP_INACTIVE)
-
-    total_used = active_used + inactive_used
-    if total_used < total_needs_logo:
-        print(f"[WARN] Logo kurang! Dibutuhkan {total_needs_logo}, tersedia {len(logos)}")
-
-    # Gabungkan: aktif dulu, lalu tidak aktif
-    all_stations = active_stations + inactive_stations
-
-    # Write output
-    write_m3u(all_stations, output_file)
-
-    # Summary
-    print(f"\n{'='*50}")
-    print(f"  AKTIF:       {len(active_stations)}")
-    print(f"  TIDAK AKTIF: {len(inactive_stations)}")
-    print(f"  TOTAL:       {len(all_stations)}")
-    print(f"  LOGO TERPAKAI: {total_used}/{total_needs_logo}")
-    print(f"{'='*50}")
+    write_m3u(unique, output_file)
 
 
 if __name__ == "__main__":
