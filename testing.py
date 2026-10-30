@@ -1,190 +1,223 @@
 #!/usr/bin/env python3
 """
-Deep JS analysis untuk 365w.org.
-Fetch halaman → ekstrak semua file JS → cari API endpoint yang return token.
+Fokus: test /embed/stream/{id} + extract logika /__r dari app.js
 """
 
 import re
 import sys
 import json
 import time
-from urllib.parse import urljoin
 from curl_cffi import requests as cffi_requests
 
 BASE = "https://www.365w.org"
+STREAM_ID = "25827145"
+STREAM_SLUG = "ms_ramat_aviv_w_vs_hapoel_kiryat_ata_w"
+STREAM_URL = f"{BASE}/stream/{STREAM_ID}/{STREAM_SLUG}"
+
 HEADERS = {
-    "Referer": BASE + "/",
+    "Referer": STREAM_URL,
+    "Origin": BASE,
     "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
 }
 
 session = cffi_requests.Session(impersonate="chrome124")
 
 
-def fetch(url: str) -> str:
-    resp = session.get(url, headers=HEADERS, timeout=20)
-    return resp.text if resp.status_code == 200 else ""
+def fetch(url: str, method: str = "GET", **kwargs) -> cffi_requests.Response:
+    if method == "GET":
+        return session.get(url, headers=HEADERS, timeout=15, **kwargs)
+    elif method == "POST":
+        return session.post(url, headers=HEADERS, timeout=15, **kwargs)
 
 
-def extract_script_srcs(html: str) -> list[str]:
-    """Ekstrak semua URL file JS eksternal."""
-    srcs = re.findall(r'<script[^>]+src=["\']([^"\']+)["\']', html, re.IGNORECASE)
-    resolved = []
-    for s in srcs:
-        full = urljoin(BASE, s)
-        if full not in resolved:
-            resolved.append(full)
-    return resolved
+def test_embed_endpoints():
+    """Test semua variasi /embed/stream/."""
+    print("=" * 60)
+    print("[*] Testing /embed/stream/ endpoints")
+    print("=" * 60)
+
+    endpoints = [
+        # GET variations
+        (f"{BASE}/embed/stream/{STREAM_ID}", "GET", {}),
+        (f"{BASE}/embed/stream/{STREAM_ID}/{STREAM_SLUG}", "GET", {}),
+        (f"{BASE}/embed/stream/{STREAM_ID}?slug={STREAM_SLUG}", "GET", {}),
+        (f"{BASE}/embed/stream/{STREAM_ID}?id={STREAM_ID}", "GET", {}),
+
+        # POST variations
+        (f"{BASE}/embed/stream/{STREAM_ID}", "POST", {"json": {"id": STREAM_ID}}),
+        (f"{BASE}/embed/stream/{STREAM_ID}", "POST", {"json": {"id": STREAM_ID, "slug": STREAM_SLUG}}),
+        (f"{BASE}/embed/stream/{STREAM_ID}", "POST", {"data": f"id={STREAM_ID}"}),
+
+        # Dengan path lengkap
+        (f"{BASE}/embed/stream/{STREAM_ID}/{STREAM_SLUG}", "POST", {"json": {}}),
+    ]
+
+    for url, method, opts in endpoints:
+        try:
+            resp = fetch(url, method, **opts)
+            body = resp.text[:300].replace("\n", " ")
+            marker = "✓" if resp.status_code == 200 and len(resp.text) > 50 else "✗"
+            print(f"  {marker} {method:4s} {url.replace(BASE, ''):50s} → {resp.status_code} | {body[:150]}")
+        except Exception as e:
+            print(f"  ✗ {method:4s} {url.replace(BASE, ''):50s} → ERROR: {e}")
+        time.sleep(0.5)
 
 
-def extract_inline_scripts(html: str) -> list[str]:
-    """Ekstrak inline JS."""
-    return re.findall(r'<script(?![^>]*src)[^>]*>(.*?)</script>', html, re.DOTALL | re.IGNORECASE)
+def test_r_endpoint():
+    """Test /__r dengan berbagai format."""
+    print(f"\n{'=' * 60}")
+    print("[*] Testing /__r endpoint")
+    print("=" * 60)
 
-
-def find_api_endpoints(js_code: str, source: str) -> list[str]:
-    """Cari API endpoint patterns di JS code."""
-    endpoints = set()
-
-    # fetch("/api/...")
-    endpoints.update(re.findall(r'fetch\(["\']([^"\']+)["\']', js_code))
-    endpoints.update(re.findall(r'fetch\(`([^`]+)`\)', js_code))
-
-    # axios.get("/api/...")
-    endpoints.update(re.findall(r'(?:axios|request|http)\s*\.\s*(?:get|post|put)\s*\(\s*["\']([^"\']+)["\']', js_code))
-
-    # XMLHttpRequest
-    endpoints.update(re.findall(r'\.open\s*\(\s*["\'](?:GET|POST)["\']\s*,\s*["\']([^"\']+)["\']', js_code))
-
-    # String literals yang mengandung /api/ atau /stream/
-    endpoints.update(re.findall(r'["\'](/[a-z0-9_/\-]*(?:api|stream|media|token|player)[a-z0-9_/\-]*)["\']', js_code, re.IGNORECASE))
-
-    # Template literals dengan variabel
-    endpoints.update(re.findall(r'`(/[a-z0-9_/${}.\-]*(?:api|stream|media|token|player)[a-z0-9_/${}.\-]*)`', js_code, re.IGNORECASE))
-
-    return [e for e in endpoints if not e.startswith(('.js', '.css', '.png', '.svg', 'data:'))]
-
-
-def find_token_generation(js_code: str) -> list[str]:
-    """Cari pola token generation (v2.xxx pattern)."""
-    patterns = []
-
-    # "v2." prefix
-    for m in re.finditer(r'["\']v2\.["\']', js_code):
-        start = max(0, m.start() - 200)
-        end = min(len(js_code), m.end() + 200)
-        patterns.append(js_code[start:end])
-
-    # atob / btoa (base64 encoding/decoding)
-    for m in re.finditer(r'(?:atob|btoa)\s*\(', js_code):
-        start = max(0, m.start() - 100)
-        end = min(len(js_code), m.end() + 200)
-        patterns.append(js_code[start:end])
-
-    # crypto / signature / HMAC
-    for m in re.finditer(r'(?:crypto|signature|hmac|sha256|md5|encrypt)', js_code, re.IGNORECASE):
-        start = max(0, m.start() - 100)
-        end = min(len(js_code), m.end() + 200)
-        patterns.append(js_code[start:end])
-
-    # .concat("v2") atau similar
-    for m in re.finditer(r'concat\s*\(\s*["\']v2', js_code):
-        start = max(0, m.start() - 200)
-        end = min(len(js_code), m.end() + 200)
-        patterns.append(js_code[start:end])
-
-    return patterns
-
-
-def try_endpoint(endpoint: str, stream_id: str = "") -> str | None:
-    """Coba endpoint, return body jika ada token di response."""
-    # Replace placeholders
-    url = endpoint
-    if "{id}" in url or "{stream_id}" in url:
-        url = url.replace("{id}", stream_id).replace("{stream_id}", stream_id)
-    if url.startswith("/"):
-        url = BASE + url
-
+    # Coba GET dulu
     try:
-        resp = session.get(url, headers=HEADERS, timeout=10)
-        if resp.status_code == 200:
-            body = resp.text
-            if "v2." in body or "token" in body.lower() or "m3u8" in body.lower():
-                return body[:500]
-    except Exception:
-        pass
-    return None
+        resp = fetch(f"{BASE}/__r", "GET")
+        print(f"  GET  /__r → {resp.status_code} | {resp.text[:200]}")
+    except Exception as e:
+        print(f"  GET  /__r → ERROR: {e}")
 
+    # POST dengan berbagai body
+    bodies = [
+        ({"id": STREAM_ID}, "json"),
+        ({"id": int(STREAM_ID)}, "json"),
+        ({"stream_id": STREAM_ID}, "json"),
+        ({"streamId": STREAM_ID}, "json"),
+        ({"url": f"/stream/{STREAM_ID}"}, "json"),
+        ({"url": STREAM_URL}, "json"),
+        ({"path": f"/stream/{STREAM_ID}/{STREAM_SLUG}"}, "json"),
+        ({"id": STREAM_ID, "type": "stream"}, "json"),
+        ({"action": "stream", "id": STREAM_ID}, "json"),
+        ({"action": "get_stream", "id": STREAM_ID}, "json"),
+        ({"cmd": "stream", "id": STREAM_ID}, "json"),
+        (f"id={STREAM_ID}", "form"),
+        (f"stream_id={STREAM_ID}", "form"),
+        (f"action=stream&id={STREAM_ID}", "form"),
+        (json.dumps({"id": STREAM_ID, "url": STREAM_URL}), "raw"),
+    ]
 
-def main():
-    # Stream page untuk analisis
-    stream_url = sys.argv[1] if len(sys.argv) > 1 else \
-        "https://www.365w.org/stream/25827145/ms_ramat_aviv_w_vs_hapoel_kiryat_ata_w"
+    for body, fmt in bodies:
+        try:
+            if fmt == "json":
+                resp = session.post(
+                    f"{BASE}/__r",
+                    headers={**HEADERS, "Content-Type": "application/json"},
+                    json=body, timeout=10
+                )
+            elif fmt == "form":
+                resp = session.post(
+                    f"{BASE}/__r",
+                    headers={**HEADERS, "Content-Type": "application/x-www-form-urlencoded"},
+                    data=body, timeout=10
+                )
+            else:
+                resp = session.post(
+                    f"{BASE}/__r",
+                    headers={**HEADERS, "Content-Type": "application/json"},
+                    data=body, timeout=10
+                )
 
-    print(f"[*] Fetching: {stream_url}")
-    html = fetch(stream_url)
-    if not html:
-        print("    [!] Gagal fetch")
-        return
-
-    print(f"[*] HTML: {len(html):,} bytes\n")
-
-    # ── 1. Ekstrak script sources ──
-    srcs = extract_script_srcs(html)
-    inlines = extract_inline_scripts(html)
-    print(f"[*] External JS files: {len(srcs)}")
-    for s in srcs:
-        print(f"    → {s}")
-    print(f"[*] Inline scripts: {len(inlines)}")
-
-    # ── 2. Download & analisis semua JS ──
-    all_js = ""
-    for src in srcs:
-        js = fetch(src)
-        if js:
-            all_js += f"\n// === {src} ===\n" + js
-            print(f"    [✓] {src.split('/')[-1]}: {len(js):,} bytes")
+            body_preview = resp.text[:150].replace("\n", " ")
+            marker = "✓" if resp.status_code == 200 and len(resp.text) > 10 else "✗"
+            print(f"  {marker} POST [{fmt:4s}] {str(body)[:50]:50s} → {resp.status_code} | {body_preview}")
+        except Exception as e:
+            print(f"  ✗ POST [{fmt:4s}] {str(body)[:50]:50s} → ERROR: {e}")
         time.sleep(0.3)
 
-    # Tambah inline
-    for i, js in enumerate(inlines):
-        if len(js.strip()) > 10:
-            all_js += f"\n// === inline[{i}] ===\n" + js
 
-    # ── 3. Cari API endpoints ──
-    print(f"\n[*] API endpoints ditemukan di JS:")
-    endpoints = find_api_endpoints(all_js, "all")
-    for ep in sorted(set(endpoints)):
-        print(f"    → {ep}")
+def analyze_app_js():
+    """Grep spesifik di app.js untuk /__r dan /embed."""
+    print(f"\n{'=' * 60}")
+    print("[*] Analyzing app.js for /__r and /embed patterns")
+    print("=" * 60)
 
-    # ── 4. Cari token generation patterns ──
-    print(f"\n[*] Token generation patterns:")
-    token_patterns = find_token_generation(all_js)
-    if token_patterns:
-        for i, p in enumerate(token_patterns[:10]):
-            print(f"    [{i}] ...{p.strip()[:300]}...")
+    js_url = f"{BASE}/app.08b799ecd6f0.js"
+    print(f"  Fetching: {js_url}")
+    js = session.get(js_url, headers=HEADERS, timeout=20).text
+    print(f"  Size: {len(js):,} bytes\n")
+
+    # ── Cari /__r ──
+    print("[*] occurrences of '__r':")
+    r_matches = list(re.finditer(r'__r', js))
+    if r_matches:
+        for m in r_matches[:20]:
+            start = max(0, m.start() - 150)
+            end = min(len(js), m.end() + 150)
+            snippet = js[start:end].replace("\n", " ")
+            print(f"  @ {m.start()}: ...{snippet}...")
     else:
-        print("    (tidak ditemukan di JS)")
+        print("  (tidak ditemukan '__r' di app.js)")
 
-    # ── 5. Coba semua endpoint ──
-    stream_id = ""
-    if "/stream/" in stream_url:
-        stream_id = stream_url.split("/stream/")[1].split("/")[0]
+    # ── Cari /embed/stream ──
+    print(f"\n[*] occurrences of 'embed/stream':")
+    embed_matches = list(re.finditer(r'embed/stream', js))
+    if embed_matches:
+        for m in embed_matches[:10]:
+            start = max(0, m.start() - 200)
+            end = min(len(js), m.end() + 300)
+            snippet = js[start:end].replace("\n", " ")
+            print(f"  @ {m.start()}: ...{snippet}...")
+    else:
+        print("  (tidak ditemukan 'embed/stream' di app.js)")
 
-    print(f"\n[*] Testing endpoints (stream_id={stream_id}):")
-    for ep in sorted(set(endpoints)):
-        result = try_endpoint(ep, stream_id)
-        if result:
-            print(f"    ✓ {ep}")
-            print(f"      Response: {result[:300]}")
+    # ── Cari fetch/axios calls ──
+    print(f"\n[*] All fetch/axios/request calls:")
+    call_patterns = [
+        r'fetch\s*\(\s*["\']([^"\']+)["\']',
+        r'fetch\s*\(\s*`([^`]+)`',
+        r'(?:axios|request|http|api)\s*\.\s*(?:get|post|put|delete)\s*\(\s*["\']([^"\']+)["\']',
+        r'(?:axios|request|http|api)\s*\.\s*(?:get|post|put|delete)\s*\(\s*`([^`]+)`',
+    ]
+    all_calls = set()
+    for pat in call_patterns:
+        all_calls.update(re.findall(pat, js))
 
-    # ── 6. Dump semua JS ke file ──
+    for c in sorted(all_calls):
+        print(f"  → {c}")
+
+    # ── Cari "v2" prefix ──
+    print(f"\n[*] occurrences of 'v2' (token prefix):")
+    v2_matches = list(re.finditer(r'["\']v2["\.]', js))
+    if v2_matches:
+        for m in v2_matches[:10]:
+            start = max(0, m.start() - 200)
+            end = min(len(js), m.end() + 200)
+            snippet = js[start:end].replace("\n", " ")
+            print(f"  @ {m.start()}: ...{snippet}...")
+    else:
+        print("  (tidak ditemukan 'v2' di app.js)")
+
+    # ── Cari WebSocket ──
+    print(f"\n[*] WebSocket usage:")
+    ws_matches = list(re.finditer(r'WebSocket|wss?://', js))
+    if ws_matches:
+        for m in ws_matches[:10]:
+            start = max(0, m.start() - 100)
+            end = min(len(js), m.end() + 200)
+            snippet = js[start:end].replace("\n", " ")
+            print(f"  @ {m.start()}: ...{snippet}...")
+    else:
+        print("  (tidak ditemukan WebSocket)")
+
+    # ── Dump relevant sections ke file ──
     with open("playlist.m3u8", "w") as f:
-        f.write(f"=== SOURCE: {stream_url} ===\n")
-        f.write(f"=== Stream ID: {stream_id} ===\n\n")
-        f.write(all_js)
-    print(f"\n💾 Semua JS di-save ke: all_js_dump.txt")
-    print("   → Cari: 'v2', 'token', 'media', 'atob', 'crypto', 'fetch', '/api/'")
+        f.write(f"=== APP JS ANALYSIS ===\n\n")
+        f.write(f"--- __r occurrences ({len(r_matches)}) ---\n")
+        for m in r_matches:
+            start = max(0, m.start() - 300)
+            end = min(len(js), m.end() + 300)
+            f.write(f"\n@ {m.start()}:\n{js[start:end]}\n")
+        f.write(f"\n\n--- embed/stream occurrences ({len(embed_matches)}) ---\n")
+        for m in embed_matches:
+            start = max(0, m.start() - 300)
+            end = min(len(js), m.end() + 500)
+            f.write(f"\n@ {m.start()}:\n{js[start:end]}\n")
+        f.write(f"\n\n--- All API calls ---\n")
+        for c in sorted(all_calls):
+            f.write(f"  {c}\n")
+    print(f"\n💾 Detail di-save ke: app_js_analysis.txt")
 
 
 if __name__ == "__main__":
-    main()   
+    test_embed_endpoints()
+    test_r_endpoint()
+    analyze_app_js()   
