@@ -1,131 +1,84 @@
 #!/usr/bin/env python3
-"""Scrape M3U/M3U8 stream URLs from 365w.org using curl_cffi."""
+"""Scrape M3U8 stream URL dari 365w.org via network interception (Playwright)."""
 
-import re
-import json
 import sys
-from curl_cffi import requests as cffi_requests
+import asyncio
+from playwright.async_api import async_playwright
 
-# ─── Konfigurasi ───────────────────────────────────────────────────────────────
 TARGET_URL = "https://www.365w.org/stream/25827145/ms_ramat_aviv_w_vs_hapoel_kiryat_ata_w"
-HEADERS = {
-    "Referer": "https://www.365w.org/",
-    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
-    "Accept-Language": "en-US,en;q=0.9",
-}
-
-# ─── Fungsi utama ──────────────────────────────────────────────────────────────
-def fetch_page(url: str) -> str:
-    """Fetch halaman dengan impersonasi Chrome (TLS fingerprint)."""
-    resp = cffi_requests.get(
-        url,
-        headers=HEADERS,
-        impersonate="chrome124",   # fingerprint Chrome terbaru
-        timeout=15,
-    )
-    if resp.status_code != 200:
-        raise RuntimeError(f"HTTP {resp.status_code} dari {url}")
-    return resp.text
 
 
-def extract_m3u8_urls(html: str) -> list[str]:
-    """Ekstrak semua URL .m3u8 / .m3u dari HTML & JavaScript."""
-    patterns = [
-        # URL langsung di HTML/JS
-        r'(https?://[^\s"\'<>]+\.m3u8[^\s"\'<>]*)',
-        # Variabel JS: hls_src, file, src, url, streamUrl, etc.
-        r'(?:hls_src|file|src|url|streamUrl|source)\s*[:=]\s*["\'](https?://[^\s"\']+)["\']',
-        # Base64-encoded (kadang dipakai untuk obfuscate)
-        r'atob\(["\']([A-Za-z0-9+/=]+)["\']\)',
-        # URL relatif dengan .m3u8
-        r'(?:src|file|url)\s*[:=]\s*["\']([^"\']*\.m3u8[^"\']*)["\']',
-    ]
+async def scrape_m3u8(page_url: str, wait_seconds: int = 20) -> list[str]:
+    """Buka halaman di headless browser, tangkap semua request .m3u8/.mpd."""
+    m3u8_urls = []
 
-    found = set()
-    for pat in patterns:
-        matches = re.findall(pat, html, re.IGNORECASE)
-        for m in matches:
-            # Decode base64 jika perlu
-            if re.fullmatch(r'[A-Za-z0-9+/=]+', m) and len(m) > 20:
-                try:
-                    import base64
-                    decoded = base64.b64decode(m).decode()
-                    if "m3u" in decoded or "http" in decoded:
-                        found.add(decoded.strip())
-                    continue
-                except Exception:
-                    pass
-            # Skip false positives
-            if "example.com" in m or "placeholder" in m:
-                continue
-            found.add(m.strip())
+    async with async_playwright() as p:
+        browser = await p.chromium.launch(
+            headless=True,
+            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
+        )
+        context = await browser.new_context(
+            user_agent=(
+                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
+                "AppleWebKit/537.36 (KHTML, like Gecko) "
+                "Chrome/124.0.0.0 Safari/537.36"
+            ),
+            viewport={"width": 1920, "height": 1080},
+        )
+        page = await context.new_page()
 
-    return sorted(found)
+        # ── Intercept semua request ──
+        def on_request(request):
+            url = request.url
+            if any(ext in url for ext in (".m3u8", ".mpd", ".ts", ".m4s")):
+                if "blob:" not in url:
+                    m3u8_urls.append(url)
+                    print(f"  [NET] {url}")
 
+        page.on("request", on_request)
 
-def extract_iframes(html: str) -> list[str]:
-    """Cari URL iframe embed (kadang player ada di iframe)."""
-    iframes = re.findall(r'<iframe[^>]+src=["\']([^"\']+)["\']', html, re.IGNORECASE)
-    return iframes
+        # ── Fetch halaman ──
+        print(f"[*] Membuka: {page_url}")
+        await page.goto(page_url, wait_until="domcontentloaded", timeout=30000)
 
+        # ── Klik tombol play jika ada (beberapa player perlu di-click dulu) ──
+        try:
+            play_btn = page.locator("video, .play-btn, [class*='play'], button").first
+            if await play_btn.is_visible(timeout=3000):
+                await play_btn.click()
+                print("[*] Klik tombol play...")
+        except Exception:
+            pass
 
-def scrape_stream_url(page_url: str) -> list[str]:
-    """Scrape stream URL dari halaman stream."""
-    print(f"[*] Fetching: {page_url}")
-    html = fetch_page(page_url)
+        # ── Tunggu stream load ──
+        print(f"[*] Menunggu {wait_seconds} detik untuk stream load...")
+        await asyncio.sleep(wait_seconds)
 
-    # 1. Cari m3u8 langsung di halaman
-    urls = extract_m3u8_urls(html)
+        await browser.close()
 
-    # 2. Jika tidak ketemu, cek iframe embed
-    if not urls:
-        iframes = extract_iframes(html)
-        print(f"[*] Tidak ada m3u8 langsung, cek {len(iframes)} iframe...")
-        for iframe_url in iframes:
-            if not iframe_url.startswith("http"):
-                iframe_url = "https://www.365w.org" + iframe_url
-            try:
-                iframe_html = fetch_page(iframe_url)
-                urls += extract_m3u8_urls(iframe_html)
-            except Exception as e:
-                print(f"    [!] Gagal fetch iframe: {e}")
-
-    # 3. Cek API endpoint umum (beberapa site pakai AJAX)
-    if not urls:
-        print("[*] Mencoba endpoint API...")
-        api_patterns = [
-            f"https://www.365w.org/api/stream?url={page_url}",
-            f"https://www.365w.org/player/{page_url.split('/')[-1]}",
-        ]
-        for api_url in api_patterns:
-            try:
-                resp = cffi_requests.get(api_url, headers=HEADERS, impersonate="chrome124", timeout=10)
-                if resp.status_code == 200:
-                    urls += extract_m3u8_urls(resp.text)
-            except Exception:
-                pass
-
-    return list(set(urls))
+    return list(dict.fromkeys(m3u8_urls))  # dedup, keep order
 
 
 # ─── Entry point ───────────────────────────────────────────────────────────────
 if __name__ == "__main__":
     url = sys.argv[1] if len(sys.argv) > 1 else TARGET_URL
-    stream_urls = scrape_stream_url(url)
+    wait = int(sys.argv[2]) if len(sys.argv) > 2 else 20
 
-    if stream_urls:
-        print(f"\n✅ Ditemukan {len(stream_urls)} stream URL:\n")
-        for i, u in enumerate(stream_urls, 1):
+    urls = asyncio.run(scrape_m3u8(url, wait))
+
+    if urls:
+        print(f"\n✅ Ditemukan {len(urls)} stream URL:\n")
+        for i, u in enumerate(urls, 1):
             print(f"  {i}. {u}")
 
-        # Simpan ke file .m3u
-        m3u_path = "playlist.m3u8"
-        with open(m3u_path, "w") as f:
+        # Simpan .m3u
+        with open("playlist.m3u8", "w") as f:
             f.write("#EXTM3U\n")
-            for u in stream_urls:
-                f.write(f'#EXTINF:-1,{u.split("/")[-1]}\n{u}\n')
-        print(f"\n💾 Tersimpan ke: {m3u_path}")
+            for u in urls:
+                if ".m3u8" in u:
+                    name = u.split("/")[-1].replace(".m3u8", "")
+                    f.write(f"#EXTINF:-1,{name}\n{u}\n")
+        print("\n💾 Tersimpan ke: playlist.m3u")
     else:
-        print("\n❌ Tidak ada stream URL ditemukan.")
-        print("   → Buka halaman di browser, buka DevTools (F12) → Network tab")
-        print("   → Filter: m3u8 → salin URL-nya secara manual")   
+        print("\n❌ Tidak ada stream URL terdeteksi.")
+        print("   Coba perbesar wait: python scrape_365w.py <url> 40")   
