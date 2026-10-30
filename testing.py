@@ -1,84 +1,217 @@
 #!/usr/bin/env python3
-"""Scrape M3U8 stream URL dari 365w.org via network interception (Playwright)."""
+"""
+Scrape stream dari 365w.org — mulai dari homepage, crawl semua link stream,
+lalu ekstrak media URL (t=v2.xxx) dari tiap halaman.
+"""
 
+import re
 import sys
-import asyncio
-from playwright.async_api import async_playwright
+import json
+import time
+from urllib.parse import urljoin, urlparse
+from curl_cffi import requests as cffi_requests
 
-TARGET_URL = "https://www.365w.org/stream/25827145/ms_ramat_aviv_w_vs_hapoel_kiryat_ata_w"
+BASE = "https://www.365w.org"
+HEADERS = {
+    "Referer": BASE + "/",
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+}
+
+session = cffi_requests.Session(impersonate="chrome124")
 
 
-async def scrape_m3u8(page_url: str, wait_seconds: int = 20) -> list[str]:
-    """Buka halaman di headless browser, tangkap semua request .m3u8/.mpd."""
-    m3u8_urls = []
+def fetch(url: str) -> str:
+    """Fetch halaman, return HTML."""
+    resp = session.get(url, headers=HEADERS, timeout=20)
+    if resp.status_code == 404:
+        return ""
+    return resp.text
 
-    async with async_playwright() as p:
-        browser = await p.chromium.launch(
-            headless=True,
-            args=["--no-sandbox", "--disable-blink-features=AutomationControlled"]
-        )
-        context = await browser.new_context(
-            user_agent=(
-                "Mozilla/5.0 (Windows NT 10.0; Win64; x64) "
-                "AppleWebKit/537.36 (KHTML, like Gecko) "
-                "Chrome/124.0.0.0 Safari/537.36"
-            ),
-            viewport={"width": 1920, "height": 1080},
-        )
-        page = await context.new_page()
 
-        # ── Intercept semua request ──
-        def on_request(request):
-            url = request.url
-            if any(ext in url for ext in (".m3u8", ".mpd", ".ts", ".m4s")):
-                if "blob:" not in url:
-                    m3u8_urls.append(url)
-                    print(f"  [NET] {url}")
+def find_stream_links(html: str) -> list[dict]:
+    """Ekstrak semua link /stream/{id}/{slug} dari HTML."""
+    links = []
+    seen = set()
 
-        page.on("request", on_request)
+    # Pola: href="/stream/12345/nama_stream" atau href="https://www.365w.org/stream/..."
+    pattern = r'href=["\']([^"\']*?/stream/(\d+)/([a-z0-9_\-]+))["\']'
+    for m in re.finditer(pattern, html, re.IGNORECASE):
+        url = m.group(1)
+        stream_id = m.group(2)
+        slug = m.group(3)
 
-        # ── Fetch halaman ──
-        print(f"[*] Membuka: {page_url}")
-        await page.goto(page_url, wait_until="domcontentloaded", timeout=30000)
+        # Resolve relative URL
+        full_url = urljoin(BASE, url)
+        if full_url not in seen:
+            seen.add(full_url)
+            links.append({
+                "id": stream_id,
+                "slug": slug,
+                "url": full_url,
+            })
 
-        # ── Klik tombol play jika ada (beberapa player perlu di-click dulu) ──
+    return links
+
+
+def extract_media_token(html: str) -> str | None:
+    """Cari token t=v2.xxx di HTML/JS."""
+    # Pola 1: URL lengkap dengan t=v2.xxx
+    m = re.search(r'(?:/stream/media\?t=)(v2\.[A-Za-z0-9_\-]+)', html)
+    if m:
+        return m.group(1)
+
+    # Pola 2: var/let/const dengan token
+    m = re.search(r'["\'](v2\.[A-Za-z0-9_\-]{20,})["\']', html)
+    if m:
+        return m.group(1)
+
+    # Pola 3: di dalam JSON
+    m = re.search(r'"(?:token|t|media_token)"\s*:\s*"(v2\.[A-Za-z0-9_\-]+)"', html)
+    if m:
+        return m.group(1)
+
+    return None
+
+
+def extract_stream_data(html: str) -> dict:
+    """Ekstrak semua data stream dari halaman."""
+    data = {"token": None, "m3u8": None, "title": None}
+
+    # Token
+    data["token"] = extract_media_token(html)
+
+    # M3U8 langsung
+    m = re.search(r'(https?://[^\s"\']+\.m3u8[^\s"\']*)', html)
+    if m:
+        data["m3u8"] = m.group(1)
+
+    # Title (untuk nama di playlist)
+    m = re.search(r'<title>([^<]+)</title>', html, re.IGNORECASE)
+    if m:
+        data["title"] = m.group(1).strip()
+
+    # Data dari __NEXT_DATA__ atau JSON ter-embed
+    m = re.search(r'<script[^>]*id="__NEXT_DATA__"[^>]*>(.*?)</script>', html, re.DOTALL)
+    if m:
         try:
-            play_btn = page.locator("video, .play-btn, [class*='play'], button").first
-            if await play_btn.is_visible(timeout=3000):
-                await play_btn.click()
-                print("[*] Klik tombol play...")
-        except Exception:
+            next_data = json.loads(m.group(1))
+            # Cari recursively
+            data.update(find_in_json(next_data, depth=0))
+        except json.JSONDecodeError:
             pass
 
-        # ── Tunggu stream load ──
-        print(f"[*] Menunggu {wait_seconds} detik untuk stream load...")
-        await asyncio.sleep(wait_seconds)
-
-        await browser.close()
-
-    return list(dict.fromkeys(m3u8_urls))  # dedup, keep order
+    return data
 
 
-# ─── Entry point ───────────────────────────────────────────────────────────────
+def find_in_json(obj, depth=0) -> dict:
+    """Recursively cari stream-related data di JSON."""
+    result = {}
+    if depth > 10:
+        return result
+
+    if isinstance(obj, dict):
+        for k, v in obj.items():
+            if isinstance(v, str):
+                if "v2." in v and len(v) > 30:
+                    result["token"] = v
+                elif ".m3u8" in v:
+                    result["m3u8"] = v
+                elif k in ("title", "name") and not result.get("title"):
+                    result["title"] = v
+            else:
+                result.update(find_in_json(v, depth + 1))
+    elif isinstance(obj, list):
+        for item in obj:
+            result.update(find_in_json(item, depth + 1))
+
+    return result
+
+
+def scrape_all(max_streams: int = 0) -> list[dict]:
+    """Crawl dari homepage, ambil semua stream."""
+    print(f"[*] Fetching homepage: {BASE}")
+    home_html = fetch(BASE)
+    if not home_html:
+        print("    [!] Gagal fetch homepage")
+        return []
+
+    # Cari link stream di homepage
+    streams = find_stream_links(home_html)
+    print(f"[*] Ditemukan {len(streams)} stream link di homepage\n")
+
+    if max_streams > 0:
+        streams = streams[:max_streams]
+
+    results = []
+    for i, stream in enumerate(streams, 1):
+        label = f"[{i}/{len(streams)}]"
+        print(f"{label} {stream['url']}")
+
+        try:
+            page_html = fetch(stream["url"])
+            if not page_html:
+                print(f"    [!] 404 / kosong")
+                continue
+
+            data = extract_stream_data(page_html)
+            data["stream_id"] = stream["id"]
+            data["slug"] = stream["slug"]
+            data["page_url"] = stream["url"]
+            data["title"] = data.get("title") or stream["slug"].replace("_", " ")
+
+            if data["token"]:
+                data["media_url"] = f"{BASE}/stream/media?t={data['token']}"
+                print(f"    ✓ Token: {data['token'][:40]}...")
+            elif data["m3u8"]:
+                data["media_url"] = data["m3u8"]
+                print(f"    ✓ M3U8: {data['m3u8'][:60]}...")
+            else:
+                print(f"    ✗ Tidak ada token/m3u8")
+
+            results.append(data)
+        except Exception as e:
+            print(f"    [!] Error: {e}")
+
+        time.sleep(1)  # rate limit
+
+    return results
+
+
+def save_m3u(results: list[dict], filename: str = "playlist.m3u8"):
+    """Simpan hasil ke file .m3u."""
+    with open(filename, "w") as f:
+        f.write("#EXTM3U\n")
+        for r in results:
+            if r.get("media_url"):
+                f.write(f'#EXTINF:-1,{r["title"]}\n')
+                f.write(f'{r["media_url"]}\n')
+    print(f"\n💾 Tersimpan: {filename} ({len([r for r in results if r.get('media_url')])} stream)")
+
+
+def save_json(results: list[dict], filename: str = "streams.json"):
+    """Simpan hasil ke JSON (untuk debugging)."""
+    with open(filename, "w") as f:
+        json.dump(results, f, indent=2, ensure_ascii=False)
+    print(f"💾 Detail: {filename}")
+
+
+# ─── Main ──────────────────────────────────────────────────────────────────────
 if __name__ == "__main__":
-    url = sys.argv[1] if len(sys.argv) > 1 else TARGET_URL
-    wait = int(sys.argv[2]) if len(sys.argv) > 2 else 20
+    max_streams = int(sys.argv[1]) if len(sys.argv) > 1 else 0  # 0 = semua
 
-    urls = asyncio.run(scrape_m3u8(url, wait))
+    results = scrape_all(max_streams)
 
-    if urls:
-        print(f"\n✅ Ditemukan {len(urls)} stream URL:\n")
-        for i, u in enumerate(urls, 1):
-            print(f"  {i}. {u}")
+    if results:
+        save_m3u(results)
+        save_json(results)
 
-        # Simpan .m3u
-        with open("playlist.m3u8", "w") as f:
-            f.write("#EXTM3U\n")
-            for u in urls:
-                if ".m3u8" in u:
-                    name = u.split("/")[-1].replace(".m3u8", "")
-                    f.write(f"#EXTINF:-1,{name}\n{u}\n")
-        print("\n💾 Tersimpan ke: playlist.m3u")
+        # Ringkasan
+        found = [r for r in results if r.get("media_url")]
+        print(f"\n{'='*50}")
+        print(f"Total stream: {len(results)}")
+        print(f"Bisa diputar: {len(found)}")
+        print(f"{'='*50}")
     else:
-        print("\n❌ Tidak ada stream URL terdeteksi.")
-        print("   Coba perbesar wait: python scrape_365w.py <url> 40")   
+        print("\n❌ Tidak ada stream ditemukan.")
+        print("   → Mungkin struktur homepage berubah. Coba cek manual.")   
