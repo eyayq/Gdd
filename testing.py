@@ -1,132 +1,119 @@
 #!/usr/bin/env python3
-"""
-Monitor homepage → detect stream live → scrape URL
-"""
+"""Dump HTML live stream + test embed endpoint"""
 
 import re
-import time
-import json
 from curl_cffi import requests as cffi_requests
 
 BASE = "https://www.365w.org"
 session = cffi_requests.Session(impersonate="chrome")
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
 
-def get(url):
-    return session.get(url, headers=HEADERS, timeout=20)
-
-def check_live(streams):
-    """Cek stream mana yang 200 (live)."""
-    live = []
-    for slug, sid, name in streams:
-        url = f"{BASE}/stream/{sid}/{name}"
-        try:
-            r = get(url)
-            if r.status_code == 200:
-                live.append((sid, name, url, r.text))
-                print(f"  ✓ LIVE: /stream/{sid}/{name}")
-            else:
-                print(f"  ✗ {r.status_code}: /stream/{sid}/{name}")
-        except:
-            pass
-        time.sleep(0.3)
-    return live
-
-def extract_stream_url(html):
-    """Extract stream URL dari HTML server-rendered."""
-    results = {}
-
-    # 1. Cari m3u8/mpd langsung di HTML
-    for pat, name in [
-        (r'["\']([^"\']+\.(?:m3u8|mpegurl)[^"\']*)["\']', "m3u8"),
-        (r'["\']([^"\']+\.mpd[^"\']*)["\']', "mpd"),
-    ]:
-        m = re.findall(pat, html)
-        if m:
-            results[name] = list(set(m))
-
-    # 2. Cari di inline script (server data)
-    scripts = re.findall(r'<script[^>]*>(.*?)</script>', html, re.DOTALL)
-    for s in scripts:
-        if len(s) < 100:
-            continue
-        for pat, name in [
-            (r'["\']([^"\']+\.(?:m3u8|mpegurl)[^"\']*)["\']', "m3u8_script"),
-            (r'["\']([^"\']+\.mpd[^"\']*)["\']', "mpd_script"),
-            (r'"(?:src|url|source|media_url|hls_url|stream_url|playback_url)"\s*:\s*"([^"]+)"', "json_key"),
-            (r'(?:src|url|source|mediaUrl|hlsUrl|streamUrl|playbackUrl)\s*[:=]\s*["\']([^"\']+)["\']', "js_var"),
-        ]:
-            m = re.findall(pat, s)
-            if m:
-                results[name] = list(set(m))
-
-    # 3. Data attributes
-    for pat in [
-        r'data-(?:src|url|stream|player|video|hls)[^=]*=["\']([^"\']+)["\']',
-    ]:
-        m = re.findall(pat, html)
-        if m:
-            results["data_attr"] = list(set(m))
-
-    return results
+# Stream yang LIVE dari output kamu
+STREAM_ID = "25825951"
+STREAM_SLUG = "kokand_1912_vs_qizilqum_zarafshon"
+STREAM_URL = f"{BASE}/stream/{STREAM_ID}/{STREAM_SLUG}"
+EMBED_URL = f"{BASE}/embed/stream/{STREAM_ID}"
 
 def main():
-    print("=" * 60)
-    print("  365W LIVE STREAM MONITOR")
-    print("=" * 60)
+    # ── 1. Dump FULL HTML stream page ──
+    print(f"[*] Fetching: {STREAM_URL}")
+    r = session.get(STREAM_URL, headers=HEADERS, timeout=20)
+    print(f"    Status: {r.status_code} | Size: {len(r.text):,} bytes")
 
-    # Initial fetch
-    home = get(BASE)
-    streams = re.findall(r'href=["\'](/stream/(\d+)/([^"\']+))["\']', home.text)
-    print(f"\n[*] {len(streams)} streams on homepage")
+    # Save to file
+    with open("stream_page.html", "w") as f:
+        f.write(r.text)
+    print("    💾 Saved to: stream_page.html")
 
-    # Check which are live
-    print("\n[*] Checking status...")
-    live = check_live(streams)
+    # Print all script tags
+    print("\n[*] All <script> tags:")
+    scripts = re.findall(r'<script[^>]*>(.*?)</script>', r.text, re.DOTALL)
+    for i, s in enumerate(scripts):
+        if len(s.strip()) > 0:
+            print(f"\n  --- Script #{i} ({len(s)} chars) ---")
+            print(f"  {s[:800]}")
+            if len(s) > 800:
+                print(f"  ... ({len(s)-800} more)")
 
-    if live:
-        print(f"\n{'=' * 60}")
-        print(f"  ✅ {len(live)} STREAM LIVE!")
-        print("=" * 60)
+    # Print all data attributes
+    print("\n[*] All data-* attributes:")
+    data_attrs = re.findall(r'data-[\w-]+=["\'][^"\']*["\']', r.text)
+    for a in data_attrs:
+        print(f"    {a}")
 
-        for sid, name, url, html in live:
-            print(f"\n[*] Extracting from: {url}")
-            print(f"    HTML size: {len(html):,} bytes")
+    # Print all <link> and <script src>
+    print("\n[*] External resources:")
+    for m in re.findall(r'(?:src|href)=["\']([^"\']+)["\']', r.text):
+        print(f"    {m}")
 
-            results = extract_stream_url(html)
-            if results:
-                print(f"\n  ✅ STREAM URLS FOUND:")
-                for cat, urls in results.items():
-                    for u in urls:
-                        print(f"    [{cat}] {u}")
-            else:
-                print("\n  ⚠️  No URL pattern matched. Dumping all URLs in HTML:")
-                all_urls = re.findall(r'["\'](https?://[^"\']+)["\']', html)
-                for u in list(set(all_urls))[:20]:
-                    print(f"    → {u}")
+    # ── 2. Fetch EMBED page (LIVE stream) ──
+    print(f"\n\n[*] Fetching: {EMBED_URL}")
+    r2 = session.get(EMBED_URL, headers=HEADERS, timeout=20)
+    print(f"    Status: {r2.status_code} | Size: {len(r2.text):,} bytes")
 
-                # Also dump all script content for manual inspection
-                scripts = re.findall(r'<script[^>]*>(.*?)</script>', html, re.DOTALL)
-                for i, s in enumerate(scripts):
-                    if len(s) > 200:
-                        print(f"\n  --- Script #{i} ({len(s)} chars) ---")
-                        print(f"  {s[:500]}")
-    else:
-        print(f"\n{'=' * 60}")
-        print("  ⚠️  TIDAK ADA STREAM LIVE SAAT INI")
-        print("=" * 60)
-        print("""
-  Semua stream di homepage adalah upcoming/recent (404).
-  
-  Opsi:
-  1. Tunggu sampai ada match live (cek https://www.365w.org di browser)
-  2. Jalankan script ini berkala:
-     while True:
-         main()
-         time.sleep(60)
-  3. Atau: buka browser → DevTools → Network → filter 'm3u8'
-     → refresh saat ada stream live → catat URL
-""")
+    with open("embed_page.html", "w") as f:
+        f.write(r2.text)
+    print("    💾 Saved to: embed_page.html")
+
+    # Search for stream URLs
+    patterns = [
+        ("m3u8", r'["\']([^"\']+\.(?:m3u8|mpegurl)[^"\']*)["\']'),
+        ("mpd",  r'["\']([^"\']+\.mpd[^"\']*)["\']'),
+        ("mp4",  r'["\']([^"\']+\.mp4[^"\']*)["\']'),
+        ("url",  r'"(?:src|url|source|media|stream|play|hls|dash|token|key)"\s*:\s*"([^"]+)"'),
+        ("any_http", r'["\'](https?://[^"\']{10,})["\']'),
+    ]
+    print("\n[*] Patterns in embed HTML:")
+    for name, pat in patterns:
+        m = re.findall(pat, r2.text, re.IGNORECASE)
+        if m:
+            print(f"  [{name}]:")
+            for u in list(set(m))[:10]:
+                print(f"    → {u[:150]}")
+
+    # Print all script tags in embed
+    print("\n[*] Embed <script> tags:")
+    scripts2 = re.findall(r'<script[^>]*>(.*?)</script>', r2.text, re.DOTALL)
+    for i, s in enumerate(scripts2):
+        if len(s.strip()) > 0:
+            print(f"\n  --- Script #{i} ({len(s)} chars) ---")
+            print(f"  {s[:1000]}")
+            if len(s) > 1000:
+                print(f"  ... ({len(s)-1000} more)")
+
+    # ── 3. Try POST to embed ──
+    print(f"\n\n[*] POST {EMBED_URL}")
+    r3 = session.post(EMBED_URL, headers=HEADERS, json={"id": STREAM_ID}, timeout=20)
+    print(f"    Status: {r3.status_code} | Size: {len(r3.text):,} bytes")
+    if r3.status_code == 200 and len(r3.text) > 100:
+        print(f"    Body: {r3.text[:500]}")
+
+    # ── 4. Try common API patterns with LIVE id ──
+    print(f"\n[*] Probing API with LIVE id {STREAM_ID}:")
+    probes = [
+        f"{BASE}/api/stream/{STREAM_ID}",
+        f"{BASE}/api/v1/stream/{STREAM_ID}",
+        f"{BASE}/api/v2/stream/{STREAM_ID}",
+        f"{BASE}/api/player/{STREAM_ID}",
+        f"{BASE}/api/play/{STREAM_ID}",
+        f"{BASE}/api/token/{STREAM_ID}",
+        f"{BASE}/api/embed/{STREAM_ID}",
+        f"{BASE}/embed/stream/{STREAM_ID}/player",
+        f"{BASE}/embed/stream/{STREAM_ID}/source",
+        f"{BASE}/stream/{STREAM_ID}/source",
+        f"{BASE}/stream/{STREAM_ID}/player",
+        f"{BASE}/stream/{STREAM_ID}/hls",
+        f"{BASE}/stream/{STREAM_ID}/m3u8",
+        f"{BASE}/stream/{STREAM_ID}/play",
+        f"{BASE}/stream/{STREAM_ID}/media",
+    ]
+    for url in probes:
+        try:
+            r4 = session.get(url, headers=HEADERS, timeout=10)
+            if r4.status_code != 404:
+                print(f"  ✓ {r4.status_code} {url.replace(BASE,'')} | {r4.text[:200]}")
+        except:
+            pass
 
 if __name__ == "__main__":
     main()   
