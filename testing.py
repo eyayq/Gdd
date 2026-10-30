@@ -1,113 +1,132 @@
 #!/usr/bin/env python3
-"""Cari fungsi u() yang resolve stream URL"""
+"""
+Monitor homepage → detect stream live → scrape URL
+"""
 
 import re
+import time
+import json
 from curl_cffi import requests as cffi_requests
 
 BASE = "https://www.365w.org"
 session = cffi_requests.Session(impersonate="chrome")
 HEADERS = {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36"}
 
-def extract_function(js, name, start_pos=0):
-    """Extract function by name using brace matching."""
-    # Try: function name(
-    pat = rf'function\s+{name}\s*\('
-    m = re.search(pat, js[start_pos:])
-    if m:
-        brace = js.find("{", start_pos + m.start())
-        depth = 0
-        for i in range(brace, len(js)):
-            if js[i] == "{": depth += 1
-            elif js[i] == "}":
-                depth -= 1
-                if depth == 0:
-                    return js[start_pos + m.start():i+1]
-    # Try: name = function / name = (
-    pat2 = rf'\b{name}\s*=\s*(?:function\s*\(|\()'
-    m2 = re.search(pat2, js[start_pos:])
-    if m2:
-        paren = js.find("(", start_pos + m2.start())
-        # find matching )
-        depth = 0
-        end_paren = paren
-        for i in range(paren, len(js)):
-            if js[i] == "(": depth += 1
-            elif js[i] == ")":
-                depth -= 1
-                if depth == 0:
-                    end_paren = i
-                    break
-        # now find {
-        brace = js.find("{", end_paren)
-        if brace != -1:
-            depth = 0
-            for i in range(brace, len(js)):
-                if js[i] == "{": depth += 1
-                elif js[i] == "}":
-                    depth -= 1
-                    if depth == 0:
-                        return js[start_pos + m2.start():i+1]
-    return None
+def get(url):
+    return session.get(url, headers=HEADERS, timeout=20)
+
+def check_live(streams):
+    """Cek stream mana yang 200 (live)."""
+    live = []
+    for slug, sid, name in streams:
+        url = f"{BASE}/stream/{sid}/{name}"
+        try:
+            r = get(url)
+            if r.status_code == 200:
+                live.append((sid, name, url, r.text))
+                print(f"  ✓ LIVE: /stream/{sid}/{name}")
+            else:
+                print(f"  ✗ {r.status_code}: /stream/{sid}/{name}")
+        except:
+            pass
+        time.sleep(0.3)
+    return live
+
+def extract_stream_url(html):
+    """Extract stream URL dari HTML server-rendered."""
+    results = {}
+
+    # 1. Cari m3u8/mpd langsung di HTML
+    for pat, name in [
+        (r'["\']([^"\']+\.(?:m3u8|mpegurl)[^"\']*)["\']', "m3u8"),
+        (r'["\']([^"\']+\.mpd[^"\']*)["\']', "mpd"),
+    ]:
+        m = re.findall(pat, html)
+        if m:
+            results[name] = list(set(m))
+
+    # 2. Cari di inline script (server data)
+    scripts = re.findall(r'<script[^>]*>(.*?)</script>', html, re.DOTALL)
+    for s in scripts:
+        if len(s) < 100:
+            continue
+        for pat, name in [
+            (r'["\']([^"\']+\.(?:m3u8|mpegurl)[^"\']*)["\']', "m3u8_script"),
+            (r'["\']([^"\']+\.mpd[^"\']*)["\']', "mpd_script"),
+            (r'"(?:src|url|source|media_url|hls_url|stream_url|playback_url)"\s*:\s*"([^"]+)"', "json_key"),
+            (r'(?:src|url|source|mediaUrl|hlsUrl|streamUrl|playbackUrl)\s*[:=]\s*["\']([^"\']+)["\']', "js_var"),
+        ]:
+            m = re.findall(pat, s)
+            if m:
+                results[name] = list(set(m))
+
+    # 3. Data attributes
+    for pat in [
+        r'data-(?:src|url|stream|player|video|hls)[^=]*=["\']([^"\']+)["\']',
+    ]:
+        m = re.findall(pat, html)
+        if m:
+            results["data_attr"] = list(set(m))
+
+    return results
 
 def main():
-    resp = session.get(f"{BASE}/app.08b799ecd6f0.js", headers=HEADERS, timeout=20)
-    js = resp.text
-    print(f"[*] app.js: {len(js):,} bytes\n")
+    print("=" * 60)
+    print("  365W LIVE STREAM MONITOR")
+    print("=" * 60)
 
-    # ── 1. Cari semua definisi 'u' di module scope ──
-    # Karena minified, 'u' bisa di mana saja. Cari pattern:
-    #   u = function / function u / var u = / const u =
-    print("[*] Searching for 'u' definitions...")
-    u_defs = []
-    for pat in [r'\bfunction\s+u\s*\(', r'\bu\s*=\s*function\s*\(', r'\bu\s*=\s*\(', r'\bvar\s+u\b', r'\bconst\s+u\b', r'\blet\s+u\b']:
-        for m in re.finditer(pat, js):
-            u_defs.append((m.start(), pat, js[max(0,m.start()-50):m.end()+200]))
+    # Initial fetch
+    home = get(BASE)
+    streams = re.findall(r'href=["\'](/stream/(\d+)/([^"\']+))["\']', home.text)
+    print(f"\n[*] {len(streams)} streams on homepage")
 
-    print(f"    Found {len(u_defs)} candidates\n")
-    for pos, pat, ctx in u_defs[:10]:
-        print(f"    @ {pos}: [{pat[:20]}]")
-        print(f"      ...{ctx[:200]}...")
-        print()
+    # Check which are live
+    print("\n[*] Checking status...")
+    live = check_live(streams)
 
-    # ── 2. Cari di sekitar cs (±5000 chars) ──
-    cs_pos = js.find("function cs(")
-    print(f"\n[*] Searching near cs() (pos {cs_pos}) for 'u' definition...")
-    window_start = max(0, cs_pos - 5000)
-    window_end = min(len(js), cs_pos + 5000)
-    window = js[window_start:window_end]
+    if live:
+        print(f"\n{'=' * 60}")
+        print(f"  ✅ {len(live)} STREAM LIVE!")
+        print("=" * 60)
 
-    for m in re.finditer(r'\bu\s*=\s*[^;]{10,200}', window):
-        print(f"    @ {window_start + m.start()}: {m.group(0)[:150]}")
+        for sid, name, url, html in live:
+            print(f"\n[*] Extracting from: {url}")
+            print(f"    HTML size: {len(html):,} bytes")
 
-    # ── 3. Cari fungsi yang mengandung "fetch" atau "XMLHttpRequest" atau API path ──
-    # dan mengembalikan URL (m3u8, mpd, atau string URL)
-    print(f"\n[*] Functions that return stream URLs (contain fetch + url pattern):")
-    # Cari semua function yang mengandung 'fetch(' dan juga 'url' atau 'm3u8'
-    func_starts = list(re.finditer(r'function\s+(\w+)\s*\(|\b(\w+)\s*=\s*function\s*\(', js))
-    for fm in func_starts:
-        fname = fm.group(1) or fm.group(2)
-        # Extract ~2000 chars after
-        body = js[fm.start():fm.start()+2000]
-        if ('fetch(' in body or 'XMLHttpRequest' in body or '.get(' in body or '.post(' in body) and \
-           ('m3u8' in body or 'url' in body.lower() or 'stream' in body.lower() or 'play' in body.lower()):
-            print(f"  ✓ {fname}() @ {fm.start()}")
-            # Print first 500 chars
-            print(f"    {body[:400]}")
-            print()
+            results = extract_stream_url(html)
+            if results:
+                print(f"\n  ✅ STREAM URLS FOUND:")
+                for cat, urls in results.items():
+                    for u in urls:
+                        print(f"    [{cat}] {u}")
+            else:
+                print("\n  ⚠️  No URL pattern matched. Dumping all URLs in HTML:")
+                all_urls = re.findall(r'["\'](https?://[^"\']+)["\']', html)
+                for u in list(set(all_urls))[:20]:
+                    print(f"    → {u}")
 
-    # ── 4. Cari semua string yang mengandung "/api/" atau endpoint pattern ──
-    print(f"\n[*] All API endpoint strings in app.js:")
-    api_strings = re.findall(r'["\'](/(?:api|v[0-9]|embed|stream|player|media|play|token|auth|hls|live)[^"\']*)["\']', js)
-    for s in sorted(set(api_strings)):
-        print(f"    {s}")
-
-    # ── 5. Cari "loadSource" context (HLS.js usage) ──
-    print(f"\n[*] 'loadSource' context (HLS.js):")
-    for m in re.finditer(r'loadSource', js):
-        start = max(0, m.start() - 200)
-        end = min(len(js), m.end() + 100)
-        print(f"    @ {m.start()}: ...{js[start:end]}...")
-        print()
+                # Also dump all script content for manual inspection
+                scripts = re.findall(r'<script[^>]*>(.*?)</script>', html, re.DOTALL)
+                for i, s in enumerate(scripts):
+                    if len(s) > 200:
+                        print(f"\n  --- Script #{i} ({len(s)} chars) ---")
+                        print(f"  {s[:500]}")
+    else:
+        print(f"\n{'=' * 60}")
+        print("  ⚠️  TIDAK ADA STREAM LIVE SAAT INI")
+        print("=" * 60)
+        print("""
+  Semua stream di homepage adalah upcoming/recent (404).
+  
+  Opsi:
+  1. Tunggu sampai ada match live (cek https://www.365w.org di browser)
+  2. Jalankan script ini berkala:
+     while True:
+         main()
+         time.sleep(60)
+  3. Atau: buka browser → DevTools → Network → filter 'm3u8'
+     → refresh saat ada stream live → catat URL
+""")
 
 if __name__ == "__main__":
     main()   
