@@ -2,12 +2,12 @@
 """
 365W → M3U Playlist Generator (v10)
 - Tanpa Playwright, tanpa _h, tanpa cookie manual
-- Worker auto-extract m3u8 dari stream page (token selalu fresh)
+- Worker auto-extract m3u8 (token selalu fresh)
 """
 
 from curl_cffi import requests as cffi_requests
 from concurrent.futures import ThreadPoolExecutor, as_completed
-import re
+import re, sys
 
 BASE = "https://365w.org"
 WORKER = "https://px.bhns.workers.dev"
@@ -84,12 +84,16 @@ def parse_homepage(html):
         sport_icon = normalize_sport_icon(sport, svg_icon)
 
         streams.append({
-            "id": sid, "slug": slug,
+            "id": sid,
+            "slug": slug,
             "url": f"{BASE}/stream/{sid}/{slug}",
-            "team1": team1, "team2": team2,
-            "sport": sport, "league": league,
+            "team1": team1,
+            "team2": team2,
+            "sport": sport,
+            "league": league,
             "sport_icon": sport_icon,
             "group_title": f"{sport} · {league}" if league != "Unknown" else sport,
+            "logo": f"{BASE}/static/sport_symbols.svg#{sport_icon}",
         })
     return streams
 
@@ -106,7 +110,7 @@ def main():
     print("=" * 60)
     print("  365W → M3U PLAYLIST GENERATOR (v10)")
     print(f"  Proxy: {WORKER}")
-    print("  Mode:  Auto-refresh (tanpa Playwright, tanpa _h)")
+    print("  Mode:  Auto-refresh (token selalu fresh)")
     print("=" * 60)
 
     # 1. Fetch homepage
@@ -141,15 +145,15 @@ def main():
         print("⚠️  Tidak ada stream live.")
         return
 
-    # 4. Generate M3U — URL = stream page (worker yang handle m3u8)
+    # 4. Generate M3U
     m3u_path = "playlist.m3u8"
     with open(m3u_path, "w") as f:
         f.write("#EXTM3U\n")
         for s in live_streams:
             title = f"{s['team1']} vs {s['team2']}"
             group = s["group_title"]
-            logo = f"{BASE}/static/sport_symbols.svg#{s['sport_icon']}"
-            # URL = worker + stream page path (worker auto-extract m3u8)
+            logo = s["logo"]
+            # URL = worker + stream page (worker auto-extract m3u8)
             url = f"{WORKER}/stream/{s['id']}/{s['slug']}"
 
             f.write(f'#EXTINF:-1 group-title="{group}" tvg-logo="{logo}",{title}\n')
@@ -166,7 +170,7 @@ def main():
     title = f"{s['team1']} vs {s['team2']}"
     url = f"{WORKER}/stream/{s['id']}/{s['slug']}"
     print(f"\nPreview:")
-    print(f'  #EXTINF:-1 group-title="{s["group_title"]}" tvg-logo="{BASE}/static/sport_symbols.svg#{s["sport_icon"]}",{title}')
+    print(f'  #EXTINF:-1 group-title="{s["group_title"]}" tvg-logo="{s["logo"]}",{title}')
     print(f"  {url}")
     print(f"\n✅ Tidak perlu re-run. Token di-regenerate otomatis oleh worker.")
 
