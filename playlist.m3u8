@@ -1,126 +1,153 @@
 #EXTM3U
 #EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Changchun Yatai vs Nantong Zhiyun
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822275/changchun_yatai_vs_nantong_zhiyun
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.N4kgHVBaC3iXU7WX4v1u4SkfexWDO-_ywAseYUmCjorAU2YeR6yhoW-6qgMQzGQO0wi_updvmwwgBZT2BnRn3WcvjohovK4aX7itkcJ2CWljdjnLvIW3-SicnE_nKq3Ur7c5F4oOQWPsYb9sa8Joe1BLUbFlPk9vaPyKIxq1rZyO-kcBN6IBW2Q1ChGlY5K8RQ9ZMiC8a_eYhpODyL0&ref=https%3A//www.365w.org/stream/25822275/changchun_yatai_vs_nantong_zhiyun
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.ACuRpr7ShIoS-Pbtv5qcrQmGPB55MpXrd2W-LlEPv4JW5yWRxS0CD0UNKFecjCb_zP9C4OnwlXO9wlku0jioKYULyKIxj4GtYmr2G9XMKGOmhSVSD4MF99SNUa3xSvu00ZeMzKIpgVc3u_ESU0fdosTxtZIUQeNCTRHqTfjfdvo09K8zds6f0OxvLVKAI-aAeypDGMs8r6mHkoqvIWU&ref=https%3A//www.365w.org/stream/25822275/changchun_yatai_vs_nantong_zhiyun
 #EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Chengdu Rongcheng 2 vs Beijing Institute of Technology
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25832124/chengdu_rongcheng_2_vs_beijing_institute_of_technology
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.ekNOg_fpAwkmbAdodKEMO4xbkAlJAn2AXruNN7nM5qyfbVq3cJR0W7sySUln0gWQh8zjn3nJ6enJUTwyFPfM7ySY9Q38R8najeOvPYzf_4vB3bvSGzR6MMWHsjuDtalw0cUg3KBvQULODkg7ETNGkaNdOdnO_W7badiwAwQvl4wPlUgxLrkVfJZHkAP3JervqGfbSIXmrxw7NwCH8hw&ref=https%3A//www.365w.org/stream/25832124/chengdu_rongcheng_2_vs_beijing_institute_of_technology
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.Pr3dzbTFjOQ9iC3R0ebYhG3HIc2BpFBV0VoGXwe0Y1aVaYVe9XnLfW_bZioWT4zb0qgP_OpHkWrzhsDqI6tuaWbLsygoxza02L-E7FWgHPsk8ZlU6NSUQUwuCjjS3EAmqEdgsHnZFT-yRjHrm6bUHxgziIYl1iUNOY2Ol3IFjWg8mKFPbMwmg8QJnKDatF8Xe6iAxrDdCgPFYE16BlE&ref=https%3A//www.365w.org/stream/25832124/chengdu_rongcheng_2_vs_beijing_institute_of_technology
 #EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Dalian Yingbo 2 vs Guangdong Mingtu
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25831779/dalian_yingbo_2_vs_guangdong_mingtu
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.0PMwOiol1L2in68c15u76ysk2ekDPhC39oWOLXkGT7KgMH-W3ZMXK4dD0NkMp0cjm9uvXe8W0Wy9U48hXZ-8gAm3hl7CwzKWSqOWQ3G6QJ9_S1XzAK4u7Q7mdMkfTFITDZX4Um3VX_Z2hZAnTBjMwOqnsG_OiF1Jb4waoZsWFnG013ZCnq40EKYPW67FWxm6PLX7W_tEScu2QndoCs4&ref=https%3A//www.365w.org/stream/25831779/dalian_yingbo_2_vs_guangdong_mingtu
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.ZTqraCSxm5XVnGyHIdq3WJmpPS2d1HKf7BoGHjOlzGy9_W6xRA67Iq7vbKg2UrkFGePTmj5ffhSZxqJZ97g-oZFH51xYmyKi96ZOJOWyZvlC6aZYoOla0bVtzfJ6Xh1ywj52c2RzCT-eaiZJATYUIoKnQL1yZmz4wdrIaM7ZS1O5WQgNBIZF9vFDJeja0HRtQTLs_IkERCBdWZ2YBlk&ref=https%3A//www.365w.org/stream/25831779/dalian_yingbo_2_vs_guangdong_mingtu
 #EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Dingnan United vs Shenzhen Juniors
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25832537/dingnan_united_vs_shenzhen_juniors
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.esJOfFAu4fj1vjRUicpSCL9nWZ885cGbXiT2NW7YyY8JvT-Pk48m4ACvDzkL7vIi4FQX4qhnMSVgoIfRXbSEkt36P6FpOBnUWNGG1PhLBEsNCpb8Q_KEzHB3ONt2YqNgQsnvfPjAekppW0KtBl5Ma8Xpmy2WTSEeqD8l6NXpDCiJzaaZn0US73j_nP_TKksBKNgOeOsvJtPAkqnhrEY&ref=https%3A//www.365w.org/stream/25832537/dingnan_united_vs_shenzhen_juniors
-#EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Foshan Nanshi vs Ningbo Professional
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-#EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822274/foshan_nanshi_vs_ningbo_professional
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.-2pYbw9gKRMVY0hOdscLzZCZj2QUy1sYc9pvqNb-rPSM1lGeI07UkvAJUmJcRHWRrcUQl4bmL6GUCIzF1f8-y-TraLwOyXuAq7fE3Il9lhJCzwmtJ77xyruGGv60ZjtcFqspTFy4TF3kR9N-SImMhDtcxCm2uEie4QhfdLgVbn3kI8uRBCO3OgWTVDifV6b2liAHHtIS1gDmuzT2VXQ&ref=https%3A//www.365w.org/stream/25822274/foshan_nanshi_vs_ningbo_professional
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.xc0p7Jkeo5eifoHM7l9YkImvScR6M16GYB3qsmOp9XtQ8Y-IBqv9WENt1hr68hesh39939LMGmmSETK1gcFnQsioH8hkzLeTTPEf-3WxJ3tK0C4NYmG712tMA1bnC2AmAQoO0522svxBxy1cWpI8rKDInySpWO2PuUofZ_s8vIXvTmQpgj8BqeuiQKDZlgzeggwhqwQ288B9E-NrV6o&ref=https%3A//www.365w.org/stream/25832537/dingnan_united_vs_shenzhen_juniors
 #EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Guangxi Hengchen vs Wuxi Wugou
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822273/guangxi_hengchen_vs_wuxi_wugou
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.38GBc4xAmzc5li4rDvBIhMjEZGyZkIQ34mNfEzByMeco49cUu1UehnpU3psHiBYUprzuPF8QWZFINgSMuMoQ8tVToI-MwQ8aPUEubkX9tif6Lk2sJIGRfVzxu_UGqicsj7Bu6K4OzqQJGmSPPQOfy20g0wYu2kuPGL5SeXMpwb2FPcCF3hHkT1YDAQSCNaJcgonU-7cIkEgU8TaDKl8&ref=https%3A//www.365w.org/stream/25822273/guangxi_hengchen_vs_wuxi_wugou
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.viPoOqh6ThZsQwoZHhhSy_3wGYZqU8sgExAo0wu6NSNmSSs7EIR6aAHH6XZIQKCIwBp1bBXugO3FyvUVTpVgtSkROsC-Kk5DNFtc07snCqdBTKx0baC2Vo6lx_r7Oeeb6WpUbSx32Axa-por4zPKO7ej3rwscGNTFrGSY6QimVKYJpJro3JWwnTZhI7-s_B0h4WeRrh-chPItEldF-I&ref=https%3A//www.365w.org/stream/25822273/guangxi_hengchen_vs_wuxi_wugou
 #EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Guangzhou Dandelion vs Changchun Xidu
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25831778/guangzhou_dandelion_vs_changchun_xidu
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.9rld1-ybxyQXqANeZQYi4K7rJAha_w0AkLjqYXIGRF5Cjy-EQ1g0m10Jh6JMbTKLYegYlb-gCDYyS_zVINPm-zDbe7DEgCS0jxTlXX58fXj2Ch2nHBa2sz5GLLLCyWYjZHXD5mkYBz3ISvgsuwm6k05eFGxi2CI1DoloBdDTi_6sIDeGtzhxk6rVNHqw9QFKR7POGA9jGa68BerypyY&ref=https%3A//www.365w.org/stream/25831778/guangzhou_dandelion_vs_changchun_xidu
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.xsSgCMb80LRbvJnHL34o1W2SHz3vDLk5UZ7idDXscY4rIEEhyv7QrjDSD60PtD0iLfiopJVeCyRx_5921kk6B6-itGMOHoN9Yor2IiqST-AApkFLAakCOAa0G5xIfWSqzIlzCKASeY1TqbSJCVYCBEBBLYUUwgb5tLgVQ-p7kFCkDtmuEnX2NJSZ5-S_e0-8U0AkNcvUN3Sm-Z8XThA&ref=https%3A//www.365w.org/stream/25831778/guangzhou_dandelion_vs_changchun_xidu
 #EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Lanzhou Longyuan vs Hubei Istar
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25831776/lanzhou_longyuan_vs_hubei_istar
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.Ernyh-j16wFZzuNPftostl2KyOYoI9lRgcA06sthYbi8fF-QUXLaEm1ROs3Pere0iprMUSr4NBZQpMe8B-mXE3nxGmerkTs4PPThknVKGcWCcCGHBd1JPkW7vBMV9QkUeUTl3miBYFGXoODU2RHsTSOYFunbU3_FayEBDwNAc6i63U3HbWH0FVnBW9bUycxLJlcHMbznB_q9arpDiOA&ref=https%3A//www.365w.org/stream/25831776/lanzhou_longyuan_vs_hubei_istar
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.SpF8ZKUtFIAMC-0XESYcq-0n1J8sehswiH7lRS5LCbkce0gGaYN6BkBfg-Gs4qNE1GbaXNuDA-lqCdzKM8Y8SvWqOWi1RzqRJDAShrjB7JM5UB1YOAHNI2thtW2k2Q7lP2xnh6K9TH-6NZw7ICE3OCV5ZM5-RnL3goEngp9mVOnOgsB5gMMB7-bTzMgN1z7RhjmBXLe3GVfKKdCEO9s&ref=https%3A//www.365w.org/stream/25831776/lanzhou_longyuan_vs_hubei_istar
 #EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Meizhou Hakka vs Shaanxi Union
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822271/meizhou_hakka_vs_shaanxi_union
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.0C2EjqQ78IcNj8gCFa-86P8rjydp4bNFEhl3qag_BME6e528YeozB83XR0LSexYJcM51EGzWSRM_6sasm6f9wSfkbLUghxOGEGWm1hT9QxSQKkY00GvU80jwAMWgk47aTwLbm8K3k7lED6vbQhyy9Hct1uV9bj9CP6i0oFoVr__NTMItSC2mU-f87PQdf4r7XbMHw9R3Dz9zTEvg41M&ref=https%3A//www.365w.org/stream/25822271/meizhou_hakka_vs_shaanxi_union
-#EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Nanjing City vs Dalian K'un City
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-#EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822269/nanjing_city_vs_dalian_k_un_city
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.qOOIBvfxj3495zpKz4KNr_umCDDivmtgIxpglueO5Sp1PAXRUMp905UOVGJait-ULBQMExhCz6AobiMBPO_kqGjm3prmSLDWh1jFG_oteee87bm3ii1sgzZoKdUieAup7ZjFrHVGjacOzJlUAzUrH3QWfD_sfjXNxgT3a8JfwREAk3DGMFoBc1suFWeobV0Z868LWgsEnEqG4sR2TzY&ref=https%3A//www.365w.org/stream/25822269/nanjing_city_vs_dalian_k_un_city
-#EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Shijiazhuang Gongfu vs Guangdong GZ-Power
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-#EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822270/shijiazhuang_gongfu_vs_guangdong_gz_power
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.Qiwc2wOTr1VhHK6lbjhBDHZjgVQOdppC8QU4c6PQfm5uFZwnXfi5BrqVv-nyQoIK6dur-Cy-xpX11XrPo3i6saUtt_gcTjDe5sD8C_dBldLWByy20NoN68nmtzWPK2q6dr3XnEMK5vENNfJ0L7YzXhyq_Um_hhnCaT7mFthjwoNatfPgbkMdKJxbakBSxir0loqFaIZFKNBCTbxcjXI&ref=https%3A//www.365w.org/stream/25822270/shijiazhuang_gongfu_vs_guangdong_gz_power
-#EXTINF:-1 group-title="Soccer · China. League 1" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Suzhou Dongwu vs Yanbian Longding
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-#EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822272/suzhou_dongwu_vs_yanbian_longding
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.Df-lduI7gQk4n7LG30wJR__1cy0kZYKYbXDQQnYto6M5CpmmUrdb5LcBLFj7ycgFbS3HRHuJqFDtn7hYRdtupgrdGSD47r6x8CeWifRCs685lWNLfpd13NtPCA2kqv8AzdWIfmubjyOb_QKH5fc9D8rQCeQ4iye0Sgg5yhrPMAelY6nxY9W6EuZh0mAM7IOhNxHc5WCOfxq2U9vzbb8&ref=https%3A//www.365w.org/stream/25822272/suzhou_dongwu_vs_yanbian_longding
-#EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Wenzhou vs Shanghai Segenda
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-#EXTVLCOPT:http-referrer=https://www.365w.org/stream/25831780/wenzhou_vs_shanghai_segenda
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.ShKhpwA45l7r1zpbcD7nQDGDdn4kxTPpY4Xi8ElvuEOEA-Xcf2RMdrpkik8_CONF_JiByugvXd5HM7vxNgnte7KCTFYtsHQEK90tsqncVkF_gBiGcXYNzd0T0ZE9zCftTNmx4P_KrETYCXGRFzyQ9QX-GazCQ3FT09AAFAMLRBkMvC1J0bHNQ-ICk9S3lDRAQ79W1jCiD2XmeMtmrm4&ref=https%3A//www.365w.org/stream/25831780/wenzhou_vs_shanghai_segenda
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.FC4ByR4zScgWeRaOAq88Ce8Qh7NWk-9wbXZgCpvV_sHG3e6B2lX-CSWuhBA7gYmr5XaMXqiwf3y1qIOcjZ96SmX4aKuSvEAVqfrCd3oJ6iH-vfD0LQNVg8o4SCSyHBpq4E1xGvKRp8iG3OGsaaYrp5Og7sNpRV_wlYx2y2sXUs-Ur8mhHS911ox-QBr6Dnr4kozEFpg4_i2TdSUBkqk&ref=https%3A//www.365w.org/stream/25822271/meizhou_hakka_vs_shaanxi_union
 #EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Wuhan Three Towns 2 vs Qingdao Red Lions
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25831781/wuhan_three_towns_2_vs_qingdao_red_lions
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.7KlA40l3zBrE4uWscxd859mD7-DRl1LVxJYWq_uCMnVEYbyobZyyt-t3shToNP6Z8GRzNF5ozrs6bsgns2RmcsD6pXPQX-eMj7ZSRmR5vlTuhdKxggCOkCzux72zqZDIs_HNcNoX5_L5v0Vscl1ebUQlnCWVqDzhLeVZ2y3Q3xtGze22nVRBxjL1-NiMLGLIyE_u-zzKpMGwGCgB-xE&ref=https%3A//www.365w.org/stream/25831781/wuhan_three_towns_2_vs_qingdao_red_lions
-#EXTINF:-1 group-title="Soccer · China. League 2. Relegation Group" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Xiamen Feilu vs Haimen Codion
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
-#EXTVLCOPT:http-referrer=https://www.365w.org/stream/25832125/xiamen_feilu_vs_haimen_codion
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.4K8FtZMOAKaEVp3fMiDvGe5-BrNniVDrc0xaLrzL6e_i9ZRNhhkG7Plh7Hyi1EN15DwsbciO2AXuNdSSVCwPLcD3Krj4YiWSfjDvlbx5XVdNDetDJvcyRWZpg3k4Xk37ryCp_jT7WtLjvCiKOjNlVj1x35I6eI31XPNZuJFyCuyT3MTP_dG0EAAaV4kU9eSs9MsISHeeoK0A4ICdFbU&ref=https%3A//www.365w.org/stream/25832125/xiamen_feilu_vs_haimen_codion
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.FTjStIqbaG1jQjXvRjI0NmperXTG2rtemfbs7dBR9J6ZIxuM_IkKETxiBEapG-Jg6ODsco1DxDQcQJKa9ixnVBpiN7oQHXupBzve8otKWKoPZcgQziqpQdcjw_z5m8nrnkKBEnIKOMEl3mvzVaj6QgzLCFzy-XU0lOw4V4WfmFsTt_W54iRAfUrtmqXRz-lQzDacQb_HaOTajosLFWg&ref=https%3A//www.365w.org/stream/25831781/wuhan_three_towns_2_vs_qingdao_red_lions
 #EXTINF:-1 group-title="Soccer · Hong-Kong. Premier League" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Eastern District vs Shatin
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25830785/eastern_district_vs_shatin
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.PaVZ-_8TidEcK6Nmk2lyp-VsrEc_nYwxXmkyN6hEJ4Hw8N6FbS_LDvh3wU4nJCqpSCRO9sqYSMcbA7Y5RhjZawlq8Jvp6BWmMy6JNHNh7jiYiUJEQG5PazsZqu7nHOnLE-XZMf5kkB7V0oOMoDllFHo5oN13WDQNn0sBYltuhraQREv_R598opU-OksugUQpR1dBv4dRvPWP1TfHMnQ&ref=https%3A//www.365w.org/stream/25830785/eastern_district_vs_shatin
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.bcZidKvhnuJAgDV9p9fbgBjYHQ4_3_rfvI9sXn0qnurjPzIKism8-X16Odcn_ZwG9ca3RWUdmxrYbaLGqDxRJ0dFAbiWYSETwHmb4PrzPJzN83U0IcqKZEmfnvc37nCpXSG-jEAkdQA8yJZwIgTVKSCUujA66AF1_lHXVvrZHIHTN4vX6yFZpU7gTKOm3CpQOuSK4lhLrkFAgfMKi-Y&ref=https%3A//www.365w.org/stream/25830785/eastern_district_vs_shatin
 #EXTINF:-1 group-title="Soccer · Chinese Taipei. Women. Championship" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Hang Yu (w) vs Kaohsiung Attackers (w)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25832190/hang_yu_w_vs_kaohsiung_attackers_w
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.Qn7CjJjqb7FsygGDvWCzEJ2FW8DcvjRLfpK4_F2UPWh2iFdlZcU2UnnxZmgBiPUCoTdG17GMz21aMm2nEDvGtJccb-ynitbzT_6E541ig973Kn2XVZbhkSmgBE7v7NeXZzpK3YRgisJeBajsRYi13YV2h10l_uo4CWgNEz9hM8ndve1ys3AVX7boKZY2WWREmbFq0Ukqqa9vGTdd8RU&ref=https%3A//www.365w.org/stream/25832190/hang_yu_w_vs_kaohsiung_attackers_w
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.VOUpWGLVr9su3iMOaEtdZMCCKId5ZqkYpstKOCyY8cGkRd77JOah78UgGKQcU16WnUTLDD48wAm5n1av-sww3kh1XaQk_-9twZSOwBu3PijwvBhjtNWdjUj5ORckd2efq7zYPshUxp6TU0dN-NjFOYTbN6wkAqBBYFRwecshUrQOYphEvRdCHLUIHJdIeGdBQdqtNbdw55z4gSj4Cg8&ref=https%3A//www.365w.org/stream/25832190/hang_yu_w_vs_kaohsiung_attackers_w
 #EXTINF:-1 group-title="Soccer · Japan. Premier League" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Kashiwa Reysol vs Urawa Red Diamonds
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822460/kashiwa_reysol_vs_urawa_red_diamonds
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.89e2m6FDlMRPLw45c3zOP08Ejyp1wC0Ij0H8gUlMBgMbXdRXIlFM2G_rAI_MXhyy7deTBdWf8tE6hklgmn6LVwQUOk4ac-i_qp__39vkk-Rud0cHNkSIBQ7mC9MNe_Zao512nzRiw0dU4-Dn51VxOVKmMZf2EdMwuhaKoVl4hKhxbzjx7NWmRRr-xZDG55R6c0U_uaRV5mGRy6n9NF0&ref=https%3A//www.365w.org/stream/25822460/kashiwa_reysol_vs_urawa_red_diamonds
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.57thom7xpfu8ABuaB1aD8xZ7NJXAsmd0fIy9OovhJfTlMXjy8MIBZNGN-CpukB67nofeBzpdmr8MSug2LeEO77q9pk8VNmzsiM2Y-IAdk2qYDdK5UfZvzW9jD1HyBT406s3c-_cVxTHQamuujH-zKxTFkMSV1CQo_j6Zuc9aax398CTuWsUoD7C50xm7OtH_dj88QFXhMeD7EbYtgGU&ref=https%3A//www.365w.org/stream/25822460/kashiwa_reysol_vs_urawa_red_diamonds
 #EXTINF:-1 group-title="Soccer · Japan. Division 3" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Nagano Parceiro vs Reilac Shiga
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822462/nagano_parceiro_vs_reilac_shiga
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.xBksGhRq3o8elzuPJijCspYdsoP1qULCh_6walXtcMv-StyMkf6u3LwWdpizSU6IlYrYp_wcGHz8M4lskdMHSkUH8dfS8Li_8vpqDGNrit2uUmtwyg7HVHz9YKHqrKse_ZY0Fyhw9SdFJNy_mJ4pm1O5r7baL9wW2XOqapL9qD2t-FcFAkJ3hIBUG7yQ9Yxbx2zBuPuueWG3kMYRdkM&ref=https%3A//www.365w.org/stream/25822462/nagano_parceiro_vs_reilac_shiga
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.26IciYK-4dTDd441phLhqnM1l8h3VqwbGC6g_lwcyUoKkjNpWW5257bRYQJyNNcsucKMza80EVsSisaUXX2Em8sgrJn8m6x9KdXYZHv8xdw4VzHZnGbfRiAanuNEWXSlhfOanautjtFLGalbBhlsVF00gLubQfVa0YzNR-naSFtXAMlDki0iroBEgQG6_FfM_QaJEvSrQlhr0V23X6U&ref=https%3A//www.365w.org/stream/25822462/nagano_parceiro_vs_reilac_shiga
 #EXTINF:-1 group-title="Soccer · Japan. Division 3" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Ryukyu vs Gainare Tottori
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822463/ryukyu_vs_gainare_tottori
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.w4m1KSQsDgYmyi2mr1ELX2-LT2-u__ozTfr4KkTW0SNkVQDS1OY_YvAZAIh3yTlGUx2SzIsvrcgPpZWeddjADfmIK8Y3zhYOf8iRepEQopKYddQp1Sf2b6ZphEiNFiXOeccZ-buDL3om2J_i2A25ldAH9mnm9b92rStmKUlL0cQEJ5zEPc4UQNnVVYmqhoReU_EW54EdtgPR4j1JLmc&ref=https%3A//www.365w.org/stream/25822463/ryukyu_vs_gainare_tottori
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.7QfUqGqUSOhrtvdKxynL6pyxz5FjeMl4VPFeawDESgD4U9c4yJ46SE9rAE9-8zIXpd1RyQkPgJZtMS5yTlb1PDu06nSOyDiZwBv1SPW-64jqHLAMdpXAokfSFDDRoJfIp6muUJAF6_kiVYJIlnf2JC2Q5GBkLYnUCfnP7TTbSoTr-Jg7_OKe9R4zycwWYthoadVhaCSKCZVIdqtzaeY&ref=https%3A//www.365w.org/stream/25822463/ryukyu_vs_gainare_tottori
 #EXTINF:-1 group-title="Soccer · South Korea. K League 2" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Chungnam Asan vs Gimpo Citizen
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822775/chungnam_asan_vs_gimpo_citizen
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.Z3uMluwGRvOOiSHP2u_I1t7WTccoAKv6Mx5Pz7Uf2Pd9ySqSs5qoj1D8No5LnzwcfBZKrN-_jjwPI4CZRdMff8ogj1gK3bUxKCe423tsBwhLHdqYl8NaZM6HaII6Y-KAV1hdf5_uvp52VxY4jZQ2Gjq34l5Z6psFkqHl6qMbAYW_8thdjttAcTdscaRJ2zXA9NYKRuKan97jGgxgX6I&ref=https%3A//www.365w.org/stream/25822775/chungnam_asan_vs_gimpo_citizen
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.cNaKjtWVi0LU0fvgiGaa0GxlsXwnlyNp12R-AFdI08UURUGHBGQRA3ui93rNG90zoG5yMUZoDJn-y4tSVH8lABggKZHKwk_ihecRPGb74-N5cMBRYs-a7MJi6DY9B9Zyg_zSDofwff8JepUGRPKijpQZbMoTO999Lo3JDDJ-nPlTsxOgqc1vBZk-LmYrPI9W6dI-uorxKbb77PFwaw8&ref=https%3A//www.365w.org/stream/25822775/chungnam_asan_vs_gimpo_citizen
 #EXTINF:-1 group-title="Soccer · South Korea. K League 2" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Daegu vs Suwon Samsung Bluewings
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822776/daegu_vs_suwon_samsung_bluewings
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.LZfQ5d_WHVihWbw0vtrBCjMStfHTMIR9iVaX5SfXCPh5c41yT_2nT0KXUntAbeP0JiLv1aURgvPRG11ZTMw_kcy51vX8B4kNFYSkio8YfusnW1K4jcgRQ6ghO_ZGuEHsSOFrUYqGeG2En1IdGo1iknCkW_N8tHGsFrc4PsRV0UZuYW_Shszw6d-2IQH1S-drJpff9lrCijetmn50Des&ref=https%3A//www.365w.org/stream/25822776/daegu_vs_suwon_samsung_bluewings
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.C1q3G_KTOBLr-8B_HYHl81AaSH5Qf6Su5h1cMbu4KKOfpt9E-HfQYUyIsC0ML7x9fXe5s7gdnMvx3TcelqWu8sU61B_6PQ98Cr4QD_0HlluWsFB8zg4Twn_W2bQLe_xFKtJbuI1UYCMYY5Kqf2wzp1MfsEfF88LUe8UfcKxMqoIoCMJLRDqSEqcFggcQF0qK9jrwiaggEvrduDfFRQc&ref=https%3A//www.365w.org/stream/25822776/daegu_vs_suwon_samsung_bluewings
 #EXTINF:-1 group-title="Soccer · South Korea. K League 1. Play-out" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",FC Gwangju vs Gimcheon Sangmu
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25822777/fc_gwangju_vs_gimcheon_sangmu
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.7eXzbFCQ3_dv4udso4toDLesPfh49HM5dXoy6lSL5msg8-3MamyW8oaSbHkrO-BVDEiiAjvWxKvihzWT50a5ha1ySphZs_XJV38Hd84xaiNJygOnlAA4mPC2rW09_64CynzJe55n_mRqiup-5b3wMKeHbHXk3YzhcOAcyIZXaFllJGkbfx3ZUI6xWZPMQKm4Ftu8nsiDuHZFv4lr&ref=https%3A//www.365w.org/stream/25822777/fc_gwangju_vs_gimcheon_sangmu
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.edsq5IPQlR_vqucA0rAkse7RPo3G6PImWLxcNjo6PPHoeVdtWuT_Ff1wC4kl54K8fHrkk5297OTPhEDygjzNC-qbY2k0JGNdWYpwezaAvxpH_Ajdmqa1WsFlukNch3BHIkIfHPGGEfSJB5tU4iKc4pG7w7yON4_DxNPw1C_MwjGUSM80gm9YjobHIfZiB6iB-_blRn4ovnUtpaF4&ref=https%3A//www.365w.org/stream/25822777/fc_gwangju_vs_gimcheon_sangmu
 #EXTINF:-1 group-title="Soccer · Chinese Taipei. Women. Championship" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",FC Hualian (w) vs Taichung Cherry Blossoms (w)
-#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25840566/fc_hualian_w_vs_taichung_cherry_blossoms_w
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.ZqMVuV6nRSy5nufjsiXBLcmD8L5AAG0SCUPmJfqbIaOlcPkmCSUvP9AN5C_AoqMgWnTyEtDFJy2YIk2jid8CbovwawZWLxXpqXOG5y0Rmo1Og8n6jJ0kCjX2yFz0QGP_Mh7p5_Vb_iTSJmf-yVbVVeiolfjljV661KXfYhZrRWkqymfPcvBk6z-cp_crtJ7HF_gg7lKqdpJJVpMmM-g&ref=https%3A//www.365w.org/stream/25840566/fc_hualian_w_vs_taichung_cherry_blossoms_w
-#EXTINF:-1 group-title="Soccer · China. U20. Championship" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Tianjin Jinmen Tiger U20 vs Zhejiang U20
 #EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.COqVzcm-OcmgCiwcsP5IFxBll6atCppOG6sOaCS8J7wczOFmJIpdT0Fzet-j4imJuL2G-w4Bu5GueMASyzX2T6NgwEsiXXrg0gRxC9RUCl1-5xiQSbQBVGSdQdKFsu5NTD1csepqYVaQCabug1xMI_0usrf5EZYQPUaZvjQk__RasxQ9gfrAkc7r2n85w0bpzBwULWY-VD8bPCqsDMc&ref=https%3A//www.365w.org/stream/25840566/fc_hualian_w_vs_taichung_cherry_blossoms_w
+#EXTINF:-1 group-title="Soccer · China. U20. Championship" tvg-logo="https://www.365w.org/static/sport_symbols.svg#soccer",Tianjin Jinmen Tiger U20 vs Zhejiang U20
+#EXTVLCOPT:http-sec-ch-ua-platform="Windows"
 #EXTVLCOPT:http-referrer=https://www.365w.org/stream/25841092/tianjin_jinmen_tiger_u20_vs_zhejiang_u20
-#EXTVLCOPT:http-origin=https://www.365w.org
-https://px.bhns.workers.dev/stream/media?t=v2.vH6UbA_BZWDMlEk9m73YlgDs3AW-FHs0cLHwQkwEtQoCNVYF6e1PYz3yWmcKI6MdYS-p1OiRal7fkupMj-wdyZg_eQseI7-r0qwtZVkzhzClKdxKbXpzG9arj5UwkOWftJ7mgVW8bb8BwsWXA40jCjoUz3zxQeuVtDPyKFDGMYpSZsyrHYSbMwcoy1ldmFWIYPsfW73CwULXTqeYU_o&ref=https%3A//www.365w.org/stream/25841092/tianjin_jinmen_tiger_u20_vs_zhejiang_u20
+#EXTVLCOPT:http-user-agent=Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36
+#EXTVLCOPT:http-sec-ch-ua="Not:A-Brand";v="8", "Chromium";v="156", "HeadlessChrome";v="156"
+#EXTVLCOPT:http-accept-language=en-US
+#EXTVLCOPT:http-sec-ch-ua-mobile=?0
+https://px.bhns.workers.dev/stream/media?t=v2.KrqIOz5NvWhxyQhtgn2cnYlwYunAEDa9dtzG8bIN_NRvTW0WyHOzGQ-H-oRIq2SMZPjbcDsy1Arx5zSHakvVHPT0Cbnv2MwzSURG66xlJrbqFgC2ercqbqW9HN9OLeRCxm-HprD7XwDS2vuiDnWL6tj-7RqrIHgGgaaBW1e5OWqSHWeK1Jrp3iz9MdR6Mv8o0QxXVtGpSoSemRhGxug&ref=https%3A//www.365w.org/stream/25841092/tianjin_jinmen_tiger_u20_vs_zhejiang_u20
