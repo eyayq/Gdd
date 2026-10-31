@@ -166,7 +166,7 @@ def main():
     title = f"{s['team1']} vs {s['team2']}"
     url = f"{WORKER}/stream/{s['id']}/{s['slug']}"
     print(f"\nPreview:")
-    print(f'  #EXTINF:-1 group-title="{s["group_title"]}" tvg-logo="{s["logo"]}",{title}')
+    print(f'  #EXTINF:-1 group-title="{s["group_title"]}" tvg-logo="{BASE}/static/sport_symbols.svg#{s["sport_icon"]}",{title}')
     print(f"  {url}")
     print(f"\n✅ Tidak perlu re-run. Token di-regenerate otomatis oleh worker.")
 
